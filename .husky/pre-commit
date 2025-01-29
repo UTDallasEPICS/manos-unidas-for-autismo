@@ -1,0 +1,4 @@
+# .husky/pre-commit
+npx eslint $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
+prettier $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write --ignore-unknown
+git update-index --again

@@ -1,0 +1,53 @@
+{
+	"name": "nuxt-app",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare",
+		"checker": "eslint && prettier . --check",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"@headlessui/vue": "^1.7.23",
+		"@heroicons/vue": "^2.2.0",
+		"@prisma/client": "^6.3.0",
+		"@tailwindcss/vite": "^4.0.1",
+		"nuxt": "^3.15.4",
+		"tailwindcss": "^4.0.1",
+		"vue": "latest",
+		"vue-router": "latest"
+	},
+	"version": "1.0.0",
+	"description": "Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.",
+	"main": "index.js",
+	"devDependencies": {
+		"@eslint/js": "^9.19.0",
+		"@types/node": "^22.12.0",
+		"eslint": "^9.19.0",
+		"eslint-config-prettier": "^10.0.1",
+		"eslint-plugin-vue": "^9.32.0",
+		"globals": "^15.14.0",
+		"husky": "^9.1.7",
+		"prettier": "^3.4.2",
+		"prettier-plugin-tailwindcss": "^0.6.11",
+		"prisma": "^6.3.0",
+		"tsx": "^4.19.2",
+		"typescript": "^5.7.3",
+		"typescript-eslint": "^8.22.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/UTDallasEPICS/manos-unidas-for-autismo.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/UTDallasEPICS/manos-unidas-for-autismo/issues"
+	},
+	"homepage": "https://github.com/UTDallasEPICS/manos-unidas-for-autismo#readme"
+}
