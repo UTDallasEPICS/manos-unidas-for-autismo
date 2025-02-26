@@ -14,7 +14,81 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
+  UID   String   @id @default(uuid())
+  Name  String
+  Email String   @unique
+  Phone String?
+  Type  UserType
+}
+
+enum UserType {
+  PARENT
+  PATIENT
+  ADMIN
+  THERAPIST
+}
+
+model Patient {
+  UID            String         @id @default(uuid())
+  DOB            DateTime
+  Gender         Gender
+  Address        String
+  Sponsor        Sponsor?       @relation(fields: [SponsorID], references: [SID])
+  SponsorID      String?
+  Appointments   Appointment[]
+  MedicalRecords MedicalRecord?
+
+  ProgressReport ProgressReport[]
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model Appointment {
+  AID       String    @id @default(uuid())
+  Type      String
+  Time      DateTime
+  Comment   String
+  PID       String
+  Patient   Patient   @relation(fields: [PID], references: [UID])
+  TID       String
+  Therapist Therapist @relation(fields: [TID], references: [TID])
+}
+
+model MedicalRecord {
+  PID     String  @id
+  Data    String
+  Patient Patient @relation(fields: [PID], references: [UID])
+}
+
+model Therapist {
+  TID            String        @id @default(uuid())
+  Specialization String //Can make this an enum if needed
+  Appointments   Appointment[]
+}
+
+model Sponsor {
+  SID      String    @id @default(uuid())
+  Name     String
+  Contact  String
+  Patients Patient[]
+}
+
+model ProgressReport {
+  RID         String   @id @default(uuid())
+  PID         String
+  Responses   Json //Expected format: {question: string, answer: string}[]
+  DateCreated DateTime @default(now())
+  Patient     Patient  @relation(fields: [PID], references: [UID])
+}
+
+model ContactForm {
+  FID            String  @id @default(uuid())
+  Identification String
+  Diagnosed      String
+  BeenHereBefore Boolean
+  Comments       String?
 }
