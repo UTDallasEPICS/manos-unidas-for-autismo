@@ -14,11 +14,12 @@ datasource db {
 }
 
 model User {
-  UID   String   @id @default(uuid())
-  Name  String
-  Email String   @unique
-  Phone String?
-  Type  UserType
+  UID     String   @id @default(uuid())
+  Name    String
+  Email   String   @unique
+  Phone   String?
+  Type    UserType
+  Patient Patient?
 }
 
 enum UserType {
@@ -28,17 +29,33 @@ enum UserType {
   THERAPIST
 }
 
+model Parent {
+  UID         String        @id @default(uuid())
+  DOB         DateTime
+  Gender      Gender
+  Address     String
+  Children    Patient[]
+  ContactForm ContactForm[]
+}
+
 model Patient {
-  UID            String         @id @default(uuid())
+  UID            String           @id @default(uuid())
   DOB            DateTime
   Gender         Gender
   Address        String
-  Sponsor        Sponsor?       @relation(fields: [SponsorID], references: [SID])
+  Identification String
+  Sponsor        Sponsor?         @relation(fields: [SponsorID], references: [SID])
   SponsorID      String?
+  Diagnosed      Boolean
   Appointments   Appointment[]
   MedicalRecords MedicalRecord?
-
   ProgressReport ProgressReport[]
+
+  ParentID String?
+
+  User        User        @relation(fields: [UID], references: [UID])
+  Parent      Parent?     @relation(fields: [ParentID], references: [UID])
+  ContactForm ContactForm
 }
 
 enum Gender {
@@ -48,10 +65,11 @@ enum Gender {
 }
 
 model Appointment {
-  AID       String    @id @default(uuid())
-  Type      String
-  Time      DateTime
-  Comment   String
+  AID     String   @id @default(uuid())
+  Type    String
+  Time    DateTime
+  Comment String
+
   PID       String
   Patient   Patient   @relation(fields: [PID], references: [UID])
   TID       String
@@ -65,10 +83,20 @@ model MedicalRecord {
 }
 
 model Therapist {
-  TID            String        @id @default(uuid())
-  Specialization String //Can make this an enum if needed
-  Appointments   Appointment[]
+  TID             String        @id @default(uuid())
+  Specializations String
+  Appointments    Appointment[]
 }
+
+// enum Specialization {
+//   LEARNING
+//   SOCIAL_HABILITATION
+//   CONDUCTUAL
+//   INTERVENTIONAL
+//   LANGUAGE
+//   OCCUPATIONAL
+//   INDEPENDENT_LIVING
+// }
 
 model Sponsor {
   SID      String    @id @default(uuid())
@@ -78,17 +106,36 @@ model Sponsor {
 }
 
 model ProgressReport {
-  RID         String   @id @default(uuid())
+  RID         String                   @id @default(uuid())
   PID         String
-  Responses   Json //Expected format: {question: string, answer: string}[]
-  DateCreated DateTime @default(now())
-  Patient     Patient  @relation(fields: [PID], references: [UID])
+  DateCreated DateTime                 @default(now())
+  Patient     Patient                  @relation(fields: [PID], references: [UID])
+  Responses   ProgressReportResponse[]
+}
+
+model ProgressReportResponse {
+  ID       String @id @default(uuid())
+  RID      String
+  Question String
+  Answer   String
+
+  Report ProgressReport @relation(fields: [RID], references: [RID])
 }
 
 model ContactForm {
-  FID            String  @id @default(uuid())
-  Identification String
-  Diagnosed      String
-  BeenHereBefore Boolean
-  Comments       String?
+  FID                 String   @id @default(uuid())
+  Patient             Patient  @relation(fields: [patientUID], references: [UID])
+  DOB                 DateTime
+  Gender              Gender
+  Parent              Parent?  @relation(fields: [parentUID], references: [UID])
+  Identification      String
+  Address             String
+  Email               String   @unique
+  Phone               String?
+  Diagnosed           Boolean
+  BeenHereBefore      Boolean
+  WantsDiagnosticEval Boolean
+  Comments            String?
+  patientUID          String   @unique
+  parentUID           String?
 }
