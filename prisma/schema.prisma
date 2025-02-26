@@ -53,9 +53,9 @@ model Patient {
 
   ParentID String?
 
-  User        User        @relation(fields: [UID], references: [UID])
-  Parent      Parent?     @relation(fields: [ParentID], references: [UID])
-  ContactForm ContactForm
+  User        User         @relation(fields: [UID], references: [UID])
+  Parent      Parent?      @relation(fields: [ParentID], references: [UID])
+  ContactForm ContactForm?
 }
 
 enum Gender {
