@@ -14,16 +14,17 @@ datasource db {
 }
 
 model User {
-  ID      String           @id @default(uuid())
-  FName   String
-  MInit   String?
-  LName   String
-  Email   String
-  Phone   String?
-  enum    PreferredContact
-  Type    UserType
-  Patient Patient?
-  Parent  Parent?
+  ID        String           @id @default(uuid())
+  FName     String
+  MInit     String?
+  LName     String
+  Email     String
+  Phone     String?
+  enum      PreferredContact
+  Type      UserType?
+  Patient   Patient?
+  Parent    Parent?
+  Therapist Therapist?
 }
 
 enum PreferredContact {
@@ -34,36 +35,34 @@ enum PreferredContact {
 enum UserType {
   ADMIN
   USER_SUPPORT
-  THERAPIST
 }
 
 model Parent {
-  ID          String        @id @default(uuid())
-  DOB         DateTime
-  Gender      Gender
-  Address     String
-  Children    Patient[]
-  ContactForm ContactForm[]
+  ID   String @unique
+  User User   @relation(fields: [ID], references: [ID])
 
-  UserID String @unique
-  User   User   @relation(fields: [UserID], references: [ID])
+  DOB          DateTime
+  Gender       Gender
+  Address      String
+  Children     Patient[]
+  ContactForms ContactForm[]
 }
 
 model Patient {
-  ID             String          @id @default(uuid())
-  DOB            DateTime
-  Gender         Gender
-  Address        String
-  Identification String
-  Sponsor        Sponsor?        @relation(fields: [SponsorID], references: [ID])
-  SponsorID      String?
-  Diagnosed      Boolean
-  Appointments   Appointment[]
-  MedicalRecords MedicalRecord[]
-  ProgressReport Report[]
+  ID   String @unique
+  User User   @relation(fields: [ID], references: [ID])
 
-  UserID   String  @unique
-  User     User    @relation(fields: [UserID], references: [ID])
+  DOB             DateTime
+  Gender          Gender
+  Address         String
+  Identification  String
+  Sponsor         Sponsor?         @relation(fields: [SponsorID], references: [ID])
+  SponsorID       String?
+  Diagnosed       Boolean
+  Appointments    SessionPatient[]
+  MedicalRecords  MedicalRecord[]
+  ProgressReports Report[]
+
   ParentID String?
   Parent   Parent? @relation(fields: [ParentID], references: [ID])
 
@@ -83,15 +82,13 @@ model Session {
   Comment       String
   MaxAttendance Int
 
-  PatientID String
-  Patients  Appointment[]
+  Patients SessionPatient[]
 
   TherapistID String
   Therapist   Therapist @relation(fields: [TherapistID], references: [ID])
 }
 
-model Appointment {
-  ID        String  @id @default(uuid())
+model SessionPatient {
   SessionID String
   Session   Session @relation(fields: [SessionID], references: [ID])
 
@@ -99,6 +96,8 @@ model Appointment {
   Patient   Patient @relation(fields: [PatientID], references: [ID])
 
   isPaidFor Boolean
+
+  @@id([SessionID, PatientID])
 }
 
 model MedicalRecord {
@@ -109,7 +108,8 @@ model MedicalRecord {
 }
 
 model Therapist {
-  ID                      String            @id @default(uuid())
+  ID                      String            @id @unique
+  User                    User              @relation(fields: [ID], references: [ID])
   TherapistSpecialization TSpecialization[]
   Sessions                Session[]
 }
@@ -139,14 +139,14 @@ model Sponsor {
 }
 
 model Report {
-  ID          String   @id @default(uuid())
+  ID          String       @id @default(uuid())
   PatientID   String
-  DateCreated DateTime @default(now())
-  Patient     Patient  @relation(fields: [PatientID], references: [ID])
-  Responses   Data[]
+  DateCreated DateTime     @default(now())
+  Patient     Patient      @relation(fields: [PatientID], references: [ID])
+  Data        ReportData[]
 }
 
-model Data {
+model ReportData {
   ID       String @id @default(uuid())
   ReportID String
   Question String
