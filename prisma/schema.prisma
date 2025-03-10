@@ -55,7 +55,7 @@ model Patient {
   Gender         Gender
   Address        String
   Identification String
-  Sponsor        Sponsor?        @relation(fields: [SponsorID], references: [SID])
+  Sponsor        Sponsor?        @relation(fields: [SponsorID], references: [ID])
   SponsorID      String?
   Diagnosed      Boolean
   Appointments   Appointment[]
@@ -76,22 +76,33 @@ enum Gender {
   OTHER
 }
 
-model Appointment {
+model Session {
   ID            String   @id @default(uuid())
   Type          String
   Time          DateTime
   Comment       String
   MaxAttendance Int
-  IsPaidFor     Boolean
 
-  PatientID   String
-  Patient     Patient   @relation(fields: [PatientID], references: [ID])
+  PatientID String
+  Patients  Appointment[]
+
   TherapistID String
   Therapist   Therapist @relation(fields: [TherapistID], references: [ID])
 }
 
+model Appointment {
+  ID        String  @id @default(uuid())
+  SessionID String
+  Session   Session @relation(fields: [SessionID], references: [ID])
+
+  PatientID String
+  Patient   Patient @relation(fields: [PatientID], references: [ID])
+
+  isPaidFor Boolean
+}
+
 model MedicalRecord {
-  ID        String  @id
+  ID        String  @id @default(uuid())
   Data      String
   PatientID String
   Patient   Patient @relation(fields: [PatientID], references: [ID])
@@ -100,11 +111,11 @@ model MedicalRecord {
 model Therapist {
   ID                      String            @id @default(uuid())
   TherapistSpecialization TSpecialization[]
-  Appointments            Appointment[]
+  Sessions                Session[]
 }
 
 model TSpecialization {
-  ID             String         @id
+  ID             String         @id @default(uuid())
   TherapistID    String
   Therapist      Therapist      @relation(fields: [TherapistID], references: [ID])
   Specialization Specialization
@@ -121,21 +132,21 @@ enum Specialization {
 }
 
 model Sponsor {
-  SID      String    @id @default(uuid())
+  ID       String    @id @default(uuid())
   Name     String
   Contact  String
   Patients Patient[]
 }
 
 model Report {
-  ID          String       @id @default(uuid())
+  ID          String   @id @default(uuid())
   PatientID   String
-  DateCreated DateTime     @default(now())
-  Patient     Patient      @relation(fields: [PatientID], references: [ID])
-  Responses   ReportData[]
+  DateCreated DateTime @default(now())
+  Patient     Patient  @relation(fields: [PatientID], references: [ID])
+  Responses   Data[]
 }
 
-model ReportData {
+model Data {
   ID       String @id @default(uuid())
   ReportID String
   Question String
@@ -155,8 +166,8 @@ model ContactForm {
   parentID String?
   Parent   Parent? @relation(fields: [parentID], references: [ID])
 
-  patientID String?  @unique
-  Patient   Patient? @relation(fields: [patientID], references: [ID])
+  patientID String  @unique
+  Patient   Patient @relation(fields: [patientID], references: [ID])
 }
 
 enum Status {
