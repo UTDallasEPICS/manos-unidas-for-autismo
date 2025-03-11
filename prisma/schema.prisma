@@ -14,7 +14,163 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
+  ID        String           @id @default(uuid())
+  FName     String
+  MInit     String?
+  LName     String
+  Email     String
+  Phone     String?
+  enum      PreferredContact
+  Type      UserType?
+  Patient   Patient?
+  Parent    Parent?
+  Therapist Therapist?
+}
+
+enum PreferredContact {
+  EMAIL
+  PHONE
+}
+
+enum UserType {
+  ADMIN
+  USER_SUPPORT
+}
+
+model Parent {
+  ID   String @id @unique
+  User User   @relation(fields: [ID], references: [ID])
+
+  DOB          DateTime
+  Gender       Gender
+  Address      String
+  Children     Patient[]
+  ContactForms ContactForm[]
+}
+
+model Patient {
+  ID   String @id @unique
+  User User   @relation(fields: [ID], references: [ID])
+
+  DOB             DateTime
+  Gender          Gender
+  Address         String
+  Identification  String
+  Sponsor         Sponsor?         @relation(fields: [SponsorID], references: [ID])
+  SponsorID       String?
+  Diagnosed       Boolean
+  Appointments    SessionPatient[]
+  MedicalRecords  MedicalRecord[]
+  ProgressReports Report[]
+
+  ParentID String?
+  Parent   Parent? @relation(fields: [ParentID], references: [ID])
+
+  ContactForm ContactForm?
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model Session {
+  ID            String   @id @default(uuid())
+  Type          String
+  Time          DateTime
+  Comment       String?
+  MaxAttendance Int
+
+  Patients SessionPatient[]
+
+  TherapistID String
+  Therapist   Therapist @relation(fields: [TherapistID], references: [ID])
+}
+
+model SessionPatient {
+  SessionID String
+  Session   Session @relation(fields: [SessionID], references: [ID])
+
+  PatientID String
+  Patient   Patient @relation(fields: [PatientID], references: [ID])
+
+  isPaidFor Boolean
+
+  @@id([SessionID, PatientID])
+}
+
+model MedicalRecord {
+  ID        String  @id @default(uuid())
+  Data      String
+  PatientID String
+  Patient   Patient @relation(fields: [PatientID], references: [ID])
+}
+
+model Therapist {
+  ID                      String            @id @unique
+  User                    User              @relation(fields: [ID], references: [ID])
+  TherapistSpecialization TSpecialization[]
+  Sessions                Session[]
+}
+
+model TSpecialization {
+  ID             String         @id @default(uuid())
+  TherapistID    String
+  Therapist      Therapist      @relation(fields: [TherapistID], references: [ID])
+  Specialization Specialization
+}
+
+enum Specialization {
+  LEARNING
+  SOCIAL_HABILITATION
+  CONDUCTUAL
+  INTERVENTIONAL
+  LANGUAGE
+  OCCUPATIONAL
+  INDEPENDENT_LIVING
+}
+
+model Sponsor {
+  ID       String    @id @default(uuid())
+  Name     String
+  Contact  String
+  Patients Patient[]
+}
+
+model Report {
+  ID          String       @id @default(uuid())
+  PatientID   String
+  DateCreated DateTime     @default(now())
+  Patient     Patient      @relation(fields: [PatientID], references: [ID])
+  Data        ReportData[]
+}
+
+model ReportData {
+  ID       String @id @default(uuid())
+  ReportID String
+  Question String
+  Answer   String
+
+  Report Report @relation(fields: [ReportID], references: [ID])
+}
+
+model ContactForm {
+  ID                  String  @id @default(uuid())
+  BeenHereBefore      Boolean
+  WantsDiagnosticEval Boolean
+  Comments            String?
+  Status              Status  @default(NEEDS_PROCESSING)
+
+  parentID String?
+  Parent   Parent? @relation(fields: [parentID], references: [ID])
+
+  patientID String  @unique
+  Patient   Patient @relation(fields: [patientID], references: [ID])
+}
+
+enum Status {
+  NEEDS_PROCESSING
+  NEEDS_SCHEDULING
+  PROCESSED
 }
