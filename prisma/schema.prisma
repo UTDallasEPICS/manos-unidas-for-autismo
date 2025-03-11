@@ -38,7 +38,7 @@ enum UserType {
 }
 
 model Parent {
-  ID   String @unique
+  ID   String @id @unique
   User User   @relation(fields: [ID], references: [ID])
 
   DOB          DateTime
@@ -49,7 +49,7 @@ model Parent {
 }
 
 model Patient {
-  ID   String @unique
+  ID   String @id @unique
   User User   @relation(fields: [ID], references: [ID])
 
   DOB             DateTime
@@ -79,7 +79,7 @@ model Session {
   ID            String   @id @default(uuid())
   Type          String
   Time          DateTime
-  Comment       String
+  Comment       String?
   MaxAttendance Int
 
   Patients SessionPatient[]
@@ -157,7 +157,6 @@ model ReportData {
 
 model ContactForm {
   ID                  String  @id @default(uuid())
-  Diagnosed           Boolean
   BeenHereBefore      Boolean
   WantsDiagnosticEval Boolean
   Comments            String?
