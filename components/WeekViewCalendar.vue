@@ -4,20 +4,18 @@
 -->
 <template>
 	<!-- Header part -->
-	<div class="weekView-container grid grid-cols-11">
-		<!-- Displays the times on the left -->
-		<div class="weekView-container col-span-1">
-			<div class="calendar-header row-span-1">Time</div>
+	<div class="calendar-header grid grid-cols-11 text-center">
+		<div class="col-span-1">
+			<div class="row-span-1">Time</div>
 		</div>
-
 		<!-- Displays each day -->
 		<div class="col-span-2" v-for="(day, index) in dayNames" :key="index">
-			<div class="calendar-header row-span-1">{{ day }}</div>
+			<div class="row-span-1">{{ day }}</div>
 		</div>
 	</div>
 
 	<!-- Main Body -->
-	<div class="grid grid-cols-11">
+	<div class="grid grid-cols-11 text-center">
 		<!-- Times -->
 		<div class="col-span-1">
 			<div
@@ -36,6 +34,7 @@
 
 		<!-- Appointments -->
 		<div class="col-span-2" v-for="(day, index) in dayNames" :key="index">
+			<!-- Replace the below with appointment components -->
 			{{ day }} appointments go here
 		</div>
 	</div>
@@ -46,7 +45,7 @@ export default {
 	data() {
 		return {
 			dayNames: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-			startHr: 8, // The start and end hour might be computed in the future once appointments are added in
+			startHr: 8, // The start and end hour might be computed in the future once appointments are added in instead of being fixed
 			endHr: 18,
 			hours: [],
 		};
@@ -75,7 +74,6 @@ export default {
 	created() {
 		this.getHours(this.startHr, this.endHr);
 	},
-
 	watch: {
 		// triggers when the start and end hour changes
 		startHr: function () {
@@ -89,28 +87,14 @@ export default {
 </script>
 
 <style>
-.weekView-container {
-	text-align: center;
-}
-
 .calendar-header {
 	/* Placeholder */
 	background-color: #b4bbc9;
-	font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
-		sans-serif;
 	font-size: large;
 }
 
 .time-container {
-	/* Color is placeholder */
-	text-align: center;
 	border-bottom: 1px solid gray;
 	border-right: 1px solid gray;
-}
-
-.test-container {
-	/* Placeholder */
-	background-color: red;
-	border-bottom: 1px solid black;
 }
 </style>
