@@ -1,100 +1,93 @@
-<!-- 11 Mar 2025 coder-Mika
+<!-- 13 Mar 2025 coder-Mika
 
-	Calendar displays days from Monday-Friday, and hours based on fixed values. Later, when we have appointments in a database, the hours should be adjusted to the earliest and latest times of all the appointments displayed to account for appointments added in the future. Does not yet display any appointments. Colors/styles are placeholders.
+	Calendar displays days from Monday-Friday, and hours based on fixed values. Later, when we have appointments in a database, the hours should be adjusted to the earliest and latest times of all the appointments displayed to account for appointments added in the future. Does not yet display any appointments.
 -->
 <template>
 	<!-- Header part -->
-	<div class="calendar-header grid grid-cols-11 text-center">
-		<div class="col-span-1">
-			<div class="row-span-1">Time</div>
+	<div class="grid grid-cols-11 text-center">
+		<div class="w-15">
+			<div class="row-span-1 overflow-hidden">Time</div>
 		</div>
-		<!-- Displays each day -->
 		<div class="col-span-2" v-for="(day, index) in dayNames" :key="index">
-			<div class="row-span-1">{{ day }}</div>
+			<div class="row-span-1 overflow-hidden">{{ day }}</div>
 		</div>
 	</div>
 
 	<!-- Main Body -->
 	<div class="grid grid-cols-11 text-center">
 		<!-- Times -->
-		<div class="col-span-1">
+		<div class="w-15">
 			<div
-				class="col-span-1 row-span-4"
+				class="row-span-4 flex-none"
 				v-for="(hr, index) in hours"
 				:key="index"
 			>
-				<div class="time-container">
-					<b>{{ hr }}:00</b>
+				<div class="border-1 border-gray-400">
+					<b>{{ militaryTimeToTwelveHr(hr) }}</b>
 				</div>
-				<div class="time-container row-span-1">{{ hr }}:15</div>
-				<div class="time-container row-span-1">{{ hr }}:30</div>
-				<div class="time-container row-span-1">{{ hr }}:45</div>
+				<div class="border-1 border-gray-400">{{ hr }}:15</div>
+				<div class="border-1 border-gray-400">{{ hr }}:30</div>
+				<div class="border-1 border-gray-400">{{ hr }}:45</div>
 			</div>
 		</div>
 
 		<!-- Appointments -->
-		<div class="col-span-2" v-for="(day, index) in dayNames" :key="index">
+		<div
+			class="col-span-2 overflow-hidden"
+			v-for="(day, index) in dayNames"
+			:key="index"
+		>
 			<!-- Replace the below with appointment components -->
 			{{ day }} appointments go here
 		</div>
 	</div>
 </template>
 
-<script>
-export default {
-	data() {
-		return {
-			dayNames: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-			startHr: 8, // The start and end hour might be computed in the future once appointments are added in instead of being fixed
-			endHr: 18,
-			hours: [],
-		};
-	},
-	methods: {
-		getHours(start, end) {
-			this.hours = [];
-			if (
-				start < end &&
-				start >= 0 &&
-				start < 24 &&
-				end >= 0 &&
-				end < 24
-			) {
-				for (let i = start; i <= end; i++) {
-					this.hours.push(i);
-				}
-			} else {
-				// default hours in case of error: show all
-				for (let i = 0; i <= 23; i++) {
-					this.hours.push(i);
-				}
-			}
-		},
-	},
-	created() {
-		this.getHours(this.startHr, this.endHr);
-	},
-	watch: {
-		// triggers when the start and end hour changes
-		startHr: function () {
-			this.getHours(this.startHr, this.endHr);
-		},
-		endHr: function () {
-			this.getHours(this.startHr, this.endHr);
-		},
-	},
-};
+<script lang="ts" setup>
+import { computed, ref } from "vue";
+
+// values
+const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const startHr = ref(8); // The start and end hour might be computed in the future once appointments are added in instead of being fixed
+const endHr = ref(16);
+
+const hours = computed(() => {
+	const hoursBuild = [];
+	if (
+		startHr.value < endHr.value &&
+		startHr.value >= 0 &&
+		startHr.value < 24 &&
+		endHr.value >= 0 &&
+		endHr.value < 24
+	) {
+		for (let i = startHr.value; i <= endHr.value; i++) {
+			hoursBuild.push(i);
+		}
+	} else {
+		// default hours in case of error: show all
+		for (let i = 0; i <= 23; i++) {
+			hoursBuild.push(i);
+		}
+	}
+	return hoursBuild;
+});
+
+// converts 24 hour military time to AM & PM
+function militaryTimeToTwelveHr(h: number): string {
+	let twelveHrTime = "";
+	if (h < 0 || h > 23) {
+		twelveHrTime = "ERROR";
+	} else if (h < 12) {
+		if (h == 0) {
+			h = 12;
+		}
+		twelveHrTime = h + " AM";
+	} else {
+		if (h > 12) {
+			h = h - 12;
+		}
+		twelveHrTime = h + " PM";
+	}
+	return twelveHrTime;
+}
 </script>
-
-<style>
-.calendar-header {
-	/* Placeholder */
-	background-color: #b4bbc9;
-	font-size: large;
-}
-
-.time-container {
-	border-bottom: 1px solid gray;
-	border-right: 1px solid gray;
-}
-</style>
