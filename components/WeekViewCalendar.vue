@@ -3,42 +3,46 @@
 	Calendar displays days from Monday-Friday, and hours based on fixed values. Later, when we have appointments in a database, the hours should be adjusted to the earliest and latest times of all the appointments displayed to account for appointments added in the future. Does not yet display any appointments.
 -->
 <template>
-	<!-- Header part -->
-	<div class="grid grid-cols-11 text-center">
-		<div class="w-15">
-			<div class="row-span-1 overflow-hidden">Time</div>
-		</div>
-		<div class="col-span-2" v-for="(day, index) in dayNames" :key="index">
-			<div class="row-span-1 overflow-hidden">{{ day }}</div>
-		</div>
-	</div>
-
-	<!-- Main Body -->
-	<div class="grid grid-cols-11 text-center">
-		<!-- Times -->
-		<div class="w-15">
+	<div class="overflow-auto">
+		<!-- Header part -->
+		<div class="grid min-w-2xl grid-cols-11 text-center">
+			<div class="col-span-1 min-w-15">
+				<div class="row-span-1 overflow-hidden">Time</div>
+			</div>
 			<div
-				class="row-span-4 flex-none"
-				v-for="(hr, index) in hours"
+				class="col-span-2"
+				v-for="(day, index) in dayNames"
 				:key="index"
 			>
-				<div class="border-1 border-gray-400">
-					<b>{{ militaryTimeToTwelveHr(hr) }}</b>
+				<div class="row-span-1 overflow-hidden">
+					{{ day }}
 				</div>
-				<div class="border-1 border-gray-400">{{ hr }}:15</div>
-				<div class="border-1 border-gray-400">{{ hr }}:30</div>
-				<div class="border-1 border-gray-400">{{ hr }}:45</div>
 			</div>
-		</div>
+			<!-- Times -->
+			<div class="col-span-1 min-w-15">
+				<div
+					class="row-span-4 flex-none"
+					v-for="(hr, index) in hours"
+					:key="index"
+				>
+					<div class="border-1 border-gray-400">
+						<b>{{ militaryTimeToTwelveHr(hr) }}</b>
+					</div>
+					<div class="border-1 border-gray-400">{{ hr }}:15</div>
+					<div class="border-1 border-gray-400">{{ hr }}:30</div>
+					<div class="border-1 border-gray-400">{{ hr }}:45</div>
+				</div>
+			</div>
 
-		<!-- Appointments -->
-		<div
-			class="col-span-2 overflow-hidden"
-			v-for="(day, index) in dayNames"
-			:key="index"
-		>
-			<!-- Replace the below with appointment components -->
-			{{ day }} appointments go here
+			<!-- Appointments -->
+			<div
+				class="col-span-2 overflow-hidden"
+				v-for="(day, index) in dayNames"
+				:key="index"
+			>
+				<!-- Replace the below with appointment components -->
+				{{ day }} appointments go here
+			</div>
 		</div>
 	</div>
 </template>
