@@ -10,8 +10,10 @@ input.test {
 	font-optical-sizing: auto;
 	font-weight: 300;
 	font-style: normal;
+	-webkit-text-fill-color: black;
 }
 
 @theme {
 	--color-color1: #06234f;
+	--color-color2: #d9d9d9;
 }

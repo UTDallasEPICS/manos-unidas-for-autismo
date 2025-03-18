@@ -15,12 +15,12 @@
 					class="flex flex-col flex-wrap justify-center bg-white px-10"
 				>
 					<div class="flex flex-wrap justify-between">
-						<div class="flex flex-col">
+						<div class="mr-5 flex flex-col">
 							<label>First name:</label>
 							<!--takes a string, type/enter box-->
 							<input
 								type="text"
-								class=""
+								class="bg-color2"
 								required
 								v-model="firstName"
 							/>
@@ -29,7 +29,11 @@
 						<div class="flex flex-col">
 							<label>Middle name:</label>
 							<!--takes a string, type/enter box-->
-							<input type="middleName" v-model="middleName" />
+							<input
+								type="middleName"
+								class="bg-color2"
+								v-model="middleName"
+							/>
 						</div>
 
 						<div class="flex flex-col">
@@ -37,6 +41,7 @@
 							<!--takes a string, type/enter box-->
 							<input
 								type="lastName"
+								class="bg-color2"
 								required
 								v-model="lastName"
 							/>
@@ -45,40 +50,72 @@
 						<div class="flex flex-col">
 							<label>Gender:</label>
 							<!--select box-->
-							<select v-model="gender">
-								<option value="female">Female</option>
-								<option value="male">Male</option>
-								<option value="nonBinary">Non-Binary</option>
+							<select class="bg-color2" v-model="gender">
+								<option class="bg-white" value="female">
+									Female
+								</option>
+								<option class="bg-white" value="male">
+									Male
+								</option>
+								<option class="bg-white" value="nonBinary">
+									Non-Binary
+								</option>
 							</select>
 						</div>
 
 						<div class="flex flex-col">
 							<label>Date of Birth (xx/xx/xxxx):</label>
-							<input type="DOB" required v-model="DOB" />
+							<input
+								class="bg-color2"
+								type="DOB"
+								required
+								v-model="DOB"
+							/>
 						</div>
 
 						<div class="flex flex-col">
 							<label>ParentName:</label>
-							<input type="parent" required v-model="parent" />
+							<input
+								class="bg-color2"
+								type="parent"
+								required
+								v-model="parent"
+							/>
 						</div>
 
 						<div class="flex flex-col">
 							<label>ID card:</label>
-							<input type="ID" required v-model="ID" />
+							<input
+								class="bg-color2"
+								type="ID"
+								required
+								v-model="ID"
+							/>
 						</div>
 
 						<div class="flex flex-col">
 							<label>Record Number:</label>
-							<input type="record" required v-model="record" />
+							<input
+								class="bg-color2"
+								type="record"
+								required
+								v-model="record"
+							/>
 						</div>
 
 						<div class="flex flex-col">
 							<label>Country/City:</label>
-							<input type="city" required v-model="city" />
+							<input
+								class="bg-color2"
+								type="city"
+								required
+								v-model="city"
+							/>
 						</div>
 						<div class="flex flex-col">
 							<label>Medical Insurance:</label>
 							<input
+								class="bg-color2"
 								type="insurance"
 								required
 								v-model="insurance"
@@ -87,17 +124,32 @@
 
 						<div class="flex flex-col">
 							<label>Address:</label>
-							<input type="address" required v-model="address" />
+							<input
+								class="bg-color2"
+								type="address"
+								required
+								v-model="address"
+							/>
 						</div>
 
 						<div class="flex flex-col">
 							<label>Email:</label>
-							<input type="email" required v-model="email" />
+							<input
+								class="bg-color2"
+								type="email"
+								required
+								v-model="email"
+							/>
 						</div>
 
 						<div class="flex flex-col">
 							<label>Phone Number/Whatsapp:</label>
-							<input type="phone" required v-model="phone" />
+							<input
+								class="bg-color2"
+								type="phone"
+								required
+								v-model="phone"
+							/>
 						</div>
 					</div>
 
