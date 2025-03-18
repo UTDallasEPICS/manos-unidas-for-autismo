@@ -5,76 +5,147 @@
     CSS could be worked on as all the fonts & colors are place holders for now & need to be synced with our
     color palette & fonts once we decide on them. 
     -->
-	<form @sumbit.prevent="handleSumbit">
-		<!-- Asks all the fun questions -->
-		<label>Name:</label>
-		<!--takes a string, type/enter box-->
-		<input type="name" required v-model="name" />
+	<div class="flex h-full w-full flex-col">
+		<NavBar></NavBar>
+		<div class="cormorant-garamond mt-4 flex flex-col justify-center">
+			<h1 class="start-10 p-5 text-xl">Patient Contact Form</h1>
+			<div class="flex justify-start">
+				<form
+					@submit.prevent="handleSubmit"
+					class="flex flex-col flex-wrap justify-center bg-white px-10"
+				>
+					<div class="flex flex-wrap justify-between">
+						<div class="flex flex-col">
+							<label>First name:</label>
+							<!--takes a string, type/enter box-->
+							<input
+								type="text"
+								class=""
+								required
+								v-model="firstName"
+							/>
+						</div>
 
-		<label>Age:</label>
-		<input type="age" required v-model="age" />
-		<!--couldn't we just get the age from DOB?? idk-->
+						<div class="flex flex-col">
+							<label>Middle name:</label>
+							<!--takes a string, type/enter box-->
+							<input type="middleName" v-model="middleName" />
+						</div>
 
-		<label>Gender:</label>
-		<!--select box-->
-		<select v-model="gender">
-			<option value="female">Female</option>
-			<option value="male">Male</option>
-			<option value="nonBinary">Non-Binary</option>
-		</select>
+						<div class="flex flex-col">
+							<label>Last name:</label>
+							<!--takes a string, type/enter box-->
+							<input
+								type="lastName"
+								required
+								v-model="lastName"
+							/>
+						</div>
 
-		<label>Date of Birth (xx/xx/xxxx):</label>
-		<input type="DOB" required v-model="DOB" />
+						<div class="flex flex-col">
+							<label>Gender:</label>
+							<!--select box-->
+							<select v-model="gender">
+								<option value="female">Female</option>
+								<option value="male">Male</option>
+								<option value="nonBinary">Non-Binary</option>
+							</select>
+						</div>
 
-		<label>ParentName:</label>
-		<input type="parent" required v-model="parent" />
+						<div class="flex flex-col">
+							<label>Date of Birth (xx/xx/xxxx):</label>
+							<input type="DOB" required v-model="DOB" />
+						</div>
 
-		<label>ID card:</label>
-		<input type="ID" required v-model="ID" />
+						<div class="flex flex-col">
+							<label>ParentName:</label>
+							<input type="parent" required v-model="parent" />
+						</div>
 
-		<label>Record Number:</label>
-		<input type="record" required v-model="record" />
+						<div class="flex flex-col">
+							<label>ID card:</label>
+							<input type="ID" required v-model="ID" />
+						</div>
 
-		<label>Country/City:</label>
-		<input type="city" required v-model="city" />
+						<div class="flex flex-col">
+							<label>Record Number:</label>
+							<input type="record" required v-model="record" />
+						</div>
 
-		<label>Medical Insurance:</label>
-		<input type="insurance" required v-model="insurance" />
+						<div class="flex flex-col">
+							<label>Country/City:</label>
+							<input type="city" required v-model="city" />
+						</div>
+						<div class="flex flex-col">
+							<label>Medical Insurance:</label>
+							<input
+								type="insurance"
+								required
+								v-model="insurance"
+							/>
+						</div>
 
-		<label>Address:</label>
-		<input type="address" required v-model="address" />
+						<div class="flex flex-col">
+							<label>Address:</label>
+							<input type="address" required v-model="address" />
+						</div>
 
-		<label>Email:</label>
-		<input type="email" required v-model="email" />
+						<div class="flex flex-col">
+							<label>Email:</label>
+							<input type="email" required v-model="email" />
+						</div>
 
-		<label>Phone Number/Whatsapp:</label>
-		<input type="phone" required v-model="phone" />
+						<div class="flex flex-col">
+							<label>Phone Number/Whatsapp:</label>
+							<input type="phone" required v-model="phone" />
+						</div>
+					</div>
 
-		<div class="prevPaitent">
-			<!-- Check box-->
-			<input type="checkbox" v-model="prevPaitent" required />
-			<label>Have you been a paitent previously with us?</label>
+					<div class="flex flex-col">
+						<div class="prevPaitent">
+							<!-- Check box-->
+							<input
+								type="checkbox"
+								v-model="prevPaitent"
+								required
+							/>
+							<label
+								>Have you been a paitent previously with
+								us?</label
+							>
+						</div>
+
+						<div class="diagnosis">
+							<!-- Check box-->
+							<input
+								type="checkbox"
+								v-model="diagnosis"
+								required
+							/>
+							<label>Have you been formally daignosed?</label>
+						</div>
+
+						<div class="evalution">
+							<!-- Check box-->
+							<input
+								type="checkbox"
+								v-model="evalution"
+								required
+							/>
+							<label
+								>Do you want to perform a Diagnostic Evaluation
+								on the patient?</label
+							>
+						</div>
+
+						<div class="submit">
+							<button>Submit form</button>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
-
-		<div class="diagnosis">
-			<!-- Check box-->
-			<input type="checkbox" v-model="diagnosis" required />
-			<label>Have you been formally daignosed?</label>
-		</div>
-
-		<div class="evalution">
-			<!-- Check box-->
-			<input type="checkbox" v-model="evalution" required />
-			<label
-				>Do you want to perform a Diagnostic Evaluation on the
-				patient?</label
-			>
-		</div>
-
-		<div class="submit">
-			<button>Submit form</button>
-		</div>
-	</form>
+	</div>
 </template>
 
 <script>
@@ -82,7 +153,9 @@ export default {
 	data() {
 		return {
 			//empty strings that will take the entered data. keep empty.
-			name: "",
+			firstName: "",
+			middleName: "",
+			lastName: "",
 			age: "",
 			gender: "",
 			DOB: "",
@@ -100,7 +173,7 @@ export default {
 		};
 	},
 	methods: {
-		handleSumbit() {
+		handleSubmit() {
 			console.log("form submitted"); //might need to adjust this with database
 		},
 	},
@@ -108,14 +181,18 @@ export default {
 </script>
 
 <style>
-form {
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap");
+</style>
+
+<style>
+/* form {
 	max-width: 420px;
 	margin: 30px auto;
-	background: white; /*Heyyyy so like pls replace all the colors bc rn they are placehodlers & hardcoded*/
+	background: white;
 	text-align: left;
 	padding: 40px;
 	border-radius: 10px;
-}
+} */
 label {
 	color: #aaa;
 	display: inline-block;
