@@ -22,77 +22,98 @@ model User {
     email               String
     phone               String?
     whatsApp            String?
-    prefContact         ContactType     @default(EMAIL)
+    contactPref         ContactType     @default(EMAIL)
     type                UserType?
 
-    Patient             Patient?
-    Parent              Parent?
+    NonEmployee         NonEmployee?
     Therapist           Therapist?
+}
+
+// if performance becomes an issue, denomailize to directly join parent/patient to user
+model NonEmployee {
+    id                  String          @id @unique
+    User                User            @relation(fields: [id], references: [id])
+
+    dob                 DateTime
+    gender              Gender
+    streetName          String
+    streetNum           Int
+    buildingNum         Int?
+
+    postCode            Int
+    PostCodeCity        PostCodeCity    @relation(fields: [postCode], references: [postCode])
+
+    Children            Patient[]       @relation(name: "parent")
+
+    Patient             Patient?
+}
+
+model PostCodeCity {
+    postCode            Int             @id @unique
+    city                String
+
+    person              NonEmployee[]
 }
 
 model Patient {
     id                  String          @id @unique
-    User                User            @relation(fields: [id], references: [id])
+    User                NonEmployee     @relation(fields: [id], references: [id])
 
     identification      String
-    dob                 DateTime
-    gender              Gender
-    address             String
     diagnosed           Boolean
-
-    Parents             Parent[]
-
-    sponsorId           String?
-    Sponsor             Sponsor?        @relation(fields: [sponsorId], references: [id])
 
     Appointments        SessionPatient[]
     MedicalRecords      MedicalRecord[]
     ProgressReports     Report[]
     ContactForm         ContactForm?
-}
 
-model Parent {
-    id                  String          @id @unique
-    User                User            @relation(fields: [id], references: [id])
+    sponsorId           String?
+    Sponsor             Sponsor?        @relation(fields: [sponsorId], references: [id])
 
-    dob                 DateTime
-    gender              Gender
-    address             String
-
-    Children            Patient[]
-
-    ContactForms        ContactForm[]
+    Parents             NonEmployee[]   @relation(name: "parent")
 }
 
 model Therapist {
     id                  String          @id @unique
     User                User            @relation(fields: [id], references: [id])
 
-    Specializations     TSpecialization[]
+    Specializations     Specialization[]
     Sessions            Session[]
 }
 
-model TSpecialization {
-    therapistId         String
-    Therapist           Therapist       @relation(fields: [therapistId], references: [id])
+// define therapist specializations here
+model Specialization {
+    id                  String          @id @default(uuid())
 
-    Specialization      Specialization
+    name                String
 
-    @@id([therapistId, Specialization])
+    Therapists          Therapist[]
 }
 
 model Session {
     id                  String          @id @default(uuid())
 
-    type                String
     time                DateTime        @default(now())
     comment             String?
     maxAttendance       Int             @default(1)
 
-    Patients            SessionPatient[]
+    typeId              String
+    Type                SessionType     @relation(fields: [typeId], references: [id])
 
     therapistId         String
     Therapist           Therapist       @relation(fields: [therapistId], references: [id])
+
+    Patients            SessionPatient[]
+}
+
+// define session types in this table
+model SessionType {
+    id                  String          @id @default(uuid())
+
+    name                String
+    color               Color
+
+    Sessions            Session[]
 }
 
 model SessionPatient {
@@ -102,7 +123,7 @@ model SessionPatient {
     patientId           String
     Patient             Patient         @relation(fields: [patientId], references: [id])
 
-    IsPaidFor           Boolean         @default(false)
+    paid                Boolean         @default(false)
 
     @@id([sessionId, patientId])
 }
@@ -128,12 +149,12 @@ model Sponsor {
 model Report {
     id                  String          @id @default(uuid())
 
-    dateCreated         DateTime        @default(now())
+    date                DateTime        @default(now())
 
     patientId           String
     Patient             Patient         @relation(fields: [patientId], references: [id])
 
-    Data                ReportData[]
+    Questions           ReportData[]
 }
 
 model ReportData {
@@ -149,12 +170,12 @@ model ReportData {
 model ContactForm {
     id                  String          @id @default(uuid())
 
-    return              Boolean
+    nationality         String
+    returnPatient       Boolean
     wantsEval           Boolean
-    comments            String?
-    status              Status          @default(NEEDS_PROCESSING)
-
-    Parents             Parent[]
+    insurance           InsuranceCompany
+    comment             String?
+    status              Status          @default(PROCESSING)
 
     patientId           String          @unique
     Patient             Patient         @relation(fields: [patientId], references: [id])
@@ -171,24 +192,39 @@ enum UserType {
     USER_SUPPORT
 }
 
-enum Specialization {
-    LEARNING
-    SOCIAL_HABILITATION
-    CONDUCTUAL
-    INTERVENTIONAL
-    LANGUAGE
-    OCCUPATIONAL
-    INDEPENDENT_LIVING
-}
-
 enum Gender {
     MALE
     FEMALE
     OTHER
 }
 
+// may make table if they need contact for insurance companies
+//  or just want to be able to add companies
+enum InsuranceCompany {
+    SENASA_CONTRIBUTIVO
+    SENASA_SUBSIDIADO
+    ARS_HUMANO
+    MAPFRE
+    LA_MONUMENTAL
+    ARS_UNIVERSAL
+    ARS_META_SALUD
+    ARS_PLAN_SALUD_BANCO_CENTRAL
+    RENACER
+    OTRO
+}
+
+enum Color {
+    BLUE
+    GREEN
+    ORANGE
+    PURPLE
+    RED
+    TEAL
+    YELLOW
+}
+
 enum Status {
-    NEEDS_PROCESSING
-    NEEDS_SCHEDULING
+    PROCESSING
+    SCHEDULING
     COMPLETED
 }
