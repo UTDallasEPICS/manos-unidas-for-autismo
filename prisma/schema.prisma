@@ -32,7 +32,7 @@ model User {
 // if performance becomes an issue, denomailize to directly join parent/patient to user
 model NonEmployee {
     id                  String          @id @unique
-    User                User            @relation(fields: [id], references: [id])
+    User                User            @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     dob                 DateTime
     gender              Gender
@@ -41,7 +41,7 @@ model NonEmployee {
     buildingNum         Int?
 
     postCode            Int
-    PostCodeCity        PostCodeCity    @relation(fields: [postCode], references: [postCode])
+    PostCodeCity        PostCodeCity    @relation(fields: [postCode], references: [postCode], onDelete: Restrict, onUpdate: Cascade)
 
     Children            Patient[]       @relation(name: "parent")
 
@@ -57,7 +57,7 @@ model PostCodeCity {
 
 model Patient {
     id                  String          @id @unique
-    User                NonEmployee     @relation(fields: [id], references: [id])
+    User                NonEmployee     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     identification      String
     diagnosed           Boolean
@@ -68,14 +68,14 @@ model Patient {
     ContactForm         ContactForm?
 
     sponsorId           String?
-    Sponsor             Sponsor?        @relation(fields: [sponsorId], references: [id])
+    Sponsor             Sponsor?        @relation(fields: [sponsorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     Parents             NonEmployee[]   @relation(name: "parent")
 }
 
 model Therapist {
     id                  String          @id @unique
-    User                User            @relation(fields: [id], references: [id])
+    User                User            @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     Specializations     Specialization[]
     Sessions            Session[]
@@ -98,10 +98,10 @@ model Session {
     maxAttendance       Int             @default(1)
 
     typeId              String
-    Type                SessionType     @relation(fields: [typeId], references: [id])
+    Type                SessionType     @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     therapistId         String
-    Therapist           Therapist       @relation(fields: [therapistId], references: [id])
+    Therapist           Therapist       @relation(fields: [therapistId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     Patients            SessionPatient[]
 }
@@ -118,10 +118,10 @@ model SessionType {
 
 model SessionPatient {
     sessionId           String
-    Session             Session         @relation(fields: [sessionId], references: [id])
+    Session             Session         @relation(fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     patientId           String
-    Patient             Patient         @relation(fields: [patientId], references: [id])
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete:Restrict, onUpdate:Cascade)
 
     paid                Boolean         @default(false)
 
@@ -134,7 +134,7 @@ model MedicalRecord {
     data                String
 
     patientId           String
-    Patient             Patient         @relation(fields: [patientId], references: [id])
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Sponsor {
@@ -152,14 +152,14 @@ model Report {
     date                DateTime        @default(now())
 
     patientId           String
-    Patient             Patient         @relation(fields: [patientId], references: [id])
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     Questions           ReportData[]
 }
 
 model ReportData {
     reportId            String
-    Report              Report          @relation(fields: [reportId], references: [id])
+    Report              Report          @relation(fields: [reportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     question            String
     answer              String
@@ -178,7 +178,7 @@ model ContactForm {
     status              Status          @default(PROCESSING)
 
     patientId           String          @unique
-    Patient             Patient         @relation(fields: [patientId], references: [id])
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum ContactType {
