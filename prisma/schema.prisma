@@ -61,7 +61,7 @@ model Patient {
     id                  String          @id @unique
     User                NonEmployee     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    identification      String
+    identification      String          @unique
     diagnosed           Boolean
 
     Appointments        SessionPatient[]
@@ -79,7 +79,7 @@ model Patient {
 model Specialization {
     id                  String          @id @default(uuid())
 
-    name                String
+    name                String          @unique
 
     Therapists          User[]
 }
@@ -98,13 +98,15 @@ model Session {
     Therapist           User            @relation(fields: [therapistId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     Patients            SessionPatient[]
+
+    @@unique([time, therapistId])
 }
 
 // define session types in this table
 model SessionType {
     id                  String          @id @default(uuid())
 
-    name                String
+    name                String          @unique
     color               Color
 
     Sessions            Session[]
