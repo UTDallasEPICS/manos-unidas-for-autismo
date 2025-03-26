@@ -56,6 +56,7 @@ model Patient {
   Gender          Gender
   Address         String
   Identification  String
+  NSS             String
   Sponsor         Sponsor?         @relation(fields: [SponsorID], references: [ID])
   SponsorID       String?
   Diagnosed       Boolean
