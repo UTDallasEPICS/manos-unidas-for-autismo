@@ -10,7 +10,7 @@
 
 		<div class="cormorant-garamond mx-70 mt-5 flex flex-col justify-center">
 			<h1 class="text-xl">Patient Contact Form</h1>
-			<div class="flex justify-center">
+			<div class="flex justify-start">
 				<form
 					@submit.prevent="handleSubmit"
 					class="flex flex-col flex-wrap justify-center bg-white"
