@@ -8,9 +8,9 @@
 	<div class="flex h-full w-full flex-col">
 		<NavBar></NavBar>
 
-		<div class="cormorant-garamond mt-5 flex flex-col justify-center px-5">
+		<div class="cormorant-garamond mx-70 mt-5 flex flex-col justify-center">
 			<h1 class="text-xl">Patient Contact Form</h1>
-			<div class="flex justify-start">
+			<div class="flex justify-center">
 				<form
 					@submit.prevent="handleSubmit"
 					class="flex flex-col flex-wrap justify-center bg-white"
