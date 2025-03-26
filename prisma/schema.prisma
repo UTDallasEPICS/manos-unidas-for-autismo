@@ -19,9 +19,9 @@ model User {
     fName               String
     mInit               String?
     lName               String
-    email               String
-    phone               String?
-    whatsApp            String?
+    email               String          @unique
+    phone               String?         @unique
+    whatsApp            String?         @unique
     contactPref         ContactType     @default(EMAIL)
     type                UserType?
 
@@ -88,6 +88,7 @@ model Session {
     id                  String          @id @default(uuid())
 
     time                DateTime        @default(now())
+    duration            Int
     comment             String?
     maxAttendance       Int             @default(1)
 
