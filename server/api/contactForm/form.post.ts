@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const Gender = {
@@ -75,7 +75,7 @@ export default defineEventHandler(async (event) => {
 	} = validatedBody.data;
 
 	//Create User entry
-	const user = await prisma.User.create({
+	const user = await prisma.user.create({
 		data: {
 			FName: fName,
 			MInit: mInit,
@@ -87,7 +87,7 @@ export default defineEventHandler(async (event) => {
 	});
 
 	//Create Patient entry
-	const patient = await prisma.Patient.create({
+	const patient = await prisma.patient.create({
 		data: {
 			ID: user.ID,
 			DOB: dob,
@@ -96,14 +96,11 @@ export default defineEventHandler(async (event) => {
 			NSS: nss,
 			Identification: idCard,
 			Diagnosed: isDiagnosed,
-			User: {
-				connect: { ID: user.ID },
-			},
 		},
 	});
 
 	//Create ContactForm entry
-	const form = await prisma.ContactForm.create({
+	const form = await prisma.contactForm.create({
 		data: {
 			BeenHereBefore: hasBeenPatient,
 			WantsDiagnosticEval: wantsEval,

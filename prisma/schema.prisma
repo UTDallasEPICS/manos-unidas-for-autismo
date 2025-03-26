@@ -14,17 +14,17 @@ datasource db {
 }
 
 model User {
-  ID        String           @id @default(uuid())
-  FName     String
-  MInit     String?
-  LName     String
-  Email     String
-  Phone     String?
-  enum      PreferredContact
-  Type      UserType?
-  Patient   Patient?
-  Parent    Parent?
-  Therapist Therapist?
+  ID               String           @id @default(uuid())
+  FName            String
+  MInit            String?
+  LName            String
+  Email            String
+  Phone            String?
+  PreferredContact PreferredContact
+  Type             UserType?
+  Patient          Patient?
+  Parent           Parent?
+  Therapist        Therapist?
 }
 
 enum PreferredContact {
