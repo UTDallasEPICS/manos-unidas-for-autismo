@@ -1,4 +1,4 @@
-<!-- 1 Apr 2025 coder-Mika
+<!-- 2 Apr 2025 coder-Mika
 	Appointment box displays an overview of the session details: the appointment name, the therapist, and the duration of the session. It's position and size depends on the duration and on the hour the calendar starts with.
 -->
 <template>
@@ -32,8 +32,9 @@ const duration = computed(() => {
 	const startMins = date.getMinutes();
 
 	// get end time
-	let endTime = new Date(date.getTime());
-	endTime.setMinutes(startMins + props.session.duration);
+	//let endTime = new Date(date.getTime());
+	//endTime.setMinutes(startMins + props.session.duration);
+	let endTime = getSessionEndTime(date, props.session.duration);
 	const endHour = endTime.getHours();
 	const endMins = endTime.getMinutes();
 
@@ -67,4 +68,11 @@ const boxTop = computed(() => {
 	const result = top + "px";
 	return result;
 });
+
+// given a time and a duration, return the end of the session time
+function getSessionEndTime(d: Date, sessionLength: number): Date {
+	let endTime = new Date(d.getTime());
+	endTime.setMinutes(d.getMinutes() + sessionLength);
+	return endTime;
+}
 </script>

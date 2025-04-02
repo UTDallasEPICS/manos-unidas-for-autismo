@@ -1,6 +1,6 @@
-<!-- 1 Apr 2025 coder-Mika
+<!-- 2 Apr 2025 coder-Mika
 
-	Calendar displays days from Monday-Friday, and hours based on fixed values. Later, when we have appointments in a database, the hours should be adjusted to the earliest and latest times of all the appointments displayed to account for appointments added in the future.
+	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed.
 -->
 <template>
 	<div class="overflow-auto">
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import AppointmentBox from "./AppointmentBox.vue";
 import type { Session } from "@prisma/client";
 
@@ -72,10 +72,43 @@ const props = defineProps<{
 	week: Date; // any day in the week wanted to be displayed. week starts at monday
 }>();
 
-// values
+// a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
+const thisWeekSessions = getFilteredSessions(props.sessions);
+
 const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-const startHr = ref(8); // The start and end hour might be computed in the future once appointments are added in instead of being fixed
-const endHr = ref(16);
+
+const startHr = computed(() => {
+	let earliestHr = 23;
+
+	for (let i = 0; i < 5; i++) {
+		for (let j of thisWeekSessions[i]) {
+			let sessionTime = new Date(j.time);
+			// check its starting hour
+			if (sessionTime.getHours() < earliestHr) {
+				earliestHr = sessionTime.getHours();
+			}
+		}
+	}
+
+	return earliestHr;
+});
+
+const endHr = computed(() => {
+	let latestHr = 0;
+
+	for (let i = 0; i < 5; i++) {
+		for (let j of thisWeekSessions[i]) {
+			let sessionTime = new Date(j.time);
+			// get the end time
+			let sessionEnd = getSessionEndTime(sessionTime, j.duration);
+			// check its starting hour
+			if (sessionEnd.getHours() > latestHr) {
+				latestHr = sessionEnd.getHours();
+			}
+		}
+	}
+	return latestHr;
+});
 
 const hours = computed(() => {
 	const hoursBuild = [];
@@ -117,29 +150,9 @@ function militaryTimeToTwelveHr(h: number): string {
 	return twelveHrTime;
 }
 
-// a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
-const thisWeekSessions = computed(() => {
-	const allSessions: Session[] = props.sessions;
-	let filteredSessions: Session[][] = [];
-	for (let i = 0; i < 5; i++) {
-		filteredSessions.push([]);
-	}
+const rowHeight = 26; // height in pixels of each row of time for the appointment box component
 
-	// get the monday of the week
-	const monday = getMonday(props.week);
-
-	for (let i = 0; i < allSessions.length; i++) {
-		let currSession = allSessions[i];
-		let currSessionDay = new Date(currSession.time);
-
-		// if the session is within the same week
-		if (monday.getDate() == getMonday(currSessionDay).getDate()) {
-			// append to the filtered sessions
-			filteredSessions[currSessionDay.getDay() - 1].push(currSession);
-		}
-	}
-	return filteredSessions;
-});
+// functions
 
 // given a date, gets the monday of that week (assuming the week starts on monday)
 function getMonday(d: Date): Date {
@@ -150,5 +163,36 @@ function getMonday(d: Date): Date {
 	return monday;
 }
 
-const rowHeight = 26; // height in pixels of each row of time for the appointment box component
+// given a time and a duration, return the end of the session time
+function getSessionEndTime(d: Date, sessionLength: number): Date {
+	let endTime = new Date(d.getTime());
+	endTime.setMinutes(d.getMinutes() + sessionLength);
+	return endTime;
+}
+
+function getFilteredSessions(allSessions: Session[]): Session[][] {
+	let filteredSessions: Session[][] = [];
+	for (let i = 0; i < 5; i++) {
+		filteredSessions.push([]);
+	}
+
+	// get the monday of the week
+	let monday = getMonday(props.week);
+	for (let i = 0; i < allSessions.length; i++) {
+		let currSession = allSessions[i];
+		let currSessionDay = new Date(currSession.time);
+
+		// if the session is within the same week
+		if (
+			monday.getDate() == getMonday(currSessionDay).getDate() &&
+			monday.getMonth() == getMonday(currSessionDay).getMonth() &&
+			monday.getFullYear() == getMonday(currSessionDay).getFullYear()
+		) {
+			// append to the filtered sessions
+			filteredSessions[currSessionDay.getDay() - 1].push(currSession);
+		}
+	}
+
+	return filteredSessions;
+}
 </script>
