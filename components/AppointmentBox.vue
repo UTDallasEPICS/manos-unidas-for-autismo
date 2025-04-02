@@ -3,7 +3,7 @@
 -->
 <template>
 	<div
-		class="relative overflow-hidden rounded-md border-4 text-center"
+		class="absolute w-full overflow-hidden rounded-md border-4 text-center"
 		:style="{ backgroundColor: boxColor, height: boxHeight, top: boxTop }"
 	>
 		<div>{{ appointmentType }}</div>

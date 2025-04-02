@@ -41,10 +41,15 @@
 			</div>
 
 			<!-- Appointments -->
-			<div class="col-span-2 overflow-hidden" v-for="day in 6" :key="day">
+			<div
+				class="col-span-2 overflow-hidden border-1 border-gray-400"
+				v-for="day in 5"
+				:key="day"
+			>
 				<div
 					v-for="session in thisWeekSessions[day - 1]"
 					:key="session.id"
+					class="h-1px relative"
 				>
 					<AppointmentBox
 						:session="session"
