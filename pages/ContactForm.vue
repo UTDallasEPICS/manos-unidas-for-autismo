@@ -16,9 +16,9 @@
 		<NavBar></NavBar>
 
 		<!--div container for the contact form-->
-		<div class="cormorant-garamond mt-5 flex flex-col justify-center">
+		<div class="cormorant-garamond mx-5 mt-5 flex flex-col justify-center">
 			<!--Title of contact form-->
-			<h1 class="text-xl">Patient Contact Form</h1>
+			<h1 class="mb-5 text-xl">Patient Contact Form</h1>
 
 			<!--div container for the form-->
 			<div class="flex justify-start">
