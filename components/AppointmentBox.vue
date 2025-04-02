@@ -3,7 +3,7 @@
 -->
 <template>
 	<div
-		class="relative overflow-hidden border-4 text-center"
+		class="relative overflow-hidden rounded-md border-4 text-center"
 		:style="{ backgroundColor: boxColor, height: boxHeight, top: boxTop }"
 	>
 		<div>{{ appointmentType }}</div>
@@ -31,16 +31,11 @@ const duration = computed(() => {
 	const startHour = date.getHours();
 	const startMins = date.getMinutes();
 
-	let endHour = startHour;
-	let endMins = startMins + props.session.duration;
-
-	while (endMins >= 60) {
-		endMins -= 60;
-		endHour++;
-		if (endHour > 23) {
-			endHour = 0;
-		}
-	}
+	// get end time
+	let endTime = new Date(date.getTime());
+	endTime.setMinutes(startMins + props.session.duration);
+	const endHour = endTime.getHours();
+	const endMins = endTime.getMinutes();
 
 	const result =
 		startHour +

@@ -1,6 +1,6 @@
 <!-- 1 Apr 2025 coder-Mika
 
-	Calendar displays days from Monday-Friday, and hours based on fixed values. Later, when we have appointments in a database, the hours should be adjusted to the earliest and latest times of all the appointments displayed to account for appointments added in the future. Also, it still needs to sort appointments by day of the week to be displayed
+	Calendar displays days from Monday-Friday, and hours based on fixed values. Later, when we have appointments in a database, the hours should be adjusted to the earliest and latest times of all the appointments displayed to account for appointments added in the future.
 -->
 <template>
 	<div class="overflow-auto">
@@ -25,7 +25,7 @@
 					v-for="(hr, index) in hours"
 					:key="index"
 				>
-					<div id="time-row" class="h-24px border-1 border-gray-400">
+					<div class="h-24px border-1 border-gray-400">
 						<b>{{ militaryTimeToTwelveHr(hr) }}</b>
 					</div>
 					<div class="h-24px border-1 border-gray-400">
@@ -41,18 +41,17 @@
 			</div>
 
 			<!-- Appointments -->
-			<div
-				class="col-span-2 overflow-hidden"
-				v-for="(day, index) in dayNames"
-				:key="index"
-			>
-				<!-- Replace the below with appointment components -->
-				<AppointmentBox
-					:session="session"
-					:calendarStartHour="startHr"
-					:rowHeight="rowHeight"
-				/>
-				{{ day }} appointments go here
+			<div class="col-span-2 overflow-hidden" v-for="day in 6" :key="day">
+				<div
+					v-for="session in thisWeekSessions[day - 1]"
+					:key="session.id"
+				>
+					<AppointmentBox
+						:session="session"
+						:calendarStartHour="startHr"
+						:rowHeight="rowHeight"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -64,7 +63,8 @@ import AppointmentBox from "./AppointmentBox.vue";
 import type { Session } from "@prisma/client";
 
 const props = defineProps<{
-	session: Session;
+	sessions: Session[];
+	week: Date; // any day in the week wanted to be displayed. week starts at monday
 }>();
 
 // values
@@ -112,7 +112,38 @@ function militaryTimeToTwelveHr(h: number): string {
 	return twelveHrTime;
 }
 
-// for the appointment box components
-const session = props.session; // this will be replaced later with a list of appointments
+// a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
+const thisWeekSessions = computed(() => {
+	const allSessions: Session[] = props.sessions;
+	let filteredSessions: Session[][] = [];
+	for (let i = 0; i < 5; i++) {
+		filteredSessions.push([]);
+	}
+
+	// get the monday of the week
+	const monday = getMonday(props.week);
+
+	for (let i = 0; i < allSessions.length; i++) {
+		let currSession = allSessions[i];
+		let currSessionDay = new Date(currSession.time);
+
+		// if the session is within the same week
+		if (monday.getDate() == getMonday(currSessionDay).getDate()) {
+			// append to the filtered sessions
+			filteredSessions[currSessionDay.getDay() - 1].push(currSession);
+		}
+	}
+	return filteredSessions;
+});
+
+// given a date, gets the monday of that week (assuming the week starts on monday)
+function getMonday(d: Date): Date {
+	// if day is sunday, go back to the monday of that week
+	const firstDay = d.getDate() - d.getDay() + (d.getDay() == 0 ? -6 : 1);
+	let monday = new Date(d.getTime());
+	monday.setDate(firstDay);
+	return monday;
+}
+
 const rowHeight = 26; // height in pixels of each row of time for the appointment box component
 </script>
