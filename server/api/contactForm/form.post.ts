@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 const prisma = new PrismaClient();
 
 const Gender = {
@@ -42,23 +43,23 @@ const schema = z.object({
 	nationality: z.string(),
 	streetName: z.string(),
 	streetNum: z.number(),
-	buildingNum: z.number(),
+	buildingNum: z.number().nullable(),
 	postcode: z.number(),
 	parentName: z.string().nullable(),
 	identification: z.string(),
 	birthCountry: z.string(),
 	birthCity: z.string(),
-	nss: z.string(),
 	insurance: z.nativeEnum(Insurance),
 	address: z.string(),
 	contactPref: z.nativeEnum(PreferredContact),
 	email: z.string().email(),
 	phone: z.string().nullable(),
+	whatsapp: z.string().nullable(),
 	isDiagnosed: z.boolean(),
 	hasBeenPatient: z.boolean(),
 	status: z.nativeEnum(Status),
 	wantsEval: z.boolean(),
-	comment: z.string(),
+	comment: z.string().nullable(),
 });
 
 const validateSchema = schema.strict();
@@ -69,9 +70,10 @@ export default defineEventHandler(async (event) => {
 	);
 
 	if (!validatedBody.success) {
+		const zodError = validatedBody.error?.issues;
 		throw createError({
 			statusCode: 400,
-			statusMessage: "Invalid request body",
+			statusMessage: `${zodError}`,
 		});
 	}
 
@@ -82,6 +84,7 @@ export default defineEventHandler(async (event) => {
 		gender,
 		dob,
 		nationality,
+		birthCity,
 		insurance,
 		identification,
 		streetName,
@@ -91,59 +94,86 @@ export default defineEventHandler(async (event) => {
 		contactPref,
 		email,
 		phone,
+		whatsapp,
 		isDiagnosed,
 		hasBeenPatient,
-		status,
 		wantsEval,
 		comment,
 	} = validatedBody.data;
 
-	//Create User entry
-	const user = await prisma.user.create({
-		data: {
-			fName: fName,
-			mInit: mInit,
-			lName: lName,
-			email: email,
-			phone: phone,
-			contactPref: contactPref,
-		},
-	});
-
-	//Create NonEmployee Entry
-	const nonEmployee = await prisma.nonEmployee.create({
-		data: {
-			id: user.id,
-			gender: gender,
-			dob: dob,
-			streetName: streetName,
-			streetNum: streetNum,
-			buildingNum: buildingNum,
+	//Check for zipcode city entry
+	const post = await prisma.postCodeCity.findUnique({
+		where: {
 			postCode: postcode,
 		},
 	});
 
-	//Create Patient entry
-	const patient = await prisma.patient.create({
-		data: {
-			id: user.id,
-			identification: identification,
-			diagnosed: isDiagnosed,
-		},
-	});
+	//If no postcode, add it to database
+	if (!post) {
+		await prisma.postCodeCity.create({
+			data: {
+				postCode: postcode,
+				city: birthCity,
+			},
+		});
+	}
 
-	//Create ContactForm entry
-	const form = await prisma.contactForm.create({
-		data: {
-			returnPatient: hasBeenPatient,
-			wantsEval: wantsEval,
-			insurance: insurance,
-			status: status,
-			nationality: nationality,
-			comment: comment,
-			patientId: patient.id,
-		},
-	});
+	try {
+		//Create User entry
+		const user = await prisma.user.create({
+			data: {
+				fName: fName,
+				mInit: mInit,
+				lName: lName,
+				email: email,
+				phone: phone,
+				whatsApp: whatsapp,
+				contactPref: contactPref,
+			},
+		});
 
-	return { user, nonEmployee, patient, form };
+		//Create NonEmployee Entry
+		const nonEmployee = await prisma.nonEmployee.create({
+			data: {
+				id: user.id,
+				gender: gender,
+				dob: dob,
+				streetName: streetName,
+				streetNum: streetNum,
+				buildingNum: buildingNum,
+				postCode: postcode,
+			},
+		});
+
+		//Create Patient entry
+		const patient = await prisma.patient.create({
+			data: {
+				id: user.id,
+				identification: identification,
+				diagnosed: isDiagnosed,
+			},
+		});
+
+		//Create ContactForm entry
+		const form = await prisma.contactForm.create({
+			data: {
+				returnPatient: hasBeenPatient,
+				wantsEval: wantsEval,
+				insurance: insurance,
+				status: "PROCESSING",
+				nationality: nationality,
+				comment: comment,
+				patientId: patient.id,
+			},
+		});
+
+		return { user, nonEmployee, patient, form };
+	} catch (e) {
+		if (e instanceof PrismaClientKnownRequestError) {
+			throw createError({
+				statusCode: 400,
+				statusMessage: e.message,
+			});
+		}
+	}
 });
