@@ -6,24 +6,26 @@
 		class="absolute w-full overflow-hidden rounded-md border-4 text-center"
 		:style="{ backgroundColor: boxColor, height: boxHeight, top: boxTop }"
 	>
-		<div>{{ appointmentType }}</div>
-		<div class="hidden md:inline">{{ therapistName }}</div>
-		<div>{{ duration }}</div>
+		<div class="truncate">{{ props.session.Type.name }}</div>
+		<div class="truncate" v-if="props.session.duration > 49">
+			{{ props.session.Therapist.fName }}
+		</div>
+		<div v-if="props.session.duration > 29">
+			{{ duration }}
+		</div>
 	</div>
 </template>
 
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { Session } from "@prisma/client";
+import { Color } from "@prisma/client";
 
 const props = defineProps<{
 	session: Session;
 	calendarStartHour: number;
 	rowHeight: number;
 }>();
-
-const appointmentType = props.session.Type.name;
-const therapistName = props.session.Therapist.fName;
 
 // gets the session duration string
 const date = new Date(props.session.time);
@@ -32,8 +34,6 @@ const duration = computed(() => {
 	const startMins = date.getMinutes();
 
 	// get end time
-	//let endTime = new Date(date.getTime());
-	//endTime.setMinutes(startMins + props.session.duration);
 	let endTime = getSessionEndTime(date, props.session.duration);
 	const endHour = endTime.getHours();
 	const endMins = endTime.getMinutes();
@@ -50,7 +50,27 @@ const duration = computed(() => {
 });
 
 // style
-const boxColor = props.session.Type.color;
+const boxColor = computed(() => {
+	// needs to be replaced with tailwind values later
+	switch (props.session.Type.color) {
+		case Color.BLUE:
+			return "#3878c2";
+		case Color.GREEN:
+			return "#4cc255";
+		case Color.ORANGE:
+			return "#e87d25";
+		case Color.PURPLE:
+			return "#d4a1f0";
+		case Color.RED:
+			return "#e34229";
+		case Color.TEAL:
+			return "#5aeddc";
+		case Color.YELLOW:
+			return "#f7d439";
+		default:
+			return "#c0e9ed";
+	}
+});
 
 const boxHeight = computed(() => {
 	const rowHeightPerMinute = props.rowHeight / 15; // one row is 15 minutes
@@ -64,9 +84,9 @@ const boxTop = computed(() => {
 	const sessionStartMin = date.getMinutes();
 	const top =
 		((sessionStartHr - props.calendarStartHour) * 60 + sessionStartMin) *
-		rowHeightPerMinute;
-	const result = top + "px";
-	return result;
+			rowHeightPerMinute +
+		"px";
+	return top;
 });
 
 // given a time and a duration, return the end of the session time

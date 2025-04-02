@@ -63,17 +63,159 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import AppointmentBox from "./AppointmentBox.vue";
 import type { Session } from "@prisma/client";
 
+const user = {
+	id: "123",
+	fName: "UserFName",
+	lName: "UserLName",
+	email: "user@gmail.com",
+	contactPref: "EMAIL",
+	Sessions: [
+		{
+			id: "1",
+			time: "April 1, 2025 9:00:00",
+			duration: 60,
+			comment: "hi",
+			maxAttendance: 2,
+			typeId: "2",
+			Type: {
+				id: "2",
+				name: "Service for Independent Living",
+				color: "BLUE",
+			},
+			therapistId: "3",
+			Therapist: {
+				id: "3",
+				fName: "FirstName",
+				lName: "LastName",
+				email: "email@site.com",
+				contactPref: "EMAIL",
+			},
+			Patients: {},
+		},
+		{
+			id: "2",
+			time: "March 31, 2025 13:00:00",
+			duration: 95,
+			comment: "hi",
+			maxAttendance: 2,
+			typeId: "3",
+			Type: {
+				id: "3",
+				name: "Occupational",
+				color: "GREEN",
+			},
+			therapistId: "4",
+			Therapist: {
+				id: "4",
+				fName: "FirstName",
+				lName: "LastName",
+				email: "email@site.com",
+				contactPref: "EMAIL",
+			},
+			Patients: {},
+		},
+		{
+			id: "3",
+			time: "April 1, 2025 11:00:00",
+			duration: 60,
+			comment: "hi",
+			maxAttendance: 2,
+			typeId: "5",
+			Type: {
+				id: "5",
+				name: "Language",
+				color: "YELLOW",
+			},
+			therapistId: "6",
+			Therapist: {
+				id: "6",
+				fName: "FirstName",
+				lName: "LastName",
+				email: "email@site.com",
+				contactPref: "EMAIL",
+			},
+			Patients: {},
+		},
+		{
+			id: "4",
+			time: "April 4, 2025 12:45:00",
+			duration: 50,
+			comment: "hi",
+			maxAttendance: 2,
+			typeId: "7",
+			Type: {
+				id: "7",
+				name: "Evaluation",
+				color: "ORANGE",
+			},
+			therapistId: "8",
+			Therapist: {
+				id: "8",
+				fName: "FirstName",
+				lName: "LastName",
+				email: "email@site.com",
+				contactPref: "EMAIL",
+			},
+			Patients: {},
+		},
+		{
+			id: "5",
+			time: "April 2, 2025 9:00:00",
+			duration: 30,
+			comment: "hi",
+			maxAttendance: 2,
+			typeId: "200",
+			Type: {
+				id: "200",
+				name: "Service for Independent Living",
+				color: "Mmmmm color",
+			},
+			therapistId: "300",
+			Therapist: {
+				id: "300",
+				fName: "FirstName",
+				lName: "LastName",
+				email: "email@site.com",
+				contactPref: "EMAIL",
+			},
+			Patients: {},
+		},
+		{
+			id: "6",
+			time: "April 3, 2025 9:00:00",
+			duration: 20,
+			comment: "hi",
+			maxAttendance: 2,
+			typeId: "2000",
+			Type: {
+				id: "2000",
+				name: "Service for Independent Living",
+				color: "Mmmmm color",
+			},
+			therapistId: "3000",
+			Therapist: {
+				id: "3000",
+				fName: "FirstName",
+				lName: "LastName",
+				email: "email@site.com",
+				contactPref: "EMAIL",
+			},
+			Patients: {},
+		},
+	],
+};
+
 const props = defineProps<{
-	sessions: Session[];
 	week: Date; // any day in the week wanted to be displayed. week starts at monday
 }>();
 
 // a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
-const thisWeekSessions = getFilteredSessions(props.sessions);
+//const thisWeekSessions = getFilteredSessions(props.sessions);
+const thisWeekSessions = ref(getFilteredSessions(user.Sessions));
 
 const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
@@ -81,7 +223,7 @@ const startHr = computed(() => {
 	let earliestHr = 23;
 
 	for (let i = 0; i < 5; i++) {
-		for (let j of thisWeekSessions[i]) {
+		for (let j of thisWeekSessions.value[i]) {
 			let sessionTime = new Date(j.time);
 			// check its starting hour
 			if (sessionTime.getHours() < earliestHr) {
@@ -97,7 +239,7 @@ const endHr = computed(() => {
 	let latestHr = 0;
 
 	for (let i = 0; i < 5; i++) {
-		for (let j of thisWeekSessions[i]) {
+		for (let j of thisWeekSessions.value[i]) {
 			let sessionTime = new Date(j.time);
 			// get the end time
 			let sessionEnd = getSessionEndTime(sessionTime, j.duration);
@@ -150,7 +292,7 @@ function militaryTimeToTwelveHr(h: number): string {
 	return twelveHrTime;
 }
 
-const rowHeight = 26; // height in pixels of each row of time for the appointment box component
+const rowHeight = ref(26); // height in pixels of each row of time for the appointment box component
 
 // functions
 
@@ -179,8 +321,7 @@ function getFilteredSessions(allSessions: Session[]): Session[][] {
 	// get the monday of the week
 	let monday = getMonday(props.week);
 	for (let i = 0; i < allSessions.length; i++) {
-		let currSession = allSessions[i];
-		let currSessionDay = new Date(currSession.time);
+		let currSessionDay = new Date(allSessions[i].time);
 
 		// if the session is within the same week
 		if (
@@ -189,7 +330,7 @@ function getFilteredSessions(allSessions: Session[]): Session[][] {
 			monday.getFullYear() == getMonday(currSessionDay).getFullYear()
 		) {
 			// append to the filtered sessions
-			filteredSessions[currSessionDay.getDay() - 1].push(currSession);
+			filteredSessions[currSessionDay.getDay() - 1].push(allSessions[i]);
 		}
 	}
 
