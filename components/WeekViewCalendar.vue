@@ -49,7 +49,7 @@
 				<div
 					v-for="session in thisWeekSessions[day - 1]"
 					:key="session.id"
-					class="h-1px relative"
+					class="relative"
 				>
 					<AppointmentBox
 						:session="session"
