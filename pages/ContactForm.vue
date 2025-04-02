@@ -5,55 +5,69 @@
     CSS could be worked on as all the fonts & colors are place holders for now & need to be synced with our
     color palette & fonts once we decide on them. 
     -->
+
+	<!--3/29
+	updating design to reflect responsive design and the elements on the figma
+	-->
+
+	<!--div container for the whole app-->
 	<div class="flex h-full w-full flex-col">
+		<!--Navigation bar-->
 		<NavBar></NavBar>
 
-		<div class="cormorant-garamond mx-70 mt-5 flex flex-col justify-center">
+		<!--div container for the contact form-->
+		<div class="cormorant-garamond mt-5 flex flex-col justify-center">
+			<!--Title of contact form-->
 			<h1 class="text-xl">Patient Contact Form</h1>
+
+			<!--div container for the form-->
 			<div class="flex justify-start">
+				<!--Form for contact form-->
 				<form
 					@submit.prevent="handleSubmit"
 					class="flex flex-col flex-wrap justify-center bg-white"
 				>
+					<!-- div class for the short answer type of responses-->
 					<div class="justify-space-evenly flex flex-wrap">
-						<div
-							class="mr-5 flex w-2/5 max-w-100 min-w-30 flex-col"
-						>
-							<label class="contactLabel">First name:</label>
-							<!--takes a string, type/enter box-->
-							<input
-								type="text"
-								class="bg-color2 w-full"
-								required
-								v-model="firstName"
-							/>
-						</div>
+						<!--div class for the name portion (the name components should occupy the same line)-->
+						<div class="flex-cols flex w-full grid-rows-3">
+							<div
+								class="mr-5 flex w-2/5 max-w-100 flex-1 flex-col"
+							>
+								<label class="">First name:</label>
 
-						<div class="mr-5 flex w-1/5 max-w-50 min-w-20 flex-col">
-							<label class="contactLabel">Middle name:</label>
-							<!--takes a string, type/enter box-->
-							<input
-								type="middleName"
-								class="bg-color2"
-								v-model="middleName"
-							/>
-						</div>
+								<input
+									type="text"
+									class="bg-color2 w-full"
+									required
+									v-model="firstName"
+								/>
+							</div>
 
-						<div
-							class="mr-5 flex w-2/5 max-w-100 min-w-30 flex-col"
-						>
-							<label class="contactLabel">Last name:</label>
-							<!--takes a string, type/enter box-->
-							<input
-								type="lastName"
-								class="bg-color2"
-								required
-								v-model="lastName"
-							/>
+							<div class="mr-5 flex w-1/5 max-w-50 flex-col">
+								<label class="">Middle name:</label>
+								<!--takes a string, type/enter box-->
+								<input
+									type="middleName"
+									class="bg-color2"
+									v-model="middleName"
+								/>
+							</div>
+
+							<div class="mr-5 flex w-2/5 max-w-100 flex-col">
+								<label class="">Last name:</label>
+								<!--takes a string, type/enter box-->
+								<input
+									type="lastName"
+									class="bg-color2"
+									required
+									v-model="lastName"
+								/>
+							</div>
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel">Gender:</label>
+							<label class="">Gender:</label>
 							<!--select box-->
 							<select class="bg-color2" v-model="gender">
 								<option class="bg-white" value="female">
@@ -69,9 +83,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel"
-								>Date of Birth (xx/xx/xxxx):</label
-							>
+							<label class="">Date of Birth (xx/xx/xxxx):</label>
 							<input
 								class="bg-color2"
 								type="DOB"
@@ -81,7 +93,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel">ParentName:</label>
+							<label class="">ParentName:</label>
 							<input
 								class="bg-color2"
 								type="parent"
@@ -91,7 +103,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel">ID card:</label>
+							<label class="">ID card:</label>
 							<input
 								class="bg-color2"
 								type="ID"
@@ -101,7 +113,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel">Record Number:</label>
+							<label class="">Record Number:</label>
 							<input
 								class="bg-color2"
 								type="record"
@@ -111,7 +123,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel">Country/City:</label>
+							<label class="">Country/City:</label>
 							<input
 								class="bg-color2"
 								type="city"
@@ -120,9 +132,7 @@
 							/>
 						</div>
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel"
-								>Medical Insurance:</label
-							>
+							<label class="">Medical Insurance:</label>
 							<input
 								class="bg-color2"
 								type="insurance"
@@ -132,7 +142,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel">Address:</label>
+							<label class="">Address:</label>
 							<input
 								class="bg-color2"
 								type="address"
@@ -142,7 +152,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel">Email:</label>
+							<label class="">Email:</label>
 							<input
 								class="bg-color2"
 								type="email"
@@ -152,9 +162,7 @@
 						</div>
 
 						<div class="mr-5 flex flex-col">
-							<label class="contactLabel"
-								>Phone Number/Whatsapp:</label
-							>
+							<label class="">Phone Number/Whatsapp:</label>
 							<input
 								class="bg-color2"
 								type="phone"
@@ -168,15 +176,15 @@
 						<div class="prevPaitent">
 							<!-- Check box-->
 							<input type="checkbox" v-model="prevPaitent" />
-							<label class="contactLabel">
-								Have you been a paitent previously with us?
+							<label class=""
+								>Have you been a paitent previously with us?
 							</label>
 						</div>
 
 						<div class="diagnosis">
 							<!-- Check box-->
 							<input type="checkbox" v-model="diagnosis" />
-							<label class="contactLabel"
+							<label class=""
 								>Have you been formally daignosed?</label
 							>
 						</div>
@@ -184,7 +192,7 @@
 						<div class="evalution">
 							<!-- Check box-->
 							<input type="checkbox" v-model="evalution" />
-							<label class="contactLabel"
+							<label class=""
 								>Do you want to perform a Diagnostic Evaluation
 								on the patient?</label
 							>
