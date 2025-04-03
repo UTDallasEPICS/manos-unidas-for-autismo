@@ -16,193 +16,339 @@
 		<NavBar></NavBar>
 
 		<!--div container for the contact form-->
-		<div class="cormorant-garamond mx-5 mt-5 flex flex-col justify-center">
-			<!--Title of contact form-->
-			<h1 class="mb-5 text-xl">Patient Contact Form</h1>
+		<div class="flex h-auto place-content-center">
+			<div
+				class="cormorant-garamond flex w-4/5 flex-col flex-wrap text-lg md:w-200"
+			>
+				<!--Title of contact form-->
+				<h1 class="mt-5 text-2xl sm:mr-3">Patient Contact Form</h1>
 
-			<!--div container for the form-->
-			<div class="flex justify-start">
-				<!--Form for contact form-->
-				<form
-					@submit.prevent="handleSubmit"
-					class="flex flex-col flex-wrap justify-center bg-white"
-				>
-					<!-- div class for the short answer type of responses-->
-					<div class="justify-space-evenly flex flex-wrap">
-						<!--div class for the name portion (the name components should occupy the same line)-->
-						<div class="flex-cols flex w-full grid-rows-3">
+				<!--div container for the form-->
+				<div class="flex justify-start p-5">
+					<!--Form for contact form-->
+					<form
+						@submit.prevent="handleSubmit"
+						class="flex flex-col flex-wrap justify-center bg-white"
+					>
+						<!-- div class for the short answer type of responses-->
+						<div
+							class="justify-space-evenly flex flex-wrap gap-5 py-5"
+						>
+							<!--div class for the name portion (the name components should occupy the same line)-->
 							<div
-								class="mr-5 flex w-2/5 max-w-100 flex-1 flex-col"
+								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
 							>
-								<label class="">First name:</label>
+								<div
+									class="flex w-50 flex-col sm:w-75 md:w-3/10"
+								>
+									<label class="">Patient First name:</label>
 
-								<input
-									type="text"
-									class="bg-color2 w-full"
-									required
-									v-model="firstName"
-								/>
+									<input
+										type="text"
+										class="bg-color2 w-full"
+										required
+										v-model="firstName"
+									/>
+								</div>
+
+								<div
+									class="flex w-40 flex-col sm:w-60 md:w-1/4"
+								>
+									<label class="">Patient Middle name:</label>
+									<!--takes a string, type/enter box-->
+									<input
+										type="middleName"
+										class="bg-color2"
+										v-model="middleName"
+									/>
+								</div>
+
+								<div
+									class="flex w-50 flex-col sm:w-75 md:w-3/10"
+								>
+									<label class="">Patient Last name:</label>
+									<!--takes a string, type/enter box-->
+									<input
+										type="lastName"
+										class="bg-color2"
+										required
+										v-model="lastName"
+									/>
+								</div>
 							</div>
 
-							<div class="mr-5 flex w-1/5 max-w-50 flex-col">
-								<label class="">Middle name:</label>
-								<!--takes a string, type/enter box-->
-								<input
-									type="middleName"
-									class="bg-color2"
-									v-model="middleName"
-								/>
+							<div
+								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+							>
+								<div
+									class="flex w-40 flex-col sm:w-60 md:w-1/4"
+								>
+									<label class="">Gender:</label>
+									<!--select box-->
+									<select class="bg-color2" v-model="gender">
+										<option class="bg-white" value="female">
+											Female
+										</option>
+										<option class="bg-white" value="male">
+											Male
+										</option>
+										<option
+											class="bg-white"
+											value="nonBinary"
+										>
+											Non-Binary
+										</option>
+									</select>
+								</div>
+
+								<div
+									class="flex w-40 flex-col sm:w-60 md:w-1/4"
+								>
+									<label class="">Date of Birth:</label>
+									<input
+										class="bg-color2"
+										type="date"
+										required
+										v-model="DOB"
+									/>
+								</div>
+
+								<div
+									class="flex w-50 flex-col sm:w-75 md:w-3/10"
+								>
+									<label class="">Nationality:</label>
+									<input
+										class="bg-color2"
+										type="nationality"
+										required
+										v-model="nationality"
+									/>
+								</div>
 							</div>
 
-							<div class="mr-5 flex w-2/5 max-w-100 flex-col">
-								<label class="">Last name:</label>
-								<!--takes a string, type/enter box-->
-								<input
-									type="lastName"
-									class="bg-color2"
-									required
-									v-model="lastName"
-								/>
+							<div
+								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+							>
+								<div
+									class="flex w-50 flex-col sm:w-75 md:w-3/10"
+								>
+									<label class="">ID Number:</label>
+									<input
+										class="bg-color2"
+										type="nationality"
+										required
+										v-model="nationality"
+									/>
+								</div>
+								<div
+									class="flex w-50 flex-col sm:w-75 md:w-3/10"
+								>
+									<label class=""
+										>Social Security Number:</label
+									>
+									<input
+										class="bg-color2"
+										type="nationality"
+										required
+										v-model="nationality"
+									/>
+								</div>
+							</div>
+
+							<div
+								class="flex h-auto w-full flex-col gap-1 sm:flex-col"
+							>
+								<div
+									class="flex w-55 flex-col sm:w-100 md:w-7/10"
+								>
+									<label class="">Address Line 1:</label>
+									<input
+										class="bg-color2"
+										type="nationality"
+										required
+										v-model="nationality"
+									/>
+								</div>
+
+								<div
+									class="flex w-55 flex-col sm:w-100 md:w-7/10"
+								>
+									<label class="">Address Line 2:</label>
+									<input
+										class="bg-color2"
+										type="nationality"
+										required
+										v-model="nationality"
+									/>
+								</div>
+
+								<div class="flex flex-col md:flex-row md:gap-5">
+									<div
+										class="flex w-30 flex-col sm:w-40 md:w-1/5"
+									>
+										<label class="">Postal Code:</label>
+										<input
+											class="bg-color2"
+											type="nationality"
+											required
+											v-model="nationality"
+										/>
+									</div>
+									<div
+										class="flex w-40 flex-col sm:w-60 md:w-1/4"
+									>
+										<label class="">Locality:</label>
+										<input
+											class="bg-color2"
+											type="nationality"
+											required
+											v-model="nationality"
+										/>
+									</div>
+									<div
+										class="flex w-40 flex-col sm:w-60 md:w-1/4"
+									>
+										<label class="">Country:</label>
+										<input
+											class="bg-color2"
+											type="nationality"
+											required
+											v-model="nationality"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div
+								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+							>
+								<div
+									class="flex w-50 flex-col sm:w-75 md:w-3/10"
+								>
+									<label class="">Parent First Name:</label>
+									<input
+										class="bg-color2"
+										type="parent"
+										required
+										v-model="parent"
+									/>
+								</div>
+								<div
+									class="flex w-50 flex-col sm:w-75 md:w-3/10"
+								>
+									<label class="">Parent Last Name:</label>
+									<input
+										class="bg-color2"
+										type="parent"
+										required
+										v-model="parent"
+									/>
+								</div>
+							</div>
+
+							<div
+								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+							>
+								<div class="flex flex-col">
+									<label class="">Email:</label>
+									<input
+										class="bg-color2"
+										type="email"
+										required
+										v-model="email"
+									/>
+								</div>
+
+								<div class="flex flex-col">
+									<label class=""
+										>Phone Number/Whatsapp:</label
+									>
+									<input
+										class="bg-color2"
+										type="phone"
+										required
+										v-model="phone"
+									/>
+								</div>
+							</div>
+
+							<div
+								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+							>
+								<div class="flex flex-col">
+									<label class="">Medical Insurance:</label>
+									<select class="bg-color2" v-model="gender">
+										<option class="bg-white" value="female">
+											Female
+										</option>
+										<option class="bg-white" value="male">
+											Male
+										</option>
+										<option
+											class="bg-white"
+											value="nonBinary"
+										>
+											Non-Binary
+										</option>
+									</select>
+								</div>
+
+								<div class="flex flex-col">
+									<label class=""
+										>Preferred Services/Therapies:</label
+									>
+									<select class="bg-color2" v-model="gender">
+										<option class="bg-white" value="female">
+											Female
+										</option>
+										<option class="bg-white" value="male">
+											Male
+										</option>
+										<option
+											class="bg-white"
+											value="nonBinary"
+										>
+											Non-Binary
+										</option>
+									</select>
+								</div>
 							</div>
 						</div>
 
-						<div class="mr-5 flex flex-col">
-							<label class="">Gender:</label>
-							<!--select box-->
-							<select class="bg-color2" v-model="gender">
-								<option class="bg-white" value="female">
-									Female
-								</option>
-								<option class="bg-white" value="male">
-									Male
-								</option>
-								<option class="bg-white" value="nonBinary">
-									Non-Binary
-								</option>
-							</select>
-						</div>
+						<div class="flex flex-col">
+							<div class="prevPaitent">
+								<!-- Check box-->
+								<input type="checkbox" v-model="prevPaitent" />
+								<label class=""
+									>Have you been a paitent previously with us?
+								</label>
+							</div>
 
-						<div class="mr-5 flex flex-col">
-							<label class="">Date of Birth (xx/xx/xxxx):</label>
-							<input
-								class="bg-color2"
-								type="DOB"
-								required
-								v-model="DOB"
-							/>
-						</div>
+							<div class="diagnosis">
+								<!-- Check box-->
+								<input type="checkbox" v-model="diagnosis" />
+								<label class=""
+									>Have you been formally daignosed?</label
+								>
+							</div>
 
-						<div class="mr-5 flex flex-col">
-							<label class="">ParentName:</label>
-							<input
-								class="bg-color2"
-								type="parent"
-								required
-								v-model="parent"
-							/>
-						</div>
+							<div class="evalution">
+								<!-- Check box-->
+								<input type="checkbox" v-model="evalution" />
+								<label class=""
+									>Do you want to perform a Diagnostic
+									Evaluation on the patient?</label
+								>
+							</div>
 
-						<div class="mr-5 flex flex-col">
-							<label class="">ID card:</label>
-							<input
-								class="bg-color2"
-								type="ID"
-								required
-								v-model="ID"
-							/>
+							<div class="submit">
+								<button class="contactSubmit">
+									Submit form
+								</button>
+							</div>
 						</div>
-
-						<div class="mr-5 flex flex-col">
-							<label class="">Record Number:</label>
-							<input
-								class="bg-color2"
-								type="record"
-								required
-								v-model="record"
-							/>
-						</div>
-
-						<div class="mr-5 flex flex-col">
-							<label class="">Country/City:</label>
-							<input
-								class="bg-color2"
-								type="city"
-								required
-								v-model="city"
-							/>
-						</div>
-						<div class="mr-5 flex flex-col">
-							<label class="">Medical Insurance:</label>
-							<input
-								class="bg-color2"
-								type="insurance"
-								required
-								v-model="insurance"
-							/>
-						</div>
-
-						<div class="mr-5 flex flex-col">
-							<label class="">Address:</label>
-							<input
-								class="bg-color2"
-								type="address"
-								required
-								v-model="address"
-							/>
-						</div>
-
-						<div class="mr-5 flex flex-col">
-							<label class="">Email:</label>
-							<input
-								class="bg-color2"
-								type="email"
-								required
-								v-model="email"
-							/>
-						</div>
-
-						<div class="mr-5 flex flex-col">
-							<label class="">Phone Number/Whatsapp:</label>
-							<input
-								class="bg-color2"
-								type="phone"
-								required
-								v-model="phone"
-							/>
-						</div>
-					</div>
-
-					<div class="flex flex-col">
-						<div class="prevPaitent">
-							<!-- Check box-->
-							<input type="checkbox" v-model="prevPaitent" />
-							<label class=""
-								>Have you been a paitent previously with us?
-							</label>
-						</div>
-
-						<div class="diagnosis">
-							<!-- Check box-->
-							<input type="checkbox" v-model="diagnosis" />
-							<label class=""
-								>Have you been formally daignosed?</label
-							>
-						</div>
-
-						<div class="evalution">
-							<!-- Check box-->
-							<input type="checkbox" v-model="evalution" />
-							<label class=""
-								>Do you want to perform a Diagnostic Evaluation
-								on the patient?</label
-							>
-						</div>
-
-						<div class="submit">
-							<button class="contactSubmit">Submit form</button>
-						</div>
-					</div>
-				</form>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -219,6 +365,7 @@ export default {
 			age: "",
 			gender: "",
 			DOB: "",
+			nationality: "",
 			parent: "",
 			ID: "",
 			record: "",
