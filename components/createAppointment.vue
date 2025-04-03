@@ -57,14 +57,28 @@
 						</select>
 					</div>
 
-					<!-- Time (required) -->
+					<!-- Date Picker -->
+					<div class="mb-4">
+						<label class="mb-1 block font-medium" for="date"
+							>Date
+							<span class="text-red-500">*</span>
+						</label>
+						<input
+							type="date"
+							v-model="form.date"
+							required
+							class="w-full rounded border border-gray-300 px-3 py-2"
+						/>
+					</div>
+
+					<!-- Time Picker -->
 					<div class="mb-4">
 						<label class="mb-1 block font-medium" for="time"
-							>Time <span class="text-red-500">*</span></label
-						>
+							>Time
+							<span class="text-red-500">*</span>
+						</label>
 						<input
-							type="datetime-local"
-							id="time"
+							type="time"
 							v-model="form.time"
 							required
 							class="w-full rounded border border-gray-300 px-3 py-2"
@@ -131,6 +145,7 @@ const showModal = ref(false);
 const form = reactive({
 	therapist: "",
 	sessionType: "",
+	date: "",
 	time: "",
 	max: 1, // defaults to 1
 	comments: "",
