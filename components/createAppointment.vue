@@ -12,7 +12,8 @@
 		<!-- Modal (only shown if showModal === true) -->
 		<div
 			v-if="showModal"
-			class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+			@click.self="closeModal"
 		>
 			<!-- Modal content box -->
 			<div class="w-full max-w-md rounded bg-white p-6 shadow-md">
@@ -73,13 +74,14 @@
 					<!-- Max (optional, defaults to 1) -->
 					<div class="mb-4">
 						<label class="mb-1 block font-medium" for="max"
-							>Max</label
+							>Max Patient Attendance (Min. 1)</label
 						>
 						<input
 							type="number"
 							id="max"
 							v-model.number="form.max"
 							min="1"
+							@blur="enforceMin()"
 							class="w-full rounded border border-gray-300 px-3 py-2"
 						/>
 					</div>
@@ -120,21 +122,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-
-interface AppointmentForm {
-	therapist: string;
-	sessionType: string;
-	time: string; // or Date, if you parse it
-	max: number;
-	comments: string;
-}
+import { ref, reactive } from "vue";
 
 // Whether to show the modal
 const showModal = ref(false);
 
 // The form data
-const form = ref<AppointmentForm>({
+const form = reactive({
 	therapist: "",
 	sessionType: "",
 	time: "",
@@ -142,16 +136,20 @@ const form = ref<AppointmentForm>({
 	comments: "",
 });
 
+function enforceMin() {
+	if (form.max < 1 || isNaN(form.max)) form.max = 1;
+}
+
 // Submit form handler
 function submitForm() {
 	// Validate required fields
-	if (!form.value.therapist || !form.value.sessionType || !form.value.time) {
+	if (!form.therapist || !form.sessionType || !form.time) {
 		alert("Please fill out all required fields.");
 		return;
 	}
 
 	// Placeholder for database submission logic
-	console.log("Form submitted:", form.value);
+	console.log("Form submitted:", form);
 
 	// Close modal after submission
 	closeModal();
@@ -161,14 +159,13 @@ function submitForm() {
 function closeModal() {
 	showModal.value = false;
 
-	// Reset the form if you want to clear fields each time
-	form.value = {
+	Object.assign(form, {
 		therapist: "",
 		sessionType: "",
 		time: "",
 		max: 1,
 		comments: "",
-	};
+	});
 }
 </script>
 
