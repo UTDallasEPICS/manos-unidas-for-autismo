@@ -135,9 +135,9 @@
 									<label class="">ID Number:</label>
 									<input
 										class="bg-color2"
-										type="nationality"
+										type="ID"
 										required
-										v-model="nationality"
+										v-model="ID"
 									/>
 								</div>
 								<div
@@ -148,9 +148,9 @@
 									>
 									<input
 										class="bg-color2"
-										type="nationality"
+										type="SSN"
 										required
-										v-model="nationality"
+										v-model="SSN"
 									/>
 								</div>
 							</div>
@@ -164,9 +164,9 @@
 									<label class="">Address Line 1:</label>
 									<input
 										class="bg-color2"
-										type="nationality"
+										type="address1"
 										required
-										v-model="nationality"
+										v-model="address1"
 									/>
 								</div>
 
@@ -176,9 +176,9 @@
 									<label class="">Address Line 2:</label>
 									<input
 										class="bg-color2"
-										type="nationality"
+										type="address2"
 										required
-										v-model="nationality"
+										v-model="address2"
 									/>
 								</div>
 
@@ -189,9 +189,9 @@
 										<label class="">Postal Code:</label>
 										<input
 											class="bg-color2"
-											type="nationality"
+											type="postalCode"
 											required
-											v-model="nationality"
+											v-model="postalCode"
 										/>
 									</div>
 									<div
@@ -200,9 +200,9 @@
 										<label class="">Locality:</label>
 										<input
 											class="bg-color2"
-											type="nationality"
+											type="locality"
 											required
-											v-model="nationality"
+											v-model="locality"
 										/>
 									</div>
 									<div
@@ -211,9 +211,9 @@
 										<label class="">Country:</label>
 										<input
 											class="bg-color2"
-											type="nationality"
+											type="country"
 											required
-											v-model="nationality"
+											v-model="country"
 										/>
 									</div>
 								</div>
@@ -228,9 +228,9 @@
 									<label class="">Parent First Name:</label>
 									<input
 										class="bg-color2"
-										type="parent"
+										type="parentFirstName"
 										required
-										v-model="parent"
+										v-model="parentFirstName"
 									/>
 								</div>
 								<div
@@ -239,9 +239,9 @@
 									<label class="">Parent Last Name:</label>
 									<input
 										class="bg-color2"
-										type="parent"
+										type="parentLastName"
 										required
-										v-model="parent"
+										v-model="parentLastName"
 									/>
 								</div>
 							</div>
@@ -277,7 +277,10 @@
 							>
 								<div class="flex flex-col">
 									<label class="">Medical Insurance:</label>
-									<select class="bg-color2" v-model="gender">
+									<select
+										class="bg-color2"
+										v-model="insurance"
+									>
 										<option class="bg-white" value="female">
 											Female
 										</option>
@@ -297,7 +300,10 @@
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
-									<select class="bg-color2" v-model="gender">
+									<select
+										class="bg-color2"
+										v-model="prefTherapies"
+									>
 										<option class="bg-white" value="female">
 											Female
 										</option>
@@ -366,14 +372,20 @@ export default {
 			gender: "",
 			DOB: "",
 			nationality: "",
-			parent: "",
+			parentFirstName: "",
+			parentLastName: "",
 			ID: "",
+			SSN: "",
 			record: "",
-			city: "",
 			insurance: "",
-			address: "",
+			address1: "",
+			address2: "",
+			postalCode: "",
+			locality: "",
+			country: "",
 			email: "",
 			phone: "",
+			prefTherapies: [],
 			prevPaitent: false,
 			diagnosis: false,
 			evalution: false,
