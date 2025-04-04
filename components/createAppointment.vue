@@ -1,4 +1,3 @@
-<!-- CreateAppointment.vue -->
 <template>
 	<div>
 		<!-- Button to open modal -->
@@ -9,14 +8,24 @@
 			Create Appointment
 		</button>
 
-		<!-- Modal (only shown if showModal === true) -->
+		<!-- Modal -->
 		<div
 			v-if="showModal"
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
-			@click.self="closeModal"
+			class="fixed inset-0 z-50 flex items-center justify-center"
+			aria-modal="true"
+			role="dialog"
 		>
+			<!-- Dimmed background -->
+			<div
+				class="absolute inset-0 bg-black/70"
+				@click.self="closeModal"
+			></div>
+
 			<!-- Modal content box -->
-			<div class="w-full max-w-md rounded bg-white p-6 shadow-md">
+			<div
+				class="relative z-10 w-full max-w-md rounded bg-white p-6 shadow-md"
+				@click.stop
+			>
 				<h2 class="mb-4 text-xl font-bold">New Appointment</h2>
 
 				<form @submit.prevent="submitForm">
@@ -57,32 +66,34 @@
 						</select>
 					</div>
 
-					<!-- Date Picker -->
-					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="date"
-							>Date
-							<span class="text-red-500">*</span>
-						</label>
-						<input
-							type="date"
-							v-model="form.date"
-							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
-						/>
-					</div>
+					<div class="mb-4 flex grow place-content-between gap-5">
+						<!-- Date Picker -->
+						<div class="w-1/2 grow flex-row">
+							<label class="mb-1 block font-medium" for="date"
+								>Date
+								<span class="text-red-500">*</span>
+							</label>
+							<input
+								type="date"
+								v-model="form.date"
+								required
+								class="w-full rounded border border-gray-300 px-3 py-2"
+							/>
+						</div>
 
-					<!-- Time Picker -->
-					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="time"
-							>Time
-							<span class="text-red-500">*</span>
-						</label>
-						<input
-							type="time"
-							v-model="form.time"
-							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
-						/>
+						<!-- Time Picker -->
+						<div class="w-1/2 grow flex-row">
+							<label class="mb-1 block font-medium" for="time"
+								>Time
+								<span class="text-red-500">*</span>
+							</label>
+							<input
+								type="time"
+								v-model="form.time"
+								required
+								class="w-full rounded border border-gray-300 px-3 py-2"
+							/>
+						</div>
 					</div>
 
 					<!-- Max (optional, defaults to 1) -->
