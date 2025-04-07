@@ -1,4 +1,4 @@
-<!-- 2 Apr 2025 coder-Mika
+<!-- 7 Apr 2025 coder-Mika
 
 	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed.
 -->
@@ -64,7 +64,6 @@
 
 <script lang="ts" setup>
 import { computed, ref } from "vue";
-import AppointmentBox from "./AppointmentBox.vue";
 import type { Session } from "@prisma/client";
 
 const user = {
@@ -111,7 +110,7 @@ const user = {
 			therapistId: "4",
 			Therapist: {
 				id: "4",
-				fName: "FirstName",
+				fName: "Very very long therapist name",
 				lName: "LastName",
 				email: "email@site.com",
 				contactPref: "EMAIL",
@@ -165,13 +164,13 @@ const user = {
 		{
 			id: "5",
 			time: "April 2, 2025 9:00:00",
-			duration: 30,
+			duration: 50,
 			comment: "hi",
 			maxAttendance: 2,
 			typeId: "200",
 			Type: {
 				id: "200",
-				name: "Service for Independent Living",
+				name: "Very long therapy name",
 				color: "Mmmmm color",
 			},
 			therapistId: "300",

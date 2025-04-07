@@ -1,23 +1,53 @@
-<!-- 2 Apr 2025 coder-Mika
+<!-- 7 Apr 2025 coder-Mika
 	Appointment box displays an overview of the session details: the appointment name, the therapist, and the duration of the session. It's position and size depends on the duration and on the hour the calendar starts with.
 -->
 <template>
 	<div
-		class="absolute w-full overflow-hidden rounded-md border-4 text-center"
-		:style="{ backgroundColor: boxColor, height: boxHeight, top: boxTop }"
+		ref="container"
+		class="absolute grid w-full grid-cols-2 grid-rows-3 overflow-hidden rounded-md border-4 text-center"
+		:style="{
+			backgroundColor: boxColor,
+			height: boxHeight,
+			top: boxTop,
+		}"
 	>
-		<div class="truncate">{{ props.session.Type.name }}</div>
-		<div class="truncate" v-if="props.session.duration > 49">
+		<div
+			ref="sessionTypeBox"
+			class="col-span-1 row-span-1 line-clamp-2"
+			:class="{
+				'col-span-2': props.session.duration > 49,
+				'row-span-3': props.session.duration < 50,
+			}"
+			:style="{ fontSize: sessionTypeFontSize }"
+		>
+			{{ props.session.Type.name }}
+		</div>
+		<div
+			ref="therapistBox"
+			class="col-span-1 row-span-1 line-clamp-2"
+			:class="{
+				'col-span-2': props.session.duration > 49,
+				'row-span-2': props.session.duration < 50,
+			}"
+			:style="{ fontSize: therapistFontSize }"
+			v-if="props.session.duration > 49"
+		>
 			{{ props.session.Therapist.fName }}
 		</div>
-		<div v-if="props.session.duration > 29">
+		<div
+			ref="durationBox"
+			class="col-span-1 row-span-1"
+			:class="{ 'col-span-2': props.session.duration > 49 }"
+			:style="{ fontSize: durationFontSize }"
+		>
 			{{ duration }}
 		</div>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { useResizeObserver } from "@vueuse/core";
+import { computed, onMounted, ref } from "vue";
 import type { Session } from "@prisma/client";
 import { Color } from "@prisma/client";
 
@@ -88,6 +118,54 @@ const boxTop = computed(() => {
 		"px";
 	return top;
 });
+
+// font sizes for each element
+const container = ref<HTMLElement | undefined>();
+const sessionTypeBox = ref<HTMLElement | undefined>();
+const sessionTypeFontSize = ref("1em");
+const therapistBox = ref<HTMLElement | undefined>();
+const therapistFontSize = ref("1em");
+const durationBox = ref<HTMLElement | undefined>();
+const durationFontSize = ref("1em");
+
+onMounted(() => {
+	getFontSize();
+});
+useResizeObserver(container, getFontSize);
+
+function getFontSize() {
+	// get size of session type text
+	let fontSize = 1;
+
+	if (sessionTypeBox.value) {
+		if (props.session.Type.name.length > 15) {
+			fontSize = 0.75;
+		}
+		if (sessionTypeBox.value.clientWidth < 150) {
+			fontSize = fontSize * (sessionTypeBox.value.clientWidth / 150);
+		}
+	}
+	sessionTypeFontSize.value = fontSize + "em";
+
+	fontSize = 1;
+	if (therapistBox.value) {
+		if (props.session.Therapist.fName.length > 15) {
+			fontSize = 0.75;
+		}
+		if (therapistBox.value.clientWidth < 150) {
+			fontSize = fontSize * (therapistBox.value.clientWidth / 150);
+		}
+	}
+	therapistFontSize.value = fontSize + "em";
+
+	fontSize = 1;
+	if (durationBox.value) {
+		if (durationBox.value.clientWidth < 150) {
+			fontSize = durationBox.value.clientWidth / 150;
+		}
+	}
+	durationFontSize.value = fontSize + "em";
+}
 
 // given a time and a duration, return the end of the session time
 function getSessionEndTime(d: Date, sessionLength: number): Date {
