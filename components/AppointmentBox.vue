@@ -13,22 +13,20 @@
 	>
 		<div
 			ref="sessionTypeBox"
-			class="col-span-1 row-span-1 line-clamp-2"
+			class="flex flex-col justify-center"
 			:class="{
-				'col-span-2': props.session.duration > 49,
+				'col-span-1': props.session.duration < 50,
+				'col-span-2': props.session.duration >= 50,
 				'row-span-3': props.session.duration < 50,
+				'row-span-1': props.session.duration >= 50,
 			}"
 			:style="{ fontSize: sessionTypeFontSize }"
 		>
-			{{ props.session.Type.name }}
+			<span class="line-clamp-2">{{ props.session.Type.name }}</span>
 		</div>
 		<div
 			ref="therapistBox"
-			class="col-span-1 row-span-1 line-clamp-2"
-			:class="{
-				'col-span-2': props.session.duration > 49,
-				'row-span-2': props.session.duration < 50,
-			}"
+			class="col-span-2 row-span-1 line-clamp-2 flex flex-col justify-center"
 			:style="{ fontSize: therapistFontSize }"
 			v-if="props.session.duration > 49"
 		>
@@ -36,8 +34,13 @@
 		</div>
 		<div
 			ref="durationBox"
-			class="col-span-1 row-span-1"
-			:class="{ 'col-span-2': props.session.duration > 49 }"
+			class="flex flex-col justify-center"
+			:class="{
+				'col-span-1': props.session.duration < 50,
+				'col-span-2': props.session.duration >= 50,
+				'row-span-3': props.session.duration < 50,
+				'row-span-1': props.session.duration >= 50,
+			}"
 			:style="{ fontSize: durationFontSize }"
 		>
 			{{ duration }}
