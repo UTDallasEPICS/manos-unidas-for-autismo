@@ -1,0 +1,110 @@
+<!-- 7 Apr 2025
+    When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information
+ -->
+<template>
+	<div class="absolute z-50 w-full items-center" v-if="showWindow">
+		<!-- Background -->
+		<div
+			class="absolute z-51 h-full w-full bg-black/70"
+			@click="showWindow = false"
+		></div>
+
+		<!-- Window -->
+		<div class="text-md relative z-52 m-7 bg-white p-4">
+			<div class="pr-2 text-right text-2xl" @click="showWindow = false">
+				&times;
+			</div>
+
+			<!-- Information -->
+			<div class="flex flex-col gap-2">
+				<h1 class="text-3xl">
+					{{ props.session.Type.name + " - " + duration }}
+				</h1>
+				<h2 class="text-xl">
+					Therapist: {{ props.session.Therapist.fName }}
+				</h2>
+				<h3 class="font-bold">
+					Maximum Patients: {{ props.session.maxAttendance }}
+				</h3>
+				<button
+					class="grid grid-cols-2 bg-blue-950 text-white"
+					@click="showPatients = !showPatients"
+				>
+					<span class="col-span-1 px-2 py-1 text-left font-bold"
+						>Patients Attending</span
+					>
+					<span class="col-span-1 px-2 py-1 text-right">
+						&#x22C1;
+					</span>
+				</button>
+				<div v-if="showPatients" class="px-5">
+					<li
+						v-for="patient in props.session.Patients"
+						:key="patient.id"
+					>
+						{{ patient.fName + " " + patient.lName }}
+						<!-- replace with link to patient profile later -->
+						<span class="text-xs text-blue-400"
+							>View Profile &gt;</span
+						>
+					</li>
+				</div>
+				<div
+					v-if="
+						typeof props.session.comment != undefined &&
+						props.session.comment != null &&
+						props.session.comment.length > 0
+					"
+				>
+					<h3 class="font-bold">Comments:</h3>
+					<div>{{ props.session.comment }}</div>
+				</div>
+			</div>
+
+			<div class="flex justify-center">
+				<button class="bg-blue-950 p-2 text-center text-white">
+					Edit Appointment
+				</button>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script lang="ts" setup>
+import { computed, ref } from "vue";
+import type { Session } from "@prisma/client";
+
+const props = defineProps<{
+	session: Session;
+}>();
+
+const showWindow = ref(true);
+const showPatients = ref(false);
+
+const duration = computed(() => {
+	const date = new Date(props.session.time);
+	const startHour = date.getHours();
+	const startMins = date.getMinutes();
+
+	// get end time
+	let endTime = getSessionEndTime(date, props.session.duration);
+	const endHour = endTime.getHours();
+	const endMins = endTime.getMinutes();
+
+	const result =
+		startHour +
+		":" +
+		(startMins > 10 ? startMins : "0" + startMins) +
+		"-" +
+		endHour +
+		":" +
+		(endMins > 10 ? endMins : "0" + endMins);
+	return result;
+});
+
+function getSessionEndTime(d: Date, sessionLength: number): Date {
+	let endTime = new Date(d.getTime());
+	endTime.setMinutes(d.getMinutes() + sessionLength);
+	return endTime;
+}
+</script>
