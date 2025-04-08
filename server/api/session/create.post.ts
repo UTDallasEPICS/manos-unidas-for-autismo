@@ -1,46 +1,53 @@
 import { PrismaClient } from "@prisma/client";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
+const sessionSchema = z.object({
+	typeID: z.string(), // We are passing the ID of the session type
+	time: z.coerce.date(),
+	comment: z.string().optional(),
+	maxAttendance: z.number().optional().default(1),
+	therapistID: z.string(),
+});
+
 export default defineEventHandler(async (event) => {
 	if (event.method !== "POST") {
-		return { error: "Method not allowed" };
+		throw createError({
+			statusCode: 405,
+			statusMessage: "Method not allowed",
+		});
 	}
 
-	try {
-		const body = await readBody(event);
+	const body = await readBody(event);
+	const validatedBody = sessionSchema.safeParse(body);
 
-		// Extract session details
-		const { type, time, comment, maxAttendance, therapistID } = body;
-
-		// Checking for missing data
-		if (!type || !time || !therapistID) {
-			return { error: "Missing required fields" };
-		}
-
-		// Create session in the database
-		const newSession = await prisma.session.create({
-			data: {
-				Type: type,
-				Time: new Date(time),
-				Comment: comment || null,
-				MaxAttendance: maxAttendance || 1,
-				TherapistID: therapistID,
-			},
+	if (!validatedBody.success) {
+		throw createError({
+			statusCode: 400,
+			statusMessage: "Invalid request body",
+			data: validatedBody.error.format(),
 		});
+	}
 
-		return { success: true, session: newSession };
-	} catch (error) {
-		// Fix for TypeScript 'unknown' error type
-		if (error instanceof Error) {
-			// Safely accessing the error's message
-			return {
-				error: "Failed to create session",
-				details: error.message,
-			};
-		} else {
-			// Fallback for unknown errors
-			return { error: "An unexpected error occurred" };
-		}
+	const { typeID, time, comment, maxAttendance, therapistID } =
+		validatedBody.data;
+
+	// Create the session with the type directly assigned as a string
+	const newSession = await prisma.session.create({
+		data: {
+			Type: typeID, // Directly assigning typeID (string)
+			Time: time,
+			Comment: comment || null,
+			MaxAttendance: maxAttendance,
+			TherapistID: therapistID,
+		},
+	});
+
+	if (!newSession) {
+		throw createError({
+			statusCode: 500,
+			statusMessage: "Failed to create session",
+		});
 	}
 });
