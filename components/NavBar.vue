@@ -45,25 +45,32 @@
 			role="dialog"
 		>
 			<!-- Backdrop -->
-			<div class="fixed inset-0 z-10" @click="toggleMenu"></div>
+			<div
+				class="bg-opacity-50 fixed inset-0 z-10"
+				@click="toggleMenu"
+			></div>
 
 			<!-- Slide-out Menu Panel -->
 			<div
 				class="relative z-20 ml-auto w-2/3 max-w-xs bg-white p-4 shadow-lg"
 			>
-				<button
-					@click="toggleMenu"
-					class="mb-4 text-xl"
-					aria-label="Close menu"
-				>
-					&times;
-				</button>
+				<!-- Close button positioned on the right -->
+				<div class="mb-4 flex justify-end">
+					<button
+						@click="toggleMenu"
+						class="p-1"
+						aria-label="Close menu"
+					>
+						<X color="black" :size="30" />
+					</button>
+				</div>
+
 				<nav class="flex flex-col gap-4">
 					<NuxtLink
 						v-for="(link, idx) in userLinks[userType]"
 						:key="idx"
 						:to="link.path"
-						class="hover:underline"
+						class="py-2 text-lg hover:underline"
 						@click="toggleMenu"
 					>
 						{{ link.label }}
@@ -76,6 +83,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { X } from "lucide-vue-next";
 
 // Replace this with the actual user role from auth/session
 const userType = ref<"user support" | "it support" | "other">("user support");
