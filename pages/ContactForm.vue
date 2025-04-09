@@ -275,48 +275,57 @@
 							<div
 								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
 							>
-								<div class="flex flex-col">
+								<div class="flex min-w-33 flex-col">
 									<label class="">Medical Insurance:</label>
-									<select
-										class="bg-color2"
-										v-model="insurance"
+									<label
+										class="flex flex-col text-lg font-bold"
 									>
-										<option class="bg-white" value="female">
-											Female
-										</option>
-										<option class="bg-white" value="male">
-											Male
-										</option>
-										<option
-											class="bg-white"
-											value="nonBinary"
-										>
-											Non-Binary
-										</option>
-									</select>
+										<multiselect
+											class="bg-color2 w-full overflow-y-scroll px-2"
+											v-model="insurance"
+											:options="insuranceOptions"
+											:searchable="false"
+											:close-on-select="true"
+											:show-labels="false"
+											placeholder="Pick a value"
+											aria-label="pick a value"
+										></multiselect>
+									</label>
 								</div>
 
 								<div class="flex flex-col">
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
-									<select
-										class="bg-color2"
-										v-model="prefTherapies"
+
+									<label
+										class="flex flex-col text-lg font-bold"
 									>
-										<option class="bg-white" value="female">
-											Female
-										</option>
-										<option class="bg-white" value="male">
-											Male
-										</option>
-										<option
-											class="bg-white"
-											value="nonBinary"
+										<!-- FORMATTING HELP HERE-->
+										<multiselect
+											class="bg-color2 overflow-y-scroll px-2"
+											v-model="therapy"
+											:options="therapyOptions"
+											:multiple="true"
+											:close-on-select="false"
+											:clear-on-select="false"
+											:preserve-search="true"
+											placeholder="Our Services"
+											label="name"
+											track-by="name"
 										>
-											Non-Binary
-										</option>
-									</select>
+											<template
+												#selection="{ values, isOpen }"
+											>
+												<span
+													class="multiselect__single flex flex-col"
+													v-if="values.length"
+													v-show="!isOpen"
+													>{{ values[0].name }}
+												</span>
+											</template>
+										</multiselect>
+									</label>
 								</div>
 							</div>
 						</div>
@@ -361,7 +370,11 @@
 </template>
 
 <script>
+import Multiselect from "vue-multiselect";
 export default {
+	components: {
+		Multiselect,
+	},
 	data() {
 		return {
 			//empty strings that will take the entered data. keep empty.
@@ -378,6 +391,19 @@ export default {
 			SSN: "",
 			record: "",
 			insurance: "",
+			insuranceOptions: [
+				"SENASA contributivo",
+				"SENASA subsidiado",
+				"ARS HUMANO",
+				"MAPFRE",
+				"LA MONUMENTAL",
+				"ARS Universal",
+				"ARS Meta Salud",
+				"ARS Plan Salud Banco Central",
+				"RENACER",
+				"Otro",
+				"Not Listed",
+			],
 			address1: "",
 			address2: "",
 			postalCode: "",
@@ -385,7 +411,17 @@ export default {
 			country: "",
 			email: "",
 			phone: "",
-			prefTherapies: [],
+			therapy: [], //types of therapies
+			therapyOptions: [
+				{ name: "Social Skills Workshop" },
+				{ name: "Assessment & Diagnosis" },
+				{ name: "Occupational Therapy" },
+				{ name: "Language Therapy" },
+				{ name: "Behavioral Therapy" },
+				{ name: "Learning Therapy" },
+				{ name: "Parental Support Group" },
+				{ name: "Preparation for Adult Life" },
+			],
 			prevPaitent: false,
 			diagnosis: false,
 			evalution: false,
