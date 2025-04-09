@@ -1,9 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&display=swap");
 @import "tailwindcss";
-
-input.test {
-	background-color: aqua;
-}
 
 .cormorant-garamond {
 	font-family: "Cormorant Garamond", serif;
@@ -11,6 +8,14 @@ input.test {
 	font-weight: 300;
 	font-style: normal;
 	-webkit-text-fill-color: black;
+}
+
+.SC-encode {
+	font-family: "Encode Sans SC", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 300;
+	font-style: normal;
+	-webkit-text-fill-color: white;
 }
 
 label.contactLabel {
@@ -41,13 +46,13 @@ input[type="checkbox"] {
 	top: 2px;
 }
 
-button.contactSubmit {
-	background: #0b6dff;
+button.manosSubmit {
+	font-family: "Encode Sans SC", sans-serif;
+	text-align: center;
+	background: #06234f;
 	border: 0;
-	padding: 10px 10px;
-	margin-top: 20px;
+	padding: 5px 5px;
 	-webkit-text-fill-color: white;
-	border-radius: 20px;
 }
 .submit {
 	text-align: center;
@@ -56,4 +61,23 @@ button.contactSubmit {
 @theme {
 	--color-color1: #06234f;
 	--color-color2: #d9d9d9;
+}
+
+.multiselect {
+	background-color: #d9d9d9;
+	display: inline-block;
+	margin: 15px 0 0;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: bold;
+	font-size: medium;
+}
+.multiselect__option--selected {
+	background-color: darkblue;
+	-webkit-text-fill-color: white;
+}
+
+.multiselect__option--highlight {
+	background-color: #0b6dff;
+	-webkit-text-fill-color: white;
 }
