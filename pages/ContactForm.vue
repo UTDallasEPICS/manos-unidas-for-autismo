@@ -1,14 +1,29 @@
 <template>
-	<!-- 3/10/25 coder-Lewis, 
-    Could not get the server to run, but coded anyway. Everything should...work. and look decent..
-    either way, all the questions are being asked and getting filed into strings & such for the database. 
-    CSS could be worked on as all the fonts & colors are place holders for now & need to be synced with our
-    color palette & fonts once we decide on them. 
-    -->
+	<!-- 4/9/25 Sreeja, 
 
-	<!--3/29
-	updating design to reflect responsive design and the elements on the figma
-	-->
+	Items in order:
+	1: nav bar
+	2: the contact form page
+
+	In contact form, there is
+	1. a title
+	2. several div containers for inputs
+
+
+	organization of div containers:
+	1. Name div containers
+	2. Identifying info div containers (Gender, DOB, Nationality)
+	3. ID number div containers (ID, SSN)
+	4. Address div containers (Dominican Republic format)
+	5. Parent name div containers
+	6. Contact info div containers
+	7. div containers for selecting insurance and preferred services
+	8. upload info button 
+	9. Yes/No question div containers
+	10. Additional comments div container
+	11. Submit button
+    
+    -->
 
 	<!--div container for the whole app-->
 	<div class="flex h-full w-full flex-col">
