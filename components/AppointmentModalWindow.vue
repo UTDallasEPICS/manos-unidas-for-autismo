@@ -1,17 +1,17 @@
-<!-- 7 Apr 2025
-    When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information
+<!-- 9 Apr 2025
+    When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information.
  -->
 <template>
-	<div class="absolute z-50 w-full items-center" v-if="showWindow">
+	<div class="fixed top-0 right-0 z-50 h-full w-full items-center text-left">
 		<!-- Background -->
 		<div
-			class="absolute z-51 h-full w-full bg-black/70"
-			@click="showWindow = false"
+			class="fixed z-51 h-full w-full bg-black/70"
+			@click="closeWindow"
 		></div>
 
 		<!-- Window -->
 		<div class="text-md relative z-52 m-7 bg-white p-4">
-			<div class="pr-2 text-right text-2xl" @click="showWindow = false">
+			<div class="pr-2 text-right text-2xl" @click="closeWindow">
 				&times;
 			</div>
 
@@ -78,7 +78,12 @@ const props = defineProps<{
 	session: Session;
 }>();
 
-const showWindow = ref(true);
+const emit = defineEmits(["closeWindow"]);
+
+function closeWindow() {
+	emit("closeWindow");
+}
+
 const showPatients = ref(false);
 
 const duration = computed(() => {
