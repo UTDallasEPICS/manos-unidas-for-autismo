@@ -24,10 +24,11 @@ export default {
 				lime: "#DDF492",
 				buttercup: "#F6E274",
 				periwinkle: "#B8D3FB",
+				lavender: "#B8D3FB",
 			},
 			fontFamily: {
-				Cormor: ['"Cormorant Garamond"', "serif"], //confident this doesn't work.
-				Encode: ['"Encode Sans SC"', "sans"],
+				cormor: ["Cormorant Garamond", "serif"], //put font-cormor in CSS body to use
+				encode: ["Encode Sans SC", "sans"],
 			},
 		},
 	},
