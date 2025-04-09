@@ -277,9 +277,7 @@
 							>
 								<div class="flex min-w-33 flex-col">
 									<label class="">Medical Insurance:</label>
-									<label
-										class="flex flex-col text-lg font-bold"
-									>
+									<label class="flex flex-col font-bold">
 										<multiselect
 											class="bg-color2 w-full overflow-y-scroll px-2"
 											v-model="insurance"
@@ -298,9 +296,7 @@
 										>Preferred Services/Therapies:</label
 									>
 
-									<label
-										class="flex flex-col text-lg font-bold"
-									>
+									<label class="flex flex-col font-bold">
 										<!-- FORMATTING HELP HERE-->
 										<multiselect
 											class="bg-color2 overflow-y-scroll px-2"
@@ -318,7 +314,7 @@
 												#selection="{ values, isOpen }"
 											>
 												<span
-													class="multiselect__single flex flex-col"
+													class="multiselect__single text-md flex flex-col"
 													v-if="values.length"
 													v-show="!isOpen"
 													>{{ values.length }} options
@@ -328,7 +324,7 @@
 										</multiselect>
 									</label>
 									<pre
-										class="language-json bg-color2 cormorant-garamond flex w-full flex-col overflow-y-auto px-2 text-lg"
+										class="language-json bg-color2 cormorant-garamond flex w-full flex-col overflow-y-auto px-2"
 									><code class="cormorant-garamond">{{ therapy.map(v => v.name).join('\n') }}</code></pre>
 								</div>
 							</div>
@@ -421,6 +417,18 @@
 								</div>
 							</div>
 
+							<div class="flex w-55 flex-col sm:w-100 md:w-7/10">
+								<label class=""
+									>Any Comments for the therapist?</label
+								>
+								<input
+									class="bg-color2"
+									type="comments"
+									required
+									v-model="comments"
+								/>
+							</div>
+
 							<div class="submit">
 								<button class="manosSubmit mt-5">
 									Submit form
@@ -475,6 +483,7 @@ export default {
 			locality: "",
 			country: "",
 			email: "",
+			comments: "",
 			phone: "",
 			therapy: [], //types of therapies
 			therapyOptions: [
@@ -487,9 +496,9 @@ export default {
 				{ name: "Parental Support Group" },
 				{ name: "Preparation for Adult Life" },
 			],
-			prevPatient: false,
-			diagnosis: false,
-			evaluation: false,
+			prevPatient: "",
+			diagnosis: "",
+			evaluation: "",
 		};
 	},
 	methods: {
