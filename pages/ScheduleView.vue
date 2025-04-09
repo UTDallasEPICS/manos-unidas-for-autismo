@@ -2,9 +2,16 @@
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
 	<div class="m-10">
-		<div class="my-5">
-			<div class="text-xl">Current Schedule for</div>
-			<div class="text-3xl">{{ currentWeek }}</div>
+		<!-- Title part + option buttons -->
+		<div class="my-5 flex justify-between">
+			<div class="flex flex-col justify-center">
+				<div class="text-xl">Current Schedule for</div>
+				<div class="text-3xl">{{ currentWeek }}</div>
+			</div>
+			<div>
+				<createAppointment />
+				<button @click="filterAppointments()">Filter</button>
+			</div>
 		</div>
 
 		<div class="flex justify-center">
@@ -74,13 +81,16 @@ function getCurrentWeek() {
 
 // true is moving forward, false is moving back a week
 function changeWeek(forward: boolean) {
-	console.log("clicky clicky");
 	if (forward) {
-		date.value.setDate(date.value.getDate() + 7);
+		date.value = new Date(date.value.setDate(date.value.getDate() + 7));
 	} else {
-		date.value.setDate(date.value.getDate() - 7);
+		date.value = new Date(date.value.setDate(date.value.getDate() - 7));
 	}
 
 	getCurrentWeek();
+}
+
+function filterAppointments() {
+	console.log("filter button clicky clicky");
 }
 </script>

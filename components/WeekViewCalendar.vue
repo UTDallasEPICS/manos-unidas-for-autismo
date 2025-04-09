@@ -1,4 +1,4 @@
-<!-- 7 Apr 2025 coder-Mika
+<!-- 8 Apr 2025 coder-Mika
 
 	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed.
 -->
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch, toRef } from "vue";
 import type { Session } from "@prisma/client";
 
 const user = {
@@ -141,7 +141,7 @@ const user = {
 		},
 		{
 			id: "4",
-			time: "April 4, 2025 12:45:00",
+			time: "April 8, 2025 12:45:00",
 			duration: 50,
 			comment: "hi",
 			maxAttendance: 2,
@@ -212,8 +212,12 @@ const props = defineProps<{
 	week: Date; // any day in the week wanted to be displayed. week starts at monday
 }>();
 
+const weekDate = toRef(props, "week");
+watch(weekDate, () => {
+	thisWeekSessions.value = getFilteredSessions(user.Sessions);
+});
+
 // a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
-//const thisWeekSessions = getFilteredSessions(props.sessions);
 const thisWeekSessions = ref(getFilteredSessions(user.Sessions));
 
 const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
@@ -293,8 +297,6 @@ function militaryTimeToTwelveHr(h: number): string {
 
 const rowHeight = ref(26); // height in pixels of each row of time for the appointment box component
 
-// functions
-
 // given a date, gets the monday of that week (assuming the week starts on monday)
 function getMonday(d: Date): Date {
 	// if day is sunday, go back to the monday of that week
@@ -318,7 +320,7 @@ function getFilteredSessions(allSessions: Session[]): Session[][] {
 	}
 
 	// get the monday of the week
-	let monday = getMonday(props.week);
+	let monday = getMonday(weekDate.value);
 	for (let i = 0; i < allSessions.length; i++) {
 		let currSessionDay = new Date(allSessions[i].time);
 
