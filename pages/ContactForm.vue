@@ -321,43 +321,108 @@
 													class="multiselect__single flex flex-col"
 													v-if="values.length"
 													v-show="!isOpen"
-													>{{ values[0].name }}
+													>{{ values.length }} options
+													selected
 												</span>
 											</template>
 										</multiselect>
 									</label>
+									<pre
+										class="language-json bg-color2 cormorant-garamond flex w-full flex-col overflow-y-auto px-2 text-lg"
+									><code class="cormorant-garamond">{{ therapy.map(v => v.name).join('\n') }}</code></pre>
 								</div>
 							</div>
 						</div>
 
-						<div class="flex flex-col">
-							<div class="prevPaitent">
-								<!-- Check box-->
-								<input type="checkbox" v-model="prevPaitent" />
-								<label class=""
-									>Have you been a paitent previously with us?
+						<div class="flex flex-col gap-5">
+							<div class="medicalRecords flex flex-col">
+								<!--only takes 1 doc... don't even know if it transfers to database ;;-->
+								<p>Please sumbit any medical records.</p>
+								<label class="">
+									<button class="manosSubmit">
+										<input
+											@change="updateVal"
+											type="file"
+										/>
+									</button>
 								</label>
 							</div>
 
+							<div class="prevPaitent flex flex-col">
+								<label
+									>Have you been a paitent previously with us?
+								</label>
+								<div class="flex flex-row gap-5 text-xl">
+									<label>
+										<input
+											type="radio"
+											name="prevPatient"
+											v-model="prevPatient"
+											value="true"
+										/>Yes
+									</label>
+									<label>
+										<input
+											type="radio"
+											name="prevPatient"
+											v-model="prevPatient"
+											value="false"
+										/>No
+									</label>
+								</div>
+							</div>
+
 							<div class="diagnosis">
-								<!-- Check box-->
-								<input type="checkbox" v-model="diagnosis" />
 								<label class=""
 									>Have you been formally daignosed?</label
 								>
+								<div class="flex flex-row gap-5 text-xl">
+									<label>
+										<input
+											type="radio"
+											name="diagnosis"
+											v-model="diagnosis"
+											value="true"
+										/>Yes
+									</label>
+									<label>
+										<input
+											type="radio"
+											name="diagnosis"
+											v-model="diagnosis"
+											value="false"
+										/>No
+									</label>
+								</div>
 							</div>
 
-							<div class="evalution">
-								<!-- Check box-->
-								<input type="checkbox" v-model="evalution" />
+							<div class="evaluation">
 								<label class=""
 									>Do you want to perform a Diagnostic
 									Evaluation on the patient?</label
 								>
+								<div class="flex flex-row gap-5 text-xl">
+									<label>
+										<input
+											type="radio"
+											name="evaluation"
+											v-model="evaluation"
+											value="true"
+										/>Yes
+									</label>
+									<label>
+										<input
+											type="radio"
+											name="evaluation"
+											v-model="evaluation"
+											value="false"
+										/>No
+									</label>
+								</div>
 							</div>
 
 							<div class="submit">
-								<button class="contactSubmit">
+								<button class="manosSubmit mt-5">
 									Submit form
 								</button>
 							</div>
@@ -422,21 +487,24 @@ export default {
 				{ name: "Parental Support Group" },
 				{ name: "Preparation for Adult Life" },
 			],
-			prevPaitent: false,
+			prevPatient: false,
 			diagnosis: false,
-			evalution: false,
+			evaluation: false,
 		};
 	},
 	methods: {
+		registerMedRec() {
+			//medical rec file checking, should??? work???
+			if (this.fileInp) {
+				this.inpValSubmitted = this.fileInp;
+			}
+		},
+		updateVal(e) {
+			this.fileInp = e.target.value;
+		},
 		handleSubmit() {
 			console.log("form submitted"); //might need to adjust this with database
 		},
 	},
 };
 </script>
-
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap");
-</style>
-
-<style></style>

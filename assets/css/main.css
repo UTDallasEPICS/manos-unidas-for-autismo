@@ -41,11 +41,10 @@ input[type="checkbox"] {
 	top: 2px;
 }
 
-button.contactSubmit {
+button.manosSubmit {
 	background: #0b6dff;
 	border: 0;
 	padding: 10px 10px;
-	margin-top: 20px;
 	-webkit-text-fill-color: white;
 	border-radius: 20px;
 }
@@ -56,4 +55,22 @@ button.contactSubmit {
 @theme {
 	--color-color1: #06234f;
 	--color-color2: #d9d9d9;
+}
+
+.multiselect {
+	background-color: #d9d9d9;
+	display: inline-block;
+	margin: 15px 0 0;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: bold;
+}
+.multiselect__option--selected {
+	background-color: darkblue;
+	-webkit-text-fill-color: white;
+}
+
+.multiselect__option--highlight {
+	background-color: #0b6dff;
+	-webkit-text-fill-color: white;
 }
