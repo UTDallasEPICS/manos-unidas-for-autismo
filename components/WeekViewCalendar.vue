@@ -1,4 +1,4 @@
-<!-- 8 Apr 2025 coder-Mika
+<!-- 9 Apr 2025
 
 	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed.
 -->
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, toRef } from "vue";
+import { computed, ref, watch } from "vue";
 import type { Session } from "@prisma/client";
 
 const user = {
@@ -212,10 +212,13 @@ const props = defineProps<{
 	week: Date; // any day in the week wanted to be displayed. week starts at monday
 }>();
 
-const weekDate = toRef(props, "week");
-watch(weekDate, () => {
-	thisWeekSessions.value = getFilteredSessions(user.Sessions);
-});
+// get new sessions when week chances
+watch(
+	() => props.week,
+	() => {
+		thisWeekSessions.value = getFilteredSessions(user.Sessions);
+	}
+);
 
 // a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
 const thisWeekSessions = ref(getFilteredSessions(user.Sessions));
@@ -320,7 +323,7 @@ function getFilteredSessions(allSessions: Session[]): Session[][] {
 	}
 
 	// get the monday of the week
-	let monday = getMonday(weekDate.value);
+	let monday = getMonday(props.week);
 	for (let i = 0; i < allSessions.length; i++) {
 		let currSessionDay = new Date(allSessions[i].time);
 

@@ -21,12 +21,13 @@
 			</div>
 		</div>
 
-		<div class="flex justify-center">
+		<!-- Calendar part -->
+		<div class="flex w-full justify-center">
 			<div class="pr-3 align-top text-3xl">
 				<button @click="changeWeek(false)">&#x25C0;</button>
 			</div>
 
-			<WeekViewCalendar :week="date" />
+			<WeekViewCalendar :week="date" class="grow" />
 			<div class="pl-3 align-top text-3xl">
 				<button @click="changeWeek(true)">&#x25B6;</button>
 			</div>
