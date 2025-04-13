@@ -207,7 +207,7 @@ input.contactInput {
 	width: 100%;
 	cursor: pointer;
 	align-content: flex-start;
-	padding: 0px 8px 0px 8px;
+	/* padding: 0px 8px 0px 8px; */
 }
 
 .contactFormListboxOptions {
@@ -215,7 +215,7 @@ input.contactInput {
 	width: 100%;
 	flex-direction: column;
 	background-color: var(--color-gray-100);
-	padding: 0px 8px 0px 8px;
+	/* padding: 0px 8px 0px 8px; */
 }
 
 .contactFormListboxOption {
