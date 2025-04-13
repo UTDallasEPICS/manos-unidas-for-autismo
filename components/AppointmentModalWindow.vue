@@ -62,14 +62,27 @@
 					<div>{{ props.session.comment }}</div>
 				</div>
 			</div>
-
-			<div
-				class="flex justify-center"
-				v-if="!permissions.nonEmployee && permissions.editAppointments"
-			>
-				<button class="bg-blue-950 p-2 text-center text-white">
-					Edit Appointment
-				</button>
+			<!-- Buttons -->
+			<div class="flex flex-col justify-center gap-2">
+				<div class="flex justify-center">
+					<button
+						class="bg-blue-950 p-2 text-center text-white"
+						v-if="!permissions.nonEmployee"
+					>
+						Therapy Notes
+					</button>
+				</div>
+				<div class="flex justify-center">
+					<button
+						class="bg-blue-950 p-2 text-center text-white"
+						v-if="
+							!permissions.nonEmployee &&
+							permissions.editAppointments
+						"
+					>
+						Edit Appointment
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
