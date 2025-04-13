@@ -8,6 +8,6 @@ import { onMounted } from "vue";
 import { navigateTo } from "#imports";
 /* add you page's name after the / in 'navigateTo("/")' */
 onMounted(async () => {
-	await navigateTo("/ContactForm");
+	await navigateTo("/");
 });
 </script>
