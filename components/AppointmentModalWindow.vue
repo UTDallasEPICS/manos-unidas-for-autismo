@@ -23,12 +23,13 @@
 				<h2 class="text-xl">
 					Therapist: {{ props.session.Therapist.fName }}
 				</h2>
-				<h3 class="font-bold">
+				<h3 class="font-bold" v-if="!permissions.nonEmployee">
 					Maximum Patients: {{ props.session.maxAttendance }}
 				</h3>
 				<button
 					class="grid grid-cols-2 bg-blue-950 text-white"
 					@click="showPatients = !showPatients"
+					v-if="!permissions.nonEmployee"
 				>
 					<span class="col-span-1 px-2 py-1 text-left font-bold"
 						>Patients Attending</span
@@ -53,7 +54,8 @@
 					v-if="
 						typeof props.session.comment != undefined &&
 						props.session.comment != null &&
-						props.session.comment.length > 0
+						props.session.comment.length > 0 &&
+						!permissions.nonEmployee
 					"
 				>
 					<h3 class="font-bold">Comments:</h3>
@@ -61,7 +63,10 @@
 				</div>
 			</div>
 
-			<div class="flex justify-center">
+			<div
+				class="flex justify-center"
+				v-if="!permissions.nonEmployee && permissions.editAppointments"
+			>
 				<button class="bg-blue-950 p-2 text-center text-white">
 					Edit Appointment
 				</button>
@@ -83,6 +88,12 @@ const emit = defineEmits(["closeWindow"]);
 function closeWindow() {
 	emit("closeWindow");
 }
+
+// will be removed later, for now defines the user's permissions
+const permissions = {
+	nonEmployee: false, // patient = true, user service/admin/therapist = false
+	editAppointments: true, // user service = true, admin/patient/therapist = false
+};
 
 const showPatients = ref(false);
 
