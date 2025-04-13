@@ -63,21 +63,19 @@ button.manosSubmit {
 	--color-color2: #d9d9d9;
 }
 
-.multiselect {
-	background-color: #d9d9d9;
-	display: inline-block;
-	margin: 15px 0 0;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-weight: bold;
-	font-size: medium;
-}
-.multiselect__option--selected {
-	background-color: darkblue;
-	-webkit-text-fill-color: white;
+div.inputsBox {
+	font-family: "Cormorant Garamond", serif;
+	font-optical-sizing: auto;
+	font-weight: 300;
+	font-style: normal;
+	-webkit-text-fill-color: black;
+	flex: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
 }
 
-.multiselect__option--highlight {
-	background-color: #0b6dff;
-	-webkit-text-fill-color: white;
+div.inputBoxRow {
+	display: flex;
+	height: auto;
+	width: 100%;
 }

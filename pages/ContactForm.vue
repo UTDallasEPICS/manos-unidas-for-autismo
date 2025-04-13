@@ -28,13 +28,10 @@
 	<!--div container for the whole app-->
 	<div class="flex h-full w-full flex-col">
 		<!--Navigation bar-->
-		<NavBar></NavBar>
 
 		<!--div container for the contact form-->
 		<div class="flex h-auto place-content-center">
-			<div
-				class="cormorant-garamond flex w-4/5 flex-col flex-wrap text-lg md:w-200"
-			>
+			<div class="inputsBox w-4/5 text-lg md:w-200">
 				<!--Title of contact form-->
 				<h1 class="mt-5 text-2xl sm:mr-3">Patient Contact Form</h1>
 
@@ -51,7 +48,7 @@
 						>
 							<!--div class for the name portion (the name components should occupy the same line)-->
 							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+								class="inputBoxRow flex-col gap-7 sm:flex-col md:flex-row"
 							>
 								<div
 									class="flex w-50 flex-col sm:w-75 md:w-3/10"
@@ -93,27 +90,54 @@
 							</div>
 
 							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+								class="inputBoxRow flex-col gap-7 sm:flex-col md:flex-row"
 							>
 								<div
 									class="flex w-40 flex-col sm:w-60 md:w-1/4"
 								>
 									<label class="">Gender:</label>
-									<!--select box-->
-									<select class="bg-color2" v-model="gender">
-										<option class="bg-white" value="female">
-											Female
-										</option>
-										<option class="bg-white" value="male">
-											Male
-										</option>
-										<option
-											class="bg-white"
-											value="nonBinary"
+
+									<Listbox
+										v-model="gender"
+										as="div"
+										class="bg-color2 flex flex-col overflow-auto"
+									>
+										<ListboxButton
+											class="flex cursor-pointer content-start px-2"
+											>{{
+												gender == ""
+													? "Select Gender:"
+													: gender
+											}}</ListboxButton
 										>
-											Non-Binary
-										</option>
-									</select>
+										<ListboxOptions
+											as="div"
+											class="flex flex-col bg-gray-100 px-2 text-center"
+										>
+											<ListboxOption
+												as="div"
+												class="flex align-middle"
+												v-for="(g, index) in genders"
+												:key="index"
+												:value="g"
+												v-slot="{ active, selected }"
+											>
+												<li
+													:class="{
+														'cursor-pointer bg-blue-500 text-white':
+															active,
+														'cursor-pointer bg-gray-100 text-black':
+															!active,
+													}"
+												>
+													<CheckIcon
+														v-show="selected"
+													/>
+													{{ g }}
+												</li>
+											</ListboxOption>
+										</ListboxOptions>
+									</Listbox>
 								</div>
 
 								<div
@@ -142,7 +166,7 @@
 							</div>
 
 							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+								class="inputBoxRow flex-col gap-7 sm:flex-col md:flex-row"
 							>
 								<div
 									class="flex w-50 flex-col sm:w-75 md:w-3/10"
@@ -170,9 +194,7 @@
 								</div>
 							</div>
 
-							<div
-								class="flex h-auto w-full flex-col gap-1 sm:flex-col"
-							>
+							<div class="inputBoxRow flex-col gap-1 sm:flex-col">
 								<div
 									class="flex w-55 flex-col sm:w-100 md:w-7/10"
 								>
@@ -235,7 +257,7 @@
 							</div>
 
 							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+								class="inputBoxRow flex-col gap-7 sm:flex-col md:flex-row"
 							>
 								<div
 									class="flex w-50 flex-col sm:w-75 md:w-3/10"
@@ -262,9 +284,11 @@
 							</div>
 
 							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+								class="inputBoxRow flex-col gap-7 sm:flex-col md:flex-row"
 							>
-								<div class="flex flex-col">
+								<div
+									class="flex w-55 flex-col sm:w-100 md:w-7/10"
+								>
 									<label class="">Email:</label>
 									<input
 										class="bg-color2"
@@ -274,7 +298,9 @@
 									/>
 								</div>
 
-								<div class="flex flex-col">
+								<div
+									class="flex w-55 flex-col sm:w-100 md:w-7/10"
+								>
 									<label class=""
 										>Phone Number/Whatsapp:</label
 									>
@@ -288,59 +314,116 @@
 							</div>
 
 							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-col md:flex-row"
+								class="inputBoxRow flex-col gap-7 sm:flex-col md:flex-row"
 							>
-								<div class="flex min-w-33 flex-col">
+								<div
+									class="flex w-55 flex-col sm:w-100 md:w-7/10"
+								>
 									<label class="">Medical Insurance:</label>
-									<label class="flex flex-col font-bold">
-										<multiselect
-											class="bg-color2 w-full overflow-y-scroll px-2"
-											v-model="insurance"
-											:options="insuranceOptions"
-											:searchable="false"
-											:close-on-select="true"
-											:show-labels="false"
-											placeholder="Pick a value"
-											aria-label="pick a value"
-										></multiselect>
-									</label>
+
+									<Listbox
+										v-model="insurance"
+										as="div"
+										class="bg-color2 flex flex-col overflow-auto"
+									>
+										<ListboxButton
+											class="flex cursor-pointer content-start px-2"
+											>{{
+												insurance == ""
+													? "Select the insurance:"
+													: insurance
+											}}</ListboxButton
+										>
+										<ListboxOptions
+											as="div"
+											class="flex flex-col bg-gray-100 px-2 text-center"
+										>
+											<ListboxOption
+												as="div"
+												class="flex align-middle"
+												v-for="(
+													ins, index
+												) in insuranceOptions"
+												:key="index"
+												:value="ins"
+												v-slot="{ active, selected }"
+											>
+												<li
+													:class="{
+														'cursor-pointer bg-blue-500 text-white':
+															active,
+														'cursor-pointer bg-gray-100 text-black':
+															!active,
+													}"
+												>
+													<CheckIcon
+														v-show="selected"
+													/>
+													{{ ins }}
+												</li>
+											</ListboxOption>
+										</ListboxOptions>
+									</Listbox>
 								</div>
 
-								<div class="flex flex-col">
+								<div
+									class="flex w-55 flex-col sm:w-100 md:w-7/10"
+								>
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
-
-									<label class="flex flex-col font-bold">
-										<!-- FORMATTING HELP HERE-->
-										<multiselect
-											class="bg-color2 overflow-y-scroll px-2"
-											v-model="therapy"
-											:options="therapyOptions"
-											:multiple="true"
-											:close-on-select="false"
-											:clear-on-select="false"
-											:preserve-search="true"
-											placeholder="Our Services"
-											label="name"
-											track-by="name"
+									<Listbox
+										v-model="therapies"
+										multiple
+										as="div"
+										class="bg-color2 flex flex-col content-start overflow-auto"
+									>
+										<ListboxButton
+											class="flex cursor-pointer content-start px-2"
+											>{{
+												therapies.length > 0
+													? therapies
+															.map(
+																(therapy) =>
+																	therapy.name
+															)
+															.join(", ")
+													: "Select different therapies:"
+											}}</ListboxButton
 										>
-											<template
-												#selection="{ values, isOpen }"
-											>
-												<span
-													class="multiselect__single text-md flex flex-col"
-													v-if="values.length"
-													v-show="!isOpen"
-													>{{ values.length }} options
-													selected
-												</span>
-											</template>
-										</multiselect>
-									</label>
-									<pre
-										class="language-json bg-color2 cormorant-garamond flex w-full flex-col overflow-y-auto px-2"
-									><code class="cormorant-garamond">{{ therapy.map(v => v.name).join('\n') }}</code></pre>
+										<ListboxOptions
+											as="div"
+											class="flex flex-col bg-gray-100 px-2 text-center"
+										>
+											<ul>
+												<ListboxOption
+													as="div"
+													class="flex align-middle"
+													v-for="therapy in therapyOptions"
+													:key="therapy.name"
+													:value="therapy"
+													v-slot="{
+														active,
+														selected,
+													}"
+												>
+													<div
+														:class="{
+															'cursor-pointer bg-blue-500 text-white':
+																active,
+															'cursor-pointer bg-gray-100 text-black':
+																!active,
+														}"
+													>
+														<CheckIcon
+															v-show="selected"
+														/>
+														{{ therapy.name }}
+													</div>
+												</ListboxOption>
+											</ul>
+										</ListboxOptions>
+									</Listbox>
 								</div>
 							</div>
 						</div>
@@ -350,9 +433,11 @@
 								<!--only takes 1 doc... don't even know if it transfers to database ;;-->
 								<p>Please sumbit any medical records.</p>
 								<label class="">
-									<button class="manosSubmit">
+									<button
+										class="manosSubmit flex w-55 flex-col sm:w-100 md:w-35/100"
+									>
 										<input
-											@change="updateVal"
+											@change="registerMedRec"
 											type="file"
 										/>
 									</button>
@@ -436,12 +521,13 @@
 								<label class=""
 									>Any Comments for the therapist?</label
 								>
-								<input
+								<textarea
 									class="bg-color2"
 									type="comments"
 									required
 									v-model="comments"
-								/>
+								>
+								</textarea>
 							</div>
 
 							<div class="submit">
@@ -457,20 +543,62 @@
 	</div>
 </template>
 
+<script setup>
+import { ref } from "vue";
+import {
+	Listbox,
+	ListboxButton,
+	ListboxOptions,
+	ListboxOption,
+} from "@headlessui/vue";
+
+const genders = ["Male", "Female", "Non-Binary"];
+const gender = ref("");
+
+const insuranceOptions = [
+	"SENASA contributivo",
+	"SENASA subsidiado",
+	"ARS HUMANO",
+	"MAPFRE",
+	"LA MONUMENTAL",
+	"ARS Universal",
+	"ARS Meta Salud",
+	"ARS Plan Salud Banco Central",
+	"RENACER",
+	"Otro",
+	"Not Listed",
+];
+const insurance = ref("");
+
+const therapyOptions = [
+	{ name: "Social Skills Workshop" },
+	{ name: "Assessment & Diagnosis" },
+	{ name: "Occupational Therapy" },
+	{ name: "Language Therapy" },
+	{ name: "Behavioral Therapy" },
+	{ name: "Learning Therapy" },
+	{ name: "Parental Support Group" },
+	{ name: "Preparation for Adult Life" },
+];
+const therapies = ref([]); //types of therapies
+</script>
+
 <script>
-import Multiselect from "vue-multiselect";
 export default {
 	components: {
-		Multiselect,
+		Listbox,
+		ListboxButton,
+		ListboxOptions,
+		ListboxOption,
 	},
 	data() {
 		return {
 			//empty strings that will take the entered data. keep empty.
+			hover: "",
 			firstName: "",
 			middleName: "",
 			lastName: "",
 			age: "",
-			gender: "",
 			DOB: "",
 			nationality: "",
 			parentFirstName: "",
@@ -478,20 +606,6 @@ export default {
 			ID: "",
 			SSN: "",
 			record: "",
-			insurance: "",
-			insuranceOptions: [
-				"SENASA contributivo",
-				"SENASA subsidiado",
-				"ARS HUMANO",
-				"MAPFRE",
-				"LA MONUMENTAL",
-				"ARS Universal",
-				"ARS Meta Salud",
-				"ARS Plan Salud Banco Central",
-				"RENACER",
-				"Otro",
-				"Not Listed",
-			],
 			address1: "",
 			address2: "",
 			postalCode: "",
@@ -500,31 +614,20 @@ export default {
 			email: "",
 			comments: "",
 			phone: "",
-			therapy: [], //types of therapies
-			therapyOptions: [
-				{ name: "Social Skills Workshop" },
-				{ name: "Assessment & Diagnosis" },
-				{ name: "Occupational Therapy" },
-				{ name: "Language Therapy" },
-				{ name: "Behavioral Therapy" },
-				{ name: "Learning Therapy" },
-				{ name: "Parental Support Group" },
-				{ name: "Preparation for Adult Life" },
-			],
 			prevPatient: "",
 			diagnosis: "",
 			evaluation: "",
+			medicalRecordFiles: [],
 		};
 	},
 	methods: {
-		registerMedRec() {
+		registerMedRec(e) {
 			//medical rec file checking, should??? work???
-			if (this.fileInp) {
-				this.inpValSubmitted = this.fileInp;
+			if (e.target.value) {
+				for (const f in e.target.files) {
+					this.medicalRecordFiles.push(f);
+				}
 			}
-		},
-		updateVal(e) {
-			this.fileInp = e.target.value;
 		},
 		handleSubmit() {
 			console.log("form submitted"); //might need to adjust this with database
