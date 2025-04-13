@@ -2,6 +2,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&display=swap");
 @import "tailwindcss";
 
+@theme {
+	--color-color1: #06234f;
+	--color-color2: #d9d9d9;
+}
+
 .cormorant-garamond {
 	font-family: "Cormorant Garamond", serif;
 	font-optical-sizing: auto;
@@ -18,32 +23,24 @@
 	-webkit-text-fill-color: white;
 }
 
-label.contactLabel {
-	display: inline-block;
-	margin: 15px 0 0;
-	font-size: 0.6em;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-weight: bold;
-	font-weight: 600;
-}
-
-input.contactInput,
-select.contactSelect {
-	display: block;
-	padding: 10px 10px;
-	width: 100%;
-	box-sizing: border-box;
-	border: none;
-	border-bottom: 1px solid #ddd;
-	color: #555;
-}
-input[type="checkbox"] {
-	display: inline-block;
-	width: 16px;
-	margin: 0 10px 0 0;
-	position: relative;
-	top: 2px;
+button.fileSubmit {
+	font-family: "Encode Sans SC", sans-serif;
+	text-align: center;
+	background: #06234f;
+	border: 0;
+	padding: 5px 5px;
+	-webkit-text-fill-color: white;
+	display: flex;
+	flex-direction: column;
+	@media (width >= 0rem) {
+		width: calc(var(--spacing) * 55);
+	}
+	@media (width >= 40rem) {
+		width: calc(var(--spacing) * 100);
+	}
+	@media (width >= 48rem) {
+		width: calc(35 / 100 * 100%);
+	}
 }
 
 button.manosSubmit {
@@ -54,16 +51,21 @@ button.manosSubmit {
 	padding: 5px 5px;
 	-webkit-text-fill-color: white;
 }
-.submit {
-	text-align: center;
+
+div.fullPage {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
 }
 
-@theme {
-	--color-color1: #06234f;
-	--color-color2: #d9d9d9;
+div.contactFormPage {
+	display: flex;
+	height: auto;
+	place-content: center;
 }
 
-div.inputsBox {
+div.contactFormArea {
 	font-family: "Cormorant Garamond", serif;
 	font-optical-sizing: auto;
 	font-weight: 300;
@@ -72,10 +74,157 @@ div.inputsBox {
 	flex: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
+	@media (width >= 0rem) {
+		width: calc(4 / 5 * 100%);
+	}
+	@media (width >= 48rem) {
+		width: calc(var(--spacing) * 200);
+	}
+}
+
+div.contactFormContent {
+	font-size: var(--text-lg);
+	line-height: var(--tw-leading, var(--text-lg--line-height));
+	justify-content: flex-start;
+	display: flex;
+	width: 100%;
+	padding: calc(var(--spacing) * 5);
+}
+
+form.contactForm {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: center;
+	background-color: var(--color-white);
+}
+
+div.freeResponseArea {
+	display: flex;
+	width: 100%;
+	flex-wrap: wrap;
+	gap: calc(var(--spacing) * 5);
 }
 
 div.inputBoxRow {
 	display: flex;
 	height: auto;
 	width: 100%;
+	gap: calc(var(--spacing) * 7);
+	@media (width >= 0rem) {
+		flex-direction: column;
+	}
+	@media (width >= 48rem) {
+		flex-direction: row;
+	}
+}
+
+div.addressInputBoxRow {
+	height: auto;
+	width: 100%;
+	gap: calc(var(--spacing) * 1);
+	@media (width >= 0rem) {
+		flex-direction: column;
+	}
+	@media (width >= 48rem) {
+		flex-direction: row;
+	}
+}
+
+div.textLabelAndBox_Size1 {
+	display: flex;
+	flex-direction: column;
+	@media (width >= 0rem) {
+		width: calc(var(--spacing) * 50);
+	}
+	@media (width >= 40rem) {
+		width: calc(var(--spacing) * 75);
+	}
+	@media (width >= 48rem) {
+		width: calc(3 / 10 * 100%);
+	}
+}
+
+div.textLabelAndBox_Size2 {
+	display: flex;
+	flex-direction: column;
+	@media (width >= 0rem) {
+		width: calc(var(--spacing) * 40);
+	}
+	@media (width >= 40rem) {
+		width: calc(var(--spacing) * 60);
+	}
+	@media (width >= 48rem) {
+		width: calc(1 / 4 * 100%);
+	}
+}
+
+div.textLabelAndBox_Size3 {
+	display: flex;
+	flex-direction: column;
+	@media (width >= 0rem) {
+		width: calc(var(--spacing) * 55);
+	}
+	@media (width >= 40rem) {
+		width: calc(var(--spacing) * 100);
+	}
+	@media (width >= 48rem) {
+		width: calc(7 / 10 * 100%);
+	}
+}
+
+div.textLabelAndBox_Size4 {
+	display: flex;
+	flex-direction: column;
+	@media (width >= 0rem) {
+		width: calc(var(--spacing) * 30);
+	}
+	@media (width >= 40rem) {
+		width: calc(var(--spacing) * 40);
+	}
+	@media (width >= 48rem) {
+		width: calc(1 / 5 * 100%);
+	}
+}
+
+input.contactInput {
+	background-color: #d9d9d9;
+	fill: #d9d9d9;
+	padding: 0px 8px 0px 8px;
+}
+
+.contactFormListbox {
+	background-color: #d9d9d9;
+	fill: #d9d9d9;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+}
+
+.contactFormListboxButton {
+	display: flex;
+	width: 100%;
+	cursor: pointer;
+	align-content: flex-start;
+	padding: 0px 8px 0px 8px;
+}
+
+.contactFormListboxOptions {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	background-color: var(--color-gray-100);
+	padding: 0px 8px 0px 8px;
+}
+
+.contactFormListboxOption {
+	display: flex;
+	width: 100%;
+	cursor: pointer;
+	&:hover {
+		@media (hover: hover) {
+			background-color: var(--color-blue-500);
+		}
+	}
 }
