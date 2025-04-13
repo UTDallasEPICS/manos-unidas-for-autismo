@@ -1,4 +1,5 @@
 <template>
+
 	<nav class="flex items-center justify-between p-4 shadow-md">
 		<!-- Logo -->
 		<div class="text-xl font-bold">Connected Care</div>
