@@ -93,7 +93,15 @@ const user = {
 				email: "email@site.com",
 				contactPref: "EMAIL",
 			},
-			Patients: {},
+			Patients: [
+				{
+					id: "3",
+					fName: "FirstName",
+					lName: "LastName",
+					email: "email@site.com",
+					contactPref: "EMAIL",
+				},
+			],
 		},
 		{
 			id: "2",
@@ -115,7 +123,15 @@ const user = {
 				email: "email@site.com",
 				contactPref: "EMAIL",
 			},
-			Patients: {},
+			Patients: [
+				{
+					id: "3",
+					fName: "FirstName",
+					lName: "LastName",
+					email: "email@site.com",
+					contactPref: "EMAIL",
+				},
+			],
 		},
 		{
 			id: "3",
@@ -137,7 +153,15 @@ const user = {
 				email: "email@site.com",
 				contactPref: "EMAIL",
 			},
-			Patients: {},
+			Patients: [
+				{
+					id: "3",
+					fName: "FirstName",
+					lName: "LastName",
+					email: "email@site.com",
+					contactPref: "EMAIL",
+				},
+			],
 		},
 		{
 			id: "4",
@@ -159,7 +183,15 @@ const user = {
 				email: "email@site.com",
 				contactPref: "EMAIL",
 			},
-			Patients: {},
+			Patients: [
+				{
+					id: "3",
+					fName: "FirstName",
+					lName: "LastName",
+					email: "email@site.com",
+					contactPref: "EMAIL",
+				},
+			],
 		},
 		{
 			id: "5",
@@ -181,7 +213,15 @@ const user = {
 				email: "email@site.com",
 				contactPref: "EMAIL",
 			},
-			Patients: {},
+			Patients: [
+				{
+					id: "3",
+					fName: "FirstName",
+					lName: "LastName",
+					email: "email@site.com",
+					contactPref: "EMAIL",
+				},
+			],
 		},
 		{
 			id: "6",
@@ -203,7 +243,15 @@ const user = {
 				email: "email@site.com",
 				contactPref: "EMAIL",
 			},
-			Patients: {},
+			Patients: [
+				{
+					id: "3",
+					fName: "FirstName",
+					lName: "LastName",
+					email: "email@site.com",
+					contactPref: "EMAIL",
+				},
+			],
 		},
 	],
 };

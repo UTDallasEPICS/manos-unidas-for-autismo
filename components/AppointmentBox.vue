@@ -1,15 +1,21 @@
-<!-- 7 Apr 2025 coder-Mika
-	Appointment box displays an overview of the session details: the appointment name, the therapist, and the duration of the session. It's position and size depends on the duration and on the hour the calendar starts with.
+<!-- 9 Apr 2025 coder-Mika
+	Appointment box displays an overview of the session details: the appointment name, the therapist, and the duration of the session. It's position and size depends on the duration and on the hour the calendar starts with. When clicked, it displays the details of the session
 -->
 <template>
+	<AppointmentModalWindow
+		:session="props.session"
+		@close-window="showWindow = false"
+		v-if="showWindow"
+	/>
 	<div
 		ref="container"
-		class="absolute grid w-full grid-cols-2 grid-rows-3 overflow-hidden rounded-md border-4 text-center"
+		class="absolute grid w-full cursor-pointer grid-cols-2 grid-rows-3 overflow-hidden rounded-md border-4 text-center"
 		:style="{
 			backgroundColor: boxColor,
 			height: boxHeight,
 			top: boxTop,
 		}"
+		@click="showWindow = true"
 	>
 		<div
 			ref="sessionTypeBox"
@@ -59,6 +65,8 @@ const props = defineProps<{
 	calendarStartHour: number;
 	rowHeight: number;
 }>();
+
+defineEmits(["showAppointmentDetails"]);
 
 // gets the session duration string
 const date = new Date(props.session.time);
@@ -176,4 +184,6 @@ function getSessionEndTime(d: Date, sessionLength: number): Date {
 	endTime.setMinutes(d.getMinutes() + sessionLength);
 	return endTime;
 }
+
+const showWindow = ref(false);
 </script>
