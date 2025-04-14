@@ -10,11 +10,13 @@
 		></div>
 
 		<!-- Window -->
-		<div class="text-md relative z-52 m-7 bg-white p-4">
-			<div class="pr-2 text-right text-2xl" @click="closeWindow">
-				&times;
+		<div class="text-md relative z-52 m-7 flex flex-col bg-white p-4">
+			<div
+				class="flex cursor-pointer justify-end pr-2 text-right"
+				@click="closeWindow"
+			>
+				<X :size="30" />
 			</div>
-
 			<!-- Information -->
 			<div class="flex flex-col gap-2">
 				<h1 class="text-3xl">
@@ -26,16 +28,20 @@
 				<h3 class="font-bold" v-if="!permissions.nonEmployee">
 					Maximum Patients: {{ props.session.maxAttendance }}
 				</h3>
+				<h3 class="font-bold" v-else>
+					Space Left: {{ remainingSpace }}
+				</h3>
 				<button
-					class="grid grid-cols-2 bg-blue-950 text-white"
+					class="grid cursor-pointer grid-cols-2 bg-blue-950 text-white"
 					@click="showPatients = !showPatients"
 					v-if="!permissions.nonEmployee"
 				>
 					<span class="col-span-1 px-2 py-1 text-left font-bold"
 						>Patients Attending</span
 					>
-					<span class="col-span-1 px-2 py-1 text-right">
-						&#x22C1;
+					<span class="col-span-1 flex justify-end px-2 py-1">
+						<ChevronDown v-if="!showPatients" />
+						<ChevronUp v-else />
 					</span>
 				</button>
 				<div v-if="showPatients" class="px-5">
@@ -66,7 +72,7 @@
 			<div class="flex flex-col justify-center gap-2">
 				<div class="flex justify-center">
 					<button
-						class="bg-blue-950 p-2 text-center text-white"
+						class="cursor-pointer bg-blue-950 p-2 text-center text-white"
 						v-if="!permissions.nonEmployee"
 					>
 						Therapy Notes
@@ -74,7 +80,7 @@
 				</div>
 				<div class="flex justify-center">
 					<button
-						class="bg-blue-950 p-2 text-center text-white"
+						class="cursor-pointer bg-blue-950 p-2 text-center text-white"
 						v-if="
 							!permissions.nonEmployee &&
 							permissions.editAppointments
@@ -91,6 +97,7 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import type { Session } from "@prisma/client";
+import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
 
 const props = defineProps<{
 	session: Session;
@@ -109,6 +116,19 @@ const permissions = {
 };
 
 const showPatients = ref(false);
+
+const remainingSpace = computed(() => {
+	let result = 0;
+	if (props.session.Patients.length != undefined) {
+		result = props.session.maxAttendance - props.session.Patients.length;
+		if (result < 0) {
+			result = 0;
+		}
+	} else {
+		result = 0;
+	}
+	return result;
+});
 
 const duration = computed(() => {
 	const date = new Date(props.session.time);

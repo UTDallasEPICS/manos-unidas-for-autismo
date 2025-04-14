@@ -9,7 +9,7 @@
 	/>
 	<div
 		ref="container"
-		class="absolute grid w-full grid-cols-2 grid-rows-3 overflow-hidden rounded-md border-4 text-center"
+		class="absolute grid w-full cursor-pointer grid-cols-2 grid-rows-3 overflow-hidden rounded-md border-4 text-center"
 		:style="{
 			backgroundColor: boxColor,
 			height: boxHeight,
