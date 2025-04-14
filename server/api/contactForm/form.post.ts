@@ -76,14 +76,14 @@ export default defineEventHandler(async (event) => {
 	} = validatedBody.data;
 
 	try {
-		//If postcode does not exist, add it to database
-		await prisma.postCodeCity.upsert({
-			where: { postCode: postcode },
-			update: {},
-			create: { postCode: postcode, city },
-		});
-
 		const result = await prisma.$transaction(async (tx) => {
+			//If postcode does not exist, add it to database
+			await prisma.postCodeCity.upsert({
+				where: { postCode: postcode },
+				update: {},
+				create: { postCode: postcode, city },
+			});
+
 			//Create User entry
 			const user = await tx.user.create({
 				data: {
@@ -144,16 +144,16 @@ export default defineEventHandler(async (event) => {
 					throw createError({
 						statusCode: 400,
 						statusMessage: "Schema Uniqueness Constraint Violated",
+						data: e.meta,
 					});
-					break;
 				case "P2005":
 				case "P2006":
 					console.log("bad input");
 					throw createError({
 						statusCode: 400,
 						statusMessage: "Wrong input type",
+						data: e.meta,
 					});
-					break;
 				case "P2011":
 				case "P2012":
 				case "P2013":
@@ -161,13 +161,14 @@ export default defineEventHandler(async (event) => {
 					throw createError({
 						statusCode: 400,
 						statusMessage: "Missing required fields",
+						data: e.meta,
 					});
-					break;
 				default:
 					throw createError({
 						statusCode: 400,
 						statusMessage: "Unexpected Prisma error",
 						message: e.message,
+						data: e.meta,
 					});
 			}
 		}
