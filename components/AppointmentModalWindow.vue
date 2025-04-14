@@ -18,7 +18,7 @@
 				<X :size="30" />
 			</div>
 			<!-- Information -->
-			<div class="flex flex-col gap-2">
+			<div class="m-3 flex flex-col gap-3">
 				<h1 class="text-3xl">
 					{{ props.session.Type.name + " - " + duration }}
 				</h1>
@@ -51,9 +51,9 @@
 					>
 						{{ patient.fName + " " + patient.lName }}
 						<!-- replace with link to patient profile later -->
-						<span class="text-xs text-blue-400"
-							>View Profile &gt;</span
-						>
+						<span class="cursor-pointer px-3 text-xs text-blue-400">
+							View Profile &gt;
+						</span>
 					</li>
 				</div>
 				<div
@@ -69,7 +69,7 @@
 				</div>
 			</div>
 			<!-- Buttons -->
-			<div class="flex flex-col justify-center gap-2">
+			<div class="flex flex-col justify-center gap-3">
 				<div class="flex justify-center">
 					<button
 						class="cursor-pointer bg-blue-950 p-2 text-center text-white"
