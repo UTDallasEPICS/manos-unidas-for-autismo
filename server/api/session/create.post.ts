@@ -4,11 +4,12 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 const sessionSchema = z.object({
-	typeID: z.string(), // We are passing the ID of the session type
+	typeId: z.string(),
 	time: z.coerce.date(),
 	comment: z.string().optional(),
-	maxAttendance: z.number().optional().default(1),
-	therapistID: z.string(),
+	maxAttendance: z.number().gte(1),
+	therapistId: z.string(),
+	duration: z.number().min(1),
 });
 
 export default defineEventHandler(async (event) => {
@@ -30,17 +31,17 @@ export default defineEventHandler(async (event) => {
 		});
 	}
 
-	const { typeID, time, comment, maxAttendance, therapistID } =
+	const { typeId, time, comment, maxAttendance, therapistId, duration } =
 		validatedBody.data;
 
-	// Create the session with the type directly assigned as a string
 	const newSession = await prisma.session.create({
 		data: {
-			Type: typeID, // Directly assigning typeID (string)
-			Time: time,
-			Comment: comment || null,
-			MaxAttendance: maxAttendance,
-			TherapistID: therapistID,
+			typeId,
+			therapistId,
+			time,
+			comment,
+			maxAttendance,
+			duration,
 		},
 	});
 
