@@ -1,7 +1,6 @@
 <template>
-	<NavBar />
+	<Nav />
 	<NuxtPage />
-	<createAppointment />
 	<Footer />
 </template>
 
