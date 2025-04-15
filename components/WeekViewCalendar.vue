@@ -75,7 +75,7 @@ const user = {
 	Sessions: [
 		{
 			id: "1",
-			time: "April 1, 2025 9:00:00",
+			time: "April 1, 2025 12:00:00",
 			duration: 60,
 			comment: "hi",
 			maxAttendance: 2,
@@ -195,7 +195,7 @@ const user = {
 		},
 		{
 			id: "5",
-			time: "April 2, 2025 9:00:00",
+			time: "April 1, 2025 8:00:00",
 			duration: 50,
 			comment: "hi",
 			maxAttendance: 2,
@@ -386,6 +386,50 @@ function getFilteredSessions(allSessions: Session[]): Session[][] {
 		}
 	}
 
+	// sort sessions
+	for (let i = 0; i < 5; i++) {
+		filteredSessions[i] = sortSessions(filteredSessions[i]);
+	}
+
 	return filteredSessions;
+}
+
+// uses merge sort to sort sessions by start time
+function sortSessions(unsorted: Session[]): Session[] {
+	let sorted: Session[] = [];
+
+	if (unsorted.length <= 1) {
+		// base case: only 1 session
+		return (sorted = unsorted);
+	} else {
+		// recursive case: multiple sessions
+		const middle = Math.floor(unsorted.length / 2);
+
+		let leftHalf = sortSessions(unsorted.slice(0, middle)); // sort left half
+		let rightHalf = sortSessions(unsorted.slice(middle)); // sort right half
+
+		// merge halves
+		let leftIdx = 0;
+		let rightIdx = 0;
+
+		while (leftIdx < leftHalf.length && rightIdx < rightHalf.length) {
+			let leftTime = new Date(leftHalf[leftIdx].time);
+			let rightTime = new Date(rightHalf[rightIdx].time);
+			if (leftTime.getTime() < rightTime.getTime()) {
+				sorted.push(leftHalf[leftIdx]);
+				leftIdx++;
+			} else {
+				sorted.push(rightHalf[rightIdx]);
+				rightIdx++;
+			}
+		}
+		// concatenate any remaining sessions into sorted list
+		sorted = sorted.concat(
+			leftHalf.slice(leftIdx),
+			rightHalf.slice(rightIdx)
+		);
+	}
+
+	return sorted;
 }
 </script>
