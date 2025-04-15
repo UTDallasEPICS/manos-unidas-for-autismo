@@ -5,172 +5,224 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.db"
+    provider = "sqlite"
+    url      = "file:dev.db"
 }
 
 model User {
-  ID        String           @id @default(uuid())
-  FName     String
-  MInit     String?
-  LName     String
-  Email     String
-  Phone     String?
-  enum      PreferredContact
-  Type      UserType?
-  Patient   Patient?
-  Parent    Parent?
-  Therapist Therapist?
-}  
+    id                  String          @id @default(uuid())
 
-enum PreferredContact {
-  EMAIL
-  PHONE
+    fName               String
+    mInit               String?
+    lName               String
+    email               String          @unique
+    phone               String?         @unique
+    whatsApp            String?         @unique
+    contactPref         ContactType     @default(EMAIL)
+    type                UserType?
+
+    Specializations     Specialization[]
+    Sessions            Session[]
+
+    NonEmployee         NonEmployee?
 }
 
-enum UserType {
-  ADMIN
-  USER_SUPPORT
+// if performance becomes an issue, denomailize to directly join parent/patient to user
+model NonEmployee {
+    id                  String          @id @unique
+    User                User            @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    dob                 DateTime
+    gender              Gender
+    streetName          String
+    streetNum           Int
+    buildingNum         Int?
+
+    postCode            Int
+    PostCodeCity        PostCodeCity    @relation(fields: [postCode], references: [postCode], onDelete: Restrict, onUpdate: Cascade)
+
+    Children            Patient[]       @relation(name: "parent")
+
+    Patient             Patient?
 }
 
-model Parent {
-  ID   String @id @unique
-  User User   @relation(fields: [ID], references: [ID])
+model PostCodeCity {
+    postCode            Int             @id @unique
+    city                String
 
-  DOB          DateTime
-  Gender       Gender
-  Address      String
-  Children     Patient[]
-  ContactForms ContactForm[]
+    person              NonEmployee[]
 }
 
 model Patient {
-  ID   String @id @unique
-  User User   @relation(fields: [ID], references: [ID])
+    id                  String          @id @unique
+    User                NonEmployee     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  DOB             DateTime
-  Gender          Gender
-  Address         String
-  Identification  String
-  Sponsor         Sponsor?         @relation(fields: [SponsorID], references: [ID])
-  SponsorID       String?
-  Diagnosed       Boolean
-  Appointments    SessionPatient[]
-  MedicalRecords  MedicalRecord[]
-  ProgressReports Report[]
+    identification      String          @unique
+    diagnosed           Boolean
 
-  ParentID String?
-  Parent   Parent? @relation(fields: [ParentID], references: [ID])
+    Appointments        SessionPatient[]
+    MedicalRecords      MedicalRecord[]
+    ProgressReports     Report[]
+    ContactForm         ContactForm?
 
-  ContactForm ContactForm?
+    sponsorId           String?
+    Sponsor             Sponsor?        @relation(fields: [sponsorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    Parents             NonEmployee[]   @relation(name: "parent")
 }
 
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
+// define therapist specializations here
+model Specialization {
+    id                  String          @id @default(uuid())
+
+    name                String          @unique
+
+    Therapists          User[]
 }
 
 model Session {
-  ID            String   @id @default(uuid())
-  Type          String
-  Time          DateTime
-  Comment       String?
-  MaxAttendance Int
+    id                  String          @id @default(uuid())
 
-  Patients SessionPatient[]
+    time                DateTime        @default(now())
+    duration            Int
+    comment             String?
+    maxAttendance       Int             @default(1)
 
-  TherapistID String
-  Therapist   Therapist @relation(fields: [TherapistID], references: [ID])
+    typeId              String
+    Type                SessionType     @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    therapistId         String
+    Therapist           User            @relation(fields: [therapistId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    Patients            SessionPatient[]
+
+    @@unique([time, therapistId])
+}
+
+// define session types in this table
+model SessionType {
+    id                  String          @id @default(uuid())
+
+    name                String          @unique
+    color               Color
+
+    Sessions            Session[]
 }
 
 model SessionPatient {
-  SessionID String
-  Session   Session @relation(fields: [SessionID], references: [ID])
+    sessionId           String
+    Session             Session         @relation(fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  PatientID String
-  Patient   Patient @relation(fields: [PatientID], references: [ID])
+    patientId           String
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete:Restrict, onUpdate:Cascade)
 
-  isPaidFor Boolean
+    paid                Boolean         @default(false)
 
-  @@id([SessionID, PatientID])
+    @@id([sessionId, patientId])
 }
 
 model MedicalRecord {
-  ID        String  @id @default(uuid())
-  Data      String
-  PatientID String
-  Patient   Patient @relation(fields: [PatientID], references: [ID])
-}
+    id                  String          @id @default(uuid())
 
-model Therapist {
-  ID                      String            @id @unique
-  User                    User              @relation(fields: [ID], references: [ID])
-  TherapistSpecialization TSpecialization[]
-  Sessions                Session[]
-}
+    data                String
 
-model TSpecialization {
-  ID             String         @id @default(uuid())
-  TherapistID    String
-  Therapist      Therapist      @relation(fields: [TherapistID], references: [ID])
-  Specialization Specialization
-}
-
-enum Specialization {
-  LEARNING
-  SOCIAL_HABILITATION
-  CONDUCTUAL
-  INTERVENTIONAL
-  LANGUAGE
-  OCCUPATIONAL
-  INDEPENDENT_LIVING
+    patientId           String
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Sponsor {
-  ID       String    @id @default(uuid())
-  Name     String
-  Contact  String
-  Patients Patient[]
+    id                  String          @id @default(uuid())
+
+    name                String
+    contact             String
+
+    Patients            Patient[]
 }
 
 model Report {
-  ID          String       @id @default(uuid())
-  PatientID   String
-  DateCreated DateTime     @default(now())
-  Patient     Patient      @relation(fields: [PatientID], references: [ID])
-  Data        ReportData[]
+    id                  String          @id @default(uuid())
+
+    date                DateTime        @default(now())
+
+    patientId           String
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    Questions           ReportData[]
 }
 
 model ReportData {
-  ID       String @id @default(uuid())
-  ReportID String
-  Question String
-  Answer   String
+    reportId            String
+    Report              Report          @relation(fields: [reportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  Report Report @relation(fields: [ReportID], references: [ID])
+    question            String
+    answer              String
+
+    @@id([reportId, question])
 }
 
 model ContactForm {
-  ID                  String  @id @default(uuid())
-  BeenHereBefore      Boolean
-  WantsDiagnosticEval Boolean
-  Comments            String?
-  Status              Status  @default(NEEDS_PROCESSING)
+    id                  String          @id @default(uuid())
 
-  parentID String?
-  Parent   Parent? @relation(fields: [parentID], references: [ID])
+    nationality         String
+    returnPatient       Boolean
+    wantsEval           Boolean
+    insurance           InsuranceCompany
+    comment             String?
+    status              Status          @default(PROCESSING)
 
-  patientID String  @unique
-  Patient   Patient @relation(fields: [patientID], references: [ID])
+    patientId           String          @unique
+    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum ContactType {
+    EMAIL
+    PHONE
+    WHATS_APP
+}
+
+enum UserType {
+    ADMIN
+    USER_SUPPORT
+    THERAPIST       //should be unness
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+// may make table if they need contact for insurance companies
+//  or just want to be able to add companies
+enum InsuranceCompany {
+    SENASA_CONTRIBUTIVO
+    SENASA_SUBSIDIADO
+    ARS_HUMANO
+    MAPFRE
+    LA_MONUMENTAL
+    ARS_UNIVERSAL
+    ARS_META_SALUD
+    ARS_PLAN_SALUD_BANCO_CENTRAL
+    RENACER
+    OTRO
+}
+
+enum Color {
+    BLUE
+    GREEN
+    ORANGE
+    PURPLE
+    RED
+    TEAL
+    YELLOW
 }
 
 enum Status {
-  NEEDS_PROCESSING
-  NEEDS_SCHEDULING
-  PROCESSED
+    PROCESSING
+    SCHEDULING
+    COMPLETED
 }
