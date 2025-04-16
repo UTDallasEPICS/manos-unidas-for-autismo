@@ -349,13 +349,19 @@
 
 						<div class="flex flex-col gap-5">
 							<div class="medicalRecords flex flex-col">
-								<!--only takes 1 doc... don't even know if it transfers to database ;;-->
 								<p>Please sumbit any medical records.</p>
 								<label class="">
-									<button class="fileSubmit">
+									<button
+										type="button"
+										@click="registerMedRec"
+										class="fileSubmit"
+									>
 										<input
-											@change="registerMedRec"
+											v-on:change="handleFileUpload"
+											ref="file"
 											type="file"
+											name="file"
+											multiple
 										/>
 									</button>
 								</label>
@@ -544,6 +550,15 @@ export default {
 				for (const f in e.target.files) {
 					this.medicalRecordFiles.push(f);
 				}
+			}
+		},
+		handleFileUpload() {
+			let files = this.$refs.file.files;
+			let formData = new FormData();
+
+			for (let i = 0; i < files.length; i++) {
+				formData.append("files[" + i + "]", files[i]);
+				this.medicalRecordFiles.push(files[i]);
 			}
 		},
 		handleSubmit() {
