@@ -54,6 +54,21 @@ button.contactSubmit {
 }
 
 @theme {
-	--color-color1: #06234f;
+	--color-color1: #06234f; /*still in CF, change l8r? */
 	--color-color2: #d9d9d9;
+
+	--color-navy: #06234f;
+	--color-smoke: #d9d9d9;
+	--color-blugrey: #b4bbc9;
+	--color-pearl: #f5f5f5;
+	/*Therapy colors */
+	--color-darkorange: #eeb586;
+	--color-banana: #ece4b9;
+	--color-peach: #ffe1b8;
+	--color-lime: #ddf492;
+	--color-buttercup: #f6e274;
+	--color-periwinkle: #b8d3fb;
+	--color-lavender: #e3cbf8;
+
+	--font-display: "cormorant-garamond", "sans-serif"; /*??? bro does nothing */
 }
