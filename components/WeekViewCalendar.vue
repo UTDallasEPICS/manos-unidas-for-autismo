@@ -51,9 +51,8 @@
 					:key="session.id"
 					class="relative w-full"
 				>
-					<!-- TO CHANGE: div here needs computed style for width!!! -->
 					<div
-						class="absolute end-0 w-full"
+						class="absolute end-0 w-full hover:z-50"
 						:style="{ width: boxWidths[day - 1][index] }"
 					>
 						<AppointmentBox
@@ -502,7 +501,7 @@ function getBoxWidths(sessions: Session[]) {
 	result = result.concat(calculateWidths(startedSessions));
 	return result;
 }
-
+// given a list of sessions that overlap, it calculates and returns the session's width
 function calculateWidths(sessions: Session[]): string[] {
 	let result: string[] = [];
 	for (let i = 0; i < sessions.length; i++) {
