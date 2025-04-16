@@ -9,7 +9,7 @@ const sessionSchema = z.object({
 	comment: z.string().optional(),
 	maxAttendance: z.number().gte(1),
 	therapistId: z.string(),
-	duration: z.number().min(1),
+	duration: z.number().gte(1),
 });
 
 export default defineEventHandler(async (event) => {
@@ -34,21 +34,42 @@ export default defineEventHandler(async (event) => {
 	const { typeId, time, comment, maxAttendance, therapistId, duration } =
 		validatedBody.data;
 
-	const newSession = await prisma.session.create({
-		data: {
-			typeId,
-			therapistId,
-			time,
-			comment,
-			maxAttendance,
-			duration,
-		},
-	});
+	try {
+		const newSession = await prisma.session.create({
+			data: {
+				typeId,
+				therapistId,
+				time,
+				comment,
+				maxAttendance,
+				duration,
+			},
+		});
 
-	if (!newSession) {
+		return newSession;
+	} catch (error: unknown) {
+		if (error && typeof error === "object" && "code" in error) {
+			const prismaError = error as { code: string };
+
+			if (prismaError.code === "P2002") {
+				throw createError({
+					statusCode: 409,
+					statusMessage:
+						"A session with this therapist at this time already exists.",
+				});
+			}
+
+			if (prismaError.code === "P2025") {
+				throw createError({
+					statusCode: 404,
+					statusMessage: "Invalid therapistId or typeId.",
+				});
+			}
+		}
+
 		throw createError({
 			statusCode: 500,
-			statusMessage: "Failed to create session",
+			statusMessage: "Unexpected error creating session.",
 		});
 	}
 });
