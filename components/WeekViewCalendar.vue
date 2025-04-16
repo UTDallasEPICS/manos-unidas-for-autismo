@@ -1,4 +1,4 @@
-<!-- 9 Apr 2025
+<!-- 16 Apr 2025
 
 	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed.
 -->
@@ -47,15 +47,21 @@
 				:key="day"
 			>
 				<div
-					v-for="session in thisWeekSessions[day - 1]"
+					v-for="(session, index) in thisWeekSessions[day - 1]"
 					:key="session.id"
-					class="relative"
+					class="relative w-full"
 				>
-					<AppointmentBox
-						:session="session"
-						:calendarStartHour="startHr"
-						:rowHeight="rowHeight"
-					/>
+					<!-- TO CHANGE: div here needs computed style for width!!! -->
+					<div
+						class="absolute end-0 w-full"
+						:style="{ width: boxWidths[day - 1][index] }"
+					>
+						<AppointmentBox
+							:session="session"
+							:calendarStartHour="startHr"
+							:rowHeight="rowHeight"
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -75,7 +81,7 @@ const user = {
 	Sessions: [
 		{
 			id: "1",
-			time: "April 1, 2025 12:00:00",
+			time: "April 1, 2025 11:00:00",
 			duration: 60,
 			comment: "hi",
 			maxAttendance: 2,
@@ -105,8 +111,8 @@ const user = {
 		},
 		{
 			id: "2",
-			time: "March 31, 2025 13:00:00",
-			duration: 95,
+			time: "April 1, 2025 11:00:00",
+			duration: 60,
 			comment: "hi",
 			maxAttendance: 2,
 			typeId: "3",
@@ -136,7 +142,7 @@ const user = {
 		{
 			id: "3",
 			time: "April 1, 2025 11:00:00",
-			duration: 60,
+			duration: 75,
 			comment: "hi",
 			maxAttendance: 2,
 			typeId: "5",
@@ -271,6 +277,16 @@ watch(
 // a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
 const thisWeekSessions = ref(getFilteredSessions(user.Sessions));
 
+// 2d array holding the widths for each session that should be displayed. indexes correspond to thisWeekSessions
+const boxWidths: string[][] = computed(() => {
+	let result: string[][] = [];
+	for (let i = 0; i < 5; i++) {
+		result.push([]);
+		result[i] = getBoxWidths(thisWeekSessions.value[i]);
+	}
+	return result;
+});
+
 const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 const startHr = computed(() => {
@@ -364,6 +380,7 @@ function getSessionEndTime(d: Date, sessionLength: number): Date {
 	return endTime;
 }
 
+// filters sessions into the day of the week they belong to
 function getFilteredSessions(allSessions: Session[]): Session[][] {
 	let filteredSessions: Session[][] = [];
 	for (let i = 0; i < 5; i++) {
@@ -390,7 +407,6 @@ function getFilteredSessions(allSessions: Session[]): Session[][] {
 	for (let i = 0; i < 5; i++) {
 		filteredSessions[i] = sortSessions(filteredSessions[i]);
 	}
-
 	return filteredSessions;
 }
 
@@ -399,7 +415,7 @@ function sortSessions(unsorted: Session[]): Session[] {
 	let sorted: Session[] = [];
 
 	if (unsorted.length <= 1) {
-		// base case: only 1 session
+		// base case: only 1 session or is empty
 		return (sorted = unsorted);
 	} else {
 		// recursive case: multiple sessions
@@ -415,12 +431,22 @@ function sortSessions(unsorted: Session[]): Session[] {
 		while (leftIdx < leftHalf.length && rightIdx < rightHalf.length) {
 			let leftTime = new Date(leftHalf[leftIdx].time);
 			let rightTime = new Date(rightHalf[rightIdx].time);
+
 			if (leftTime.getTime() < rightTime.getTime()) {
 				sorted.push(leftHalf[leftIdx]);
 				leftIdx++;
-			} else {
+			} else if (rightTime.getTime() < leftTime.getTime()) {
 				sorted.push(rightHalf[rightIdx]);
 				rightIdx++;
+			} else {
+				// if start time is the same, then sort by duration
+				if (leftHalf[leftIdx].duration > rightHalf[rightIdx].duration) {
+					sorted.push(leftHalf[leftIdx]);
+					leftIdx++;
+				} else {
+					sorted.push(rightHalf[rightIdx]);
+					rightIdx++;
+				}
 			}
 		}
 		// concatenate any remaining sessions into sorted list
@@ -431,5 +457,57 @@ function sortSessions(unsorted: Session[]): Session[] {
 	}
 
 	return sorted;
+}
+
+// determines the width for each session given a list for 1 day (if sessions overlap, the session occuring later has a shorter width)
+function getBoxWidths(sessions: Session[]) {
+	let startedSessions: Session[] = [];
+	let result: string[] = [];
+
+	for (let i = 0; i < sessions.length; i++) {
+		// for each started appointment
+		let currSessionStartTime = new Date(sessions[i].time);
+		let overlaps = false;
+
+		// check if current session overlaps with another session in the set of started sessions
+		for (let j = 0; j < startedSessions.length; j++) {
+			let startedSessionEndTime = getSessionEndTime(
+				new Date(startedSessions[j].time),
+				startedSessions[j].duration
+			);
+
+			// if that a started session ends after current session's start time
+			if (
+				startedSessionEndTime.getTime() > currSessionStartTime.getTime()
+			) {
+				overlaps = true;
+				break;
+			}
+		}
+
+		// if there is an overlap
+		if (overlaps) {
+			// add current session to started sessions
+			startedSessions.push(sessions[i]);
+		} else {
+			// if not, current started sessions group won't overlap with any other session
+			// calculate style widths for each box
+			result = result.concat(calculateWidths(startedSessions));
+
+			// set started sessions to empty & add current session to started sessions
+			startedSessions = [sessions[i]];
+		}
+	}
+	// in case there is a remaining group, add it to the result
+	result = result.concat(calculateWidths(startedSessions));
+	return result;
+}
+
+function calculateWidths(sessions: Session[]): string[] {
+	let result: string[] = [];
+	for (let i = 0; i < sessions.length; i++) {
+		result.push(((sessions.length - i) / sessions.length) * 100 + "%");
+	}
+	return result;
 }
 </script>
