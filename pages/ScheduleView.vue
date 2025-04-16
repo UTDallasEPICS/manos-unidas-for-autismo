@@ -13,7 +13,7 @@
 				<!-- placeholder style for the button so it's not just text lmao -->
 				<button
 					@click="filterAppointments()"
-					class="bg-blue-950 p-2 text-white"
+					class="cursor-pointer bg-blue-950 p-2 text-white"
 					v-if="permissions.filter"
 				>
 					Filter
@@ -24,12 +24,16 @@
 		<!-- Calendar part -->
 		<div class="flex w-full justify-center">
 			<div class="pr-3 align-top text-3xl">
-				<button @click="changeWeek(false)">&#x25C0;</button>
+				<button class="cursor-pointer" @click="changeWeek(false)">
+					&#x25C0;
+				</button>
 			</div>
 
 			<WeekViewCalendar :week="date" class="grow" />
 			<div class="pl-3 align-top text-3xl">
-				<button @click="changeWeek(true)">&#x25B6;</button>
+				<button class="cursor-pointer" @click="changeWeek(true)">
+					&#x25B6;
+				</button>
 			</div>
 		</div>
 	</div>
