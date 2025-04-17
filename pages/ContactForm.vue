@@ -50,7 +50,7 @@
 										type="text"
 										class="contactInput"
 										required
-										v-model="firstName"
+										v-model="data.firstName"
 									/>
 								</div>
 
@@ -60,7 +60,7 @@
 									<input
 										type="middleName"
 										class="contactInput"
-										v-model="middleName"
+										v-model="data.middleName"
 									/>
 								</div>
 
@@ -71,7 +71,7 @@
 										type="lastName"
 										class="contactInput"
 										required
-										v-model="lastName"
+										v-model="data.lastName"
 									/>
 								</div>
 							</div>
@@ -122,7 +122,7 @@
 										class="contactInput"
 										type="date"
 										required
-										v-model="DOB"
+										v-model="data.DOB"
 									/>
 								</div>
 
@@ -132,7 +132,7 @@
 										class="contactInput"
 										type="nationality"
 										required
-										v-model="nationality"
+										v-model="data.nationality"
 									/>
 								</div>
 							</div>
@@ -144,7 +144,7 @@
 										class="contactInput"
 										type="ID"
 										required
-										v-model="ID"
+										v-model="data.ID"
 									/>
 								</div>
 								<div class="textLabelAndBox_Size1">
@@ -155,7 +155,7 @@
 										class="contactInput"
 										type="SSN"
 										required
-										v-model="SSN"
+										v-model="data.SSN"
 									/>
 								</div>
 							</div>
@@ -167,7 +167,7 @@
 										class="contactInput"
 										type="address1"
 										required
-										v-model="address1"
+										v-model="data.address1"
 									/>
 								</div>
 
@@ -176,8 +176,7 @@
 									<input
 										class="contactInput"
 										type="address2"
-										required
-										v-model="address2"
+										v-model="data.address2"
 									/>
 								</div>
 
@@ -190,7 +189,7 @@
 											class="contactInput"
 											type="postalCode"
 											required
-											v-model="postalCode"
+											v-model="data.postalCode"
 										/>
 									</div>
 									<div class="textLabelAndBox_Size2">
@@ -199,7 +198,7 @@
 											class="contactInput"
 											type="locality"
 											required
-											v-model="locality"
+											v-model="data.locality"
 										/>
 									</div>
 									<div class="textLabelAndBox_Size2">
@@ -208,7 +207,7 @@
 											class="contactInput"
 											type="country"
 											required
-											v-model="country"
+											v-model="data.country"
 										/>
 									</div>
 								</div>
@@ -221,7 +220,7 @@
 										class="contactInput"
 										type="parentFirstName"
 										required
-										v-model="parentFirstName"
+										v-model="data.parentFirstName"
 									/>
 								</div>
 								<div class="textLabelAndBox_Size1">
@@ -230,7 +229,7 @@
 										class="contactInput"
 										type="parentLastName"
 										required
-										v-model="parentLastName"
+										v-model="data.parentLastName"
 									/>
 								</div>
 							</div>
@@ -242,7 +241,7 @@
 										class="contactInput"
 										type="email"
 										required
-										v-model="email"
+										v-model="data.email"
 									/>
 								</div>
 
@@ -254,7 +253,7 @@
 										class="contactInput"
 										type="phone"
 										required
-										v-model="phone"
+										v-model="data.phone"
 									/>
 								</div>
 							</div>
@@ -317,7 +316,7 @@
 														? therapies
 																.map(
 																	(therapy) =>
-																		therapy.name
+																		therapy
 																)
 																.join(", ")
 														: "Select different therapies:"
@@ -333,7 +332,7 @@
 														class="contactFormListboxOption"
 														v-for="therapy in therapyOptions"
 														:key="therapy.name"
-														:value="therapy"
+														:value="therapy.name"
 													>
 														<div class="px-5">
 															{{ therapy.name }}
@@ -352,6 +351,7 @@
 								<p>Please sumbit any medical records.</p>
 								<label class="">
 									<button
+										ref="fileInputRef"
 										type="button"
 										@click="registerMedRec"
 										class="fileSubmit"
@@ -376,7 +376,7 @@
 										<input
 											type="radio"
 											name="prevPatient"
-											v-model="prevPatient"
+											v-model="data.prevPatient"
 											value="true"
 										/>Yes
 									</label>
@@ -384,7 +384,7 @@
 										<input
 											type="radio"
 											name="prevPatient"
-											v-model="prevPatient"
+											v-model="data.prevPatient"
 											value="false"
 										/>No
 									</label>
@@ -400,7 +400,7 @@
 										<input
 											type="radio"
 											name="diagnosis"
-											v-model="diagnosis"
+											v-model="data.diagnosis"
 											value="true"
 										/>Yes
 									</label>
@@ -408,7 +408,7 @@
 										<input
 											type="radio"
 											name="diagnosis"
-											v-model="diagnosis"
+											v-model="data.diagnosis"
 											value="false"
 										/>No
 									</label>
@@ -425,7 +425,7 @@
 										<input
 											type="radio"
 											name="evaluation"
-											v-model="evaluation"
+											v-model="data.evaluation"
 											value="true"
 										/>Yes
 									</label>
@@ -433,7 +433,7 @@
 										<input
 											type="radio"
 											name="evaluation"
-											v-model="evaluation"
+											v-model="data.evaluation"
 											value="false"
 										/>No
 									</label>
@@ -447,8 +447,7 @@
 								<textarea
 									class="bg-color2 px-2"
 									type="comments"
-									required
-									v-model="comments"
+									v-model="data.comments"
 								>
 								</textarea>
 							</div>
@@ -466,16 +465,18 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
+import { reactive } from "vue";
 import {
 	Listbox,
 	ListboxButton,
 	ListboxOptions,
 	ListboxOption,
 } from "@headlessui/vue";
+import { $fetch } from "ofetch";
 
-const genders = ["Male", "Female", "Non-Binary"];
+const genders = ["Male", "Female", "Other"];
 const gender = ref("");
 
 const insuranceOptions = [
@@ -504,66 +505,120 @@ const therapyOptions = [
 	{ name: "Preparation for Adult Life" },
 ];
 const therapies = ref([]); //types of therapies
-</script>
 
-<script>
-export default {
-	components: {
-		Listbox,
-		ListboxButton,
-		ListboxOptions,
-		ListboxOption,
-	},
-	data() {
-		return {
-			//empty strings that will take the entered data. keep empty.
-			hover: "",
-			firstName: "",
-			middleName: "",
-			lastName: "",
-			age: "",
-			DOB: "",
-			nationality: "",
-			parentFirstName: "",
-			parentLastName: "",
-			ID: "",
-			SSN: "",
-			record: "",
-			address1: "",
-			address2: "",
-			postalCode: "",
-			locality: "",
-			country: "",
-			email: "",
-			comments: "",
-			phone: "",
-			prevPatient: "",
-			diagnosis: "",
-			evaluation: "",
-			medicalRecordFiles: [],
-		};
-	},
-	methods: {
-		registerMedRec(e) {
-			//medical rec file checking, should??? work???
-			if (e.target.value) {
-				for (const f in e.target.files) {
-					this.medicalRecordFiles.push(f);
-				}
-			}
-		},
-		handleFileUpload() {
-			let files = this.$refs.file.files;
-			let formData = new FormData();
+const data = reactive({
+	//empty strings that will take the entered data. keep empty.
+	firstName: "",
+	middleName: "",
+	lastName: "",
+	age: "",
+	DOB: "",
+	nationality: "",
+	parentFirstName: "",
+	parentLastName: "",
+	ID: "",
+	SSN: "",
+	record: "",
+	address1: "",
+	address2: "",
+	postalCode: "",
+	locality: "",
+	country: "",
+	email: "",
+	comments: "",
+	phone: "",
+	prevPatient: "",
+	diagnosis: "",
+	evaluation: "",
+	medicalRecordFiles: [""],
+});
 
-			for (let i = 0; i < files.length; i++) {
-				formData.append("files[" + i + "]", files[i]);
-				this.medicalRecordFiles.push(files[i]);
-			}
-		},
-		handleSubmit() {
-			console.log("form submitted"); //might need to adjust this with database
-		},
-	},
-};
+const fileInputRef = ref<HTMLInputElement | null>(null);
+
+function registerMedRec(e: Event) {
+	const target = e.target as HTMLInputElement;
+	//medical rec file checking, should??? work???
+	if (target.files) {
+		for (const f in target.files) {
+			data.medicalRecordFiles.push(f);
+		}
+	}
+}
+
+function handleFileUpload() {
+	if (!fileInputRef.value) return;
+	let files = fileInputRef.value.files;
+	if (!files) return;
+	let formData = new FormData();
+
+	for (let i = 0; i < files.length; i++) {
+		formData.append("files[" + i + "]", files[i]);
+		data.medicalRecordFiles.push(files[i].name);
+	}
+}
+
+async function handleSubmit() {
+	const formData = {
+		fName: data.firstName,
+		mInit: data.middleName.substring(0, 1),
+		lName: data.lastName,
+		gender: gender,
+		dob: data.DOB,
+		nationality: data.nationality,
+		streetName: data.address1,
+		streetNum: data.address2,
+		postcode: data.postalCode,
+		identification: data.ID,
+		city: data.locality,
+		insurance: insurance,
+		email: data.email,
+		phone: data.phone,
+		isDiagnosed: data.diagnosis == "Yes" ? true : false,
+		hasBeenPatient: data.prevPatient == "Yes" ? true : false,
+		status: "PROCESSING",
+		wantsEval: data.evaluation == "Yes" ? true : false,
+		comment: data.comments,
+	};
+
+	try {
+		const response = await $fetch("/api/contactForm/form", {
+			method: "POST",
+			body: formData,
+		});
+
+		if (response == null || !response) {
+			throw new Error("Could not submit form");
+		}
+
+		clearForm();
+	} catch {
+		throw new Error("Could not submit form");
+	}
+}
+
+function clearForm() {
+	data.firstName = "";
+	data.middleName = "";
+	data.lastName = "";
+	data.age = "";
+	data.DOB = "";
+	data.nationality = "";
+	data.parentFirstName = "";
+	data.parentLastName = "";
+	data.ID = "";
+	data.SSN = "";
+	data.record = "";
+	data.address1 = "";
+	data.address2 = "";
+	data.postalCode = "";
+	data.locality = "";
+	data.country = "";
+	data.email = "";
+	data.comments = "";
+	data.phone = "";
+	data.prevPatient = "";
+	data.diagnosis = "";
+	data.evaluation = "";
+	data.medicalRecordFiles = [];
+}
 </script>
