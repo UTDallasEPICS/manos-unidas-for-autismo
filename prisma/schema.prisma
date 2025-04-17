@@ -226,3 +226,46 @@ enum Status {
     SCHEDULING
     COMPLETED
 }
+
+enum UserType {
+    ADMIN
+    USER_SUPPORT
+    THERAPIST       //should be unness
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+// may make table if they need contact for insurance companies
+//  or just want to be able to add companies
+enum InsuranceCompany {
+    SENASA_CONTRIBUTIVO
+    SENASA_SUBSIDIADO
+    ARS_HUMANO
+    MAPFRE
+    LA_MONUMENTAL
+    ARS_UNIVERSAL
+    ARS_META_SALUD
+    ARS_PLAN_SALUD_BANCO_CENTRAL
+    RENACER
+    OTRO
+}
+
+enum Color {
+    BLUE
+    GREEN
+    ORANGE
+    PURPLE
+    RED
+    TEAL
+    YELLOW
+}
+
+enum Status {
+    PROCESSING
+    SCHEDULING
+    COMPLETED
+}
