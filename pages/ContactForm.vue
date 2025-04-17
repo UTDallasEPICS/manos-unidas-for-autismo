@@ -219,7 +219,6 @@
 									<input
 										class="contactInput"
 										type="parentFirstName"
-										required
 										v-model="data.parentFirstName"
 									/>
 								</div>
@@ -228,7 +227,6 @@
 									<input
 										class="contactInput"
 										type="parentLastName"
-										required
 										v-model="data.parentLastName"
 									/>
 								</div>
@@ -626,5 +624,8 @@ function clearForm() {
 	data.diagnosis = "";
 	data.evaluation = "";
 	data.medicalRecordFiles = [];
+	gender.value = "";
+	therapies.value = [];
+	insurance.value = "";
 }
 </script>

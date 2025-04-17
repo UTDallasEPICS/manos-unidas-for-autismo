@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
 	try {
 		const result = await prisma.$transaction(async (tx) => {
 			//If postcode does not exist, add it to database
-			await prisma.postCodeCity.upsert({
+			await tx.postCodeCity.upsert({
 				where: { postCode: postcode },
 				update: {},
 				create: { postCode: postcode, city },
