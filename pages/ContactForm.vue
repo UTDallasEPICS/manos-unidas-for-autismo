@@ -219,7 +219,6 @@
 									<input
 										class="contactInput"
 										type="parentFirstName"
-										required
 										v-model="data.parentFirstName"
 									/>
 								</div>
@@ -228,7 +227,6 @@
 									<input
 										class="contactInput"
 										type="parentLastName"
-										required
 										v-model="data.parentLastName"
 									/>
 								</div>
@@ -562,29 +560,35 @@ async function handleSubmit() {
 		fName: data.firstName,
 		mInit: data.middleName.substring(0, 1),
 		lName: data.lastName,
-		gender: gender,
-		dob: data.DOB,
+		gender: gender.value.toUpperCase(),
+		dob: new Date(data.DOB),
 		nationality: data.nationality,
-		streetName: data.address1,
-		streetNum: data.address2,
-		postcode: data.postalCode,
+		streetName: data.address1.substring(data.address1.indexOf(" ") + 1),
+		streetNum: Number(
+			data.address1.substring(0, data.address1.indexOf(" "))
+		),
+		postcode: Number(data.postalCode),
 		identification: data.ID,
 		city: data.locality,
-		insurance: insurance,
+		insurance: insurance.value.toUpperCase().replace(" ", "_"),
 		email: data.email,
 		phone: data.phone,
-		isDiagnosed: data.diagnosis == "Yes" ? true : false,
-		hasBeenPatient: data.prevPatient == "Yes" ? true : false,
+		isDiagnosed: data.diagnosis === "true",
 		status: "PROCESSING",
-		wantsEval: data.evaluation == "Yes" ? true : false,
+		hasBeenPatient: data.prevPatient === "true",
+		wantsEval: data.evaluation === "true",
 		comment: data.comments,
 	};
+
+	console.log(formData);
 
 	try {
 		const response = await $fetch("/api/contactForm/form", {
 			method: "POST",
 			body: formData,
 		});
+
+		console.log(response);
 
 		if (response == null || !response) {
 			throw new Error("Could not submit form");
@@ -620,5 +624,8 @@ function clearForm() {
 	data.diagnosis = "";
 	data.evaluation = "";
 	data.medicalRecordFiles = [];
+	gender.value = "";
+	therapies.value = [];
+	insurance.value = "";
 }
 </script>
