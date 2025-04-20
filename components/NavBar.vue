@@ -1,6 +1,7 @@
 <template>
-
-	<nav class="flex items-center justify-between p-4 shadow-md">
+	<nav
+		class="flex items-center justify-between bg-blue-950 p-4 text-white shadow-md"
+	>
 		<!-- Logo -->
 		<div class="text-xl font-bold">Connected Care</div>
 
@@ -34,6 +35,13 @@
 			>
 				{{ link.label }}
 			</NuxtLink>
+		</div>
+
+		<!-- Logout Button -->
+		<div>
+			<button class="cursor-pointer" @click="logout">
+				<LogOut />
+			</button>
 		</div>
 	</nav>
 
@@ -83,32 +91,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { X } from "lucide-vue-next";
+import { X, LogOut } from "lucide-vue-next";
+import { ref, useCookie, navigateTo } from "#imports";
 
 // Replace this with the actual user role from auth/session
 const userType = ref<"user support" | "it support" | "other">("user support");
+const permissions = useCookie("AccessPermission");
 
 const userLinks = {
 	"user support": [
-		{ path: "/schedule", label: "Manage Schedule" },
-		{ path: "/patients", label: "Patient Info" },
-		{ path: "/forms", label: "Contact Forms" },
+		{ path: "/Schedule", label: "Manage Schedule" },
+		{ path: "/Patients", label: "Patient Info" },
+		{ path: "/ContactForm", label: "Contact Forms" },
 	],
 	"it support": [
-		{ path: "/users", label: "User Accounts" },
-		{ path: "/settings", label: "System Settings" },
+		{ path: "/Users", label: "User Accounts" },
+		{ path: "/Settings", label: "System Settings" },
 	],
 	other: [
-		{ path: "/my-schedule", label: "My Schedule" },
-		{ path: "/notes", label: "Therapy Notes" },
-		{ path: "/profile", label: "Profile" },
+		{ path: "/Schedule", label: "My Schedule" },
+		{ path: "/Notes", label: "Therapy Notes" },
+		{ path: "/Profile", label: "Profile" },
 	],
 };
 
 const isMenuOpen = ref(false);
 function toggleMenu() {
 	isMenuOpen.value = !isMenuOpen.value;
+}
+
+async function logout() {
+	const userId = useCookie("userId");
+	userId.value = null;
+	permissions.value = null;
+
+	// not having await seems to cause an issue with the order of page components
+	//  putting the footer above the page content
+	await navigateTo("/");
 }
 </script>
 
