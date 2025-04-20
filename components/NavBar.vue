@@ -27,7 +27,7 @@
 			</div>
 
 			<!-- Logout Button -->
-			<button class="cursor-pointer" @click="logout">
+			<button v-if="login" class="cursor-pointer" @click="logout">
 				<LogOut />
 			</button>
 		</div>
@@ -74,6 +74,7 @@
 					</NuxtLink>
 					<div class="grow"></div>
 					<button
+						v-if="login"
 						class="py-2 text-end text-lg hover:underline"
 						@click="logout"
 					>
@@ -91,10 +92,16 @@ import { ref, computed, useCookie, navigateTo } from "#imports";
 import { AccessPermission } from "~/permissions";
 
 // Replace this with the actual user role from auth/session
+const login = useCookie("userId");
 const permissions = useCookie("AccessPermission");
 
 const userLinks = computed(() => {
 	let legalRoutes = [];
+	// protect against undefined permissions throwind error
+	if (!permissions.value) {
+		return legalRoutes;
+	}
+	// add relevant links
 	if (permissions.value[AccessPermission.USER]) {
 		legalRoutes.push({ path: "/ScheduleView", label: "Schedule" });
 	}
