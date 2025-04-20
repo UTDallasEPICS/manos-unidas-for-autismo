@@ -1,7 +1,7 @@
 <!-- 9 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
-	<div class="m-10">
+	<div class="mx-10 h-full">
 		<!-- Title part + option buttons -->
 		<div class="my-5 flex justify-between">
 			<div class="flex flex-col justify-center">
@@ -40,13 +40,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed, useCookie } from "#imports";
+import { AccessPermission } from "~/permissions";
+
+const access = useCookie("AccessPermission");
 
 // will be removed later, for now defines the user's permissions
-const permissions = {
-	filter: true, // user service/admin = true, admin/patient/therapist = false
-	editAppointments: true, // user service = true, admin/patient/therapist = false
-};
+const permissions = computed(() => {
+	let actions = {
+		filter: false, // user service/admin = true, admin/patient/therapist = false
+		editAppointments: false, // user service = true, admin/patient/therapist = false
+	};
+
+	if (access.value) {
+		if (access.value[AccessPermission.USER_SUPPORT]) {
+			actions.filter = true;
+			actions.editAppointments = true;
+		}
+		if (access.value[AccessPermission.ADMIN]) {
+			actions.filter = true;
+		}
+	}
+
+	return actions;
+});
 
 const date = ref<Date>();
 date.value = new Date(Date.now());
