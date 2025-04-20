@@ -15,10 +15,23 @@ enum AccessPermission {
 */
 
 const pageAccessMap: { [route: string]: AccessPermission } = {
+	// Public Pages
 	"/": AccessPermission.PUBLIC,
 	"/index": AccessPermission.PUBLIC,
-	"/contactForm": AccessPermission.PUBLIC,
-	"/dashboard": AccessPermission.USER,
+	"/ContactForm": AccessPermission.PUBLIC,
+	// All User Pages
+	"/Dashboard": AccessPermission.USER,
+	"/ScheduleView": AccessPermission.USER,
+	// Patient Pages
+	"/MyProfile": AccessPermission.PATIENT,
+	// Parent Pages
+	"/ChildProfiles": AccessPermission.PARENT,
+	// Therapist Pages
+	"/PatientProfiles": AccessPermission.THERAPIST,
+	// User Support Pages
+	"/ReviewContactForms": AccessPermission.USER_SUPPORT,
+	// Admin Pages
+	"/Admin": AccessPermission.ADMIN,
 };
 const apiAccessMap: {
 	[route: string]: { [method: string]: AccessPermission };
@@ -28,6 +41,12 @@ const apiAccessMap: {
 	},
 	"/api/updatePermissions": {
 		GET: AccessPermission.PUBLIC,
+	},
+	"/api/contactForm/form": {
+		POST: AccessPermission.PUBLIC,
+	},
+	"/api/session/create": {
+		POST: AccessPermission.USER_SUPPORT,
 	},
 };
 

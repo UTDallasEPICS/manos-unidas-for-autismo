@@ -39,11 +39,12 @@ const email = ref("");
 const userId = useCookie("userId");
 
 onMounted(async () => {
+	await $fetch("/api/updatePermissions", {
+		method: "GET",
+	});
+	refreshCookie("AccessPermission");
 	if (userId.value) {
-		await $fetch("/api/updatePermissions", {
-			method: "GET",
-		});
-		await navigateTo("/dashboard");
+		await navigateTo("/Dashboard");
 	}
 });
 
