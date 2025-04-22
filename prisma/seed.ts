@@ -40,6 +40,16 @@ const createSpecializations = async () => {
 const admin = [
 	// admin
 	{
+		fName: "Admin",
+		mInit: null,
+		lName: "Account",
+		email: "admin@email.com",
+		phone: "184-286-0857",
+		whatsApp: "Rubus hispidus L.",
+		contactPref: "EMAIL",
+		type: "ADMIN",
+	},
+	{
 		fName: "Mahmud",
 		mInit: null,
 		lName: "Jenk",
@@ -48,6 +58,16 @@ const admin = [
 		whatsApp: "Crassocephalum Moench",
 		contactPref: "EMAIL",
 		type: "ADMIN",
+	},
+	{
+		fName: "User-Support",
+		mInit: null,
+		lName: "Account",
+		email: "user-support@email.com",
+		phone: "269-679-2852",
+		whatsApp: "Brassica septiceps (L.H. Bailey) L.H. Bailey",
+		contactPref: "EMAIL",
+		type: "USER_SUPPORT",
 	},
 	{
 		fName: "Brigit",
@@ -62,6 +82,19 @@ const admin = [
 ];
 const therapists = [
 	// therapists
+	{
+		user: {
+			fName: "Therapist",
+			mInit: null,
+			lName: "Account",
+			email: "therapist@email.com",
+			phone: "364-107-4495",
+			whatsApp: "Succisella inflexa (Kluk) G. Beck",
+			contactPref: "EMAIL",
+			type: "THERAPIST",
+		},
+		specializations: [0],
+	},
 	{
 		user: {
 			fName: "Brion",
@@ -105,6 +138,26 @@ const therapists = [
 ];
 const patients = [
 	// patients
+	{
+		user: {
+			fName: "Patient",
+			mInit: null,
+			lName: "Account",
+			email: "patient@email.com",
+			phone: "386-206-4302",
+			whatsApp: "Epidendrum anceps Jacq.",
+			contactPref: "EMAIL",
+			type: null,
+		},
+		nonEmployee: {
+			dob: new Date("1/1/2001"),
+			gender: "MALE",
+			streetName: "Test",
+			streetNum: 1,
+			postCode: 216646,
+		},
+		patient: { identification: "1", diagnosed: false },
+	},
 	{
 		user: {
 			fName: "Dael",
@@ -231,6 +284,25 @@ const patients = [
 ];
 const parents = [
 	// parents
+	{
+		user: {
+			fName: "Parent",
+			mInit: null,
+			lName: "Account",
+			email: "parent@email.com",
+			phone: "513-608-6374",
+			whatsApp: "Krascheninnikovia lanata (Pursh) A. Meeuse & Smit",
+			contactPref: "WHATS_APP",
+			type: null,
+		},
+		nonEmployee: {
+			dob: new Date("2/2/2002"),
+			gender: "MALE",
+			streetName: "test",
+			streetNum: 1,
+			postCode: 216646,
+		},
+	},
 	{
 		user: {
 			fName: "Willdon",
