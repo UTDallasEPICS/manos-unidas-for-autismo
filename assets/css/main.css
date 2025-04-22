@@ -23,7 +23,7 @@
 	-webkit-text-fill-color: white;
 }
 
-button.fileSubmit {
+.fileSubmit {
 	font-family: "Encode Sans SC", sans-serif;
 	text-align: center;
 	background: #06234f;

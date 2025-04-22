@@ -348,21 +348,40 @@
 							<div class="medicalRecords flex flex-col">
 								<p>Please sumbit any medical records.</p>
 								<label class="">
-									<button
+									<input
+										v-on:change="handleFileUpload"
+										class="fileSubmit h-full w-full cursor-pointer p-2"
 										ref="fileInputRef"
-										type="button"
-										@click="registerMedRec"
-										class="fileSubmit"
-									>
-										<input
-											v-on:change="handleFileUpload"
-											ref="file"
-											type="file"
-											name="file"
-											multiple
-										/>
-									</button>
+										type="file"
+										name="file"
+										accept=".jpg, .jpeg, .png, .pdf"
+										multiple
+									/>
 								</label>
+								<div v-if="data.medicalRecordFiles.length > 1">
+									<div
+										class="bg-color2 flex flex-col justify-between p-2 md:flex-row"
+										v-for="(
+											rec, idx
+										) in data.medicalRecordFiles"
+										:key="idx"
+									>
+										<div>
+											{{ rec }}
+										</div>
+										<button
+											class="fileSubmit w-3/5 cursor-pointer"
+											type="button"
+											@click="handleDeleteFile(rec)"
+											v-if="
+												data.medicalRecordFiles.length >
+													1 && rec != ''
+											"
+										>
+											Remove file
+										</button>
+									</div>
+								</div>
 							</div>
 
 							<div class="prevPaitent flex flex-col">
@@ -533,16 +552,6 @@ const data = reactive({
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
-function registerMedRec(e: Event) {
-	const target = e.target as HTMLInputElement;
-	//medical rec file checking, should??? work???
-	if (target.files) {
-		for (const f in target.files) {
-			data.medicalRecordFiles.push(f);
-		}
-	}
-}
-
 function handleFileUpload() {
 	if (!fileInputRef.value) return;
 	let files = fileInputRef.value.files;
@@ -553,6 +562,10 @@ function handleFileUpload() {
 		formData.append("files[" + i + "]", files[i]);
 		data.medicalRecordFiles.push(files[i].name);
 	}
+}
+
+function handleDeleteFile(rec: string) {
+	data.medicalRecordFiles.splice(data.medicalRecordFiles.indexOf(rec), 1);
 }
 
 async function handleSubmit() {
@@ -580,15 +593,11 @@ async function handleSubmit() {
 		comment: data.comments,
 	};
 
-	console.log(formData);
-
 	try {
 		const response = await $fetch("/api/contactForm/form", {
 			method: "POST",
 			body: formData,
 		});
-
-		console.log(response);
 
 		if (response == null || !response) {
 			throw new Error("Could not submit form");
