@@ -1,4 +1,4 @@
-<!-- 9 Apr 2025
+<!-- 22 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
 	<div class="mx-10 h-full">
@@ -20,6 +20,7 @@
 					<div v-if="showFilterWindow">
 						<FilterAppointments
 							@close-filter-window="showFilterWindow = false"
+							@add-filters="(filter) => addFilters(filter)"
 						/>
 					</div>
 				</button>
@@ -34,7 +35,7 @@
 				</button>
 			</div>
 
-			<WeekViewCalendar :week="date" class="grow" />
+			<WeekViewCalendar :week="date" :filter="filters" class="grow" />
 			<div class="pl-3 align-top text-3xl">
 				<button class="cursor-pointer" @click="changeWeek(true)">
 					&#x25B6;
@@ -132,4 +133,13 @@ function changeWeek(forward: boolean) {
 
 // for showing the filter window
 const showFilterWindow = ref(false);
+
+const filters = ref<number[]>([]);
+
+function addFilters(filter: number[]) {
+	console.log("filters received: ");
+	console.log(filter);
+
+	filters.value = filter;
+}
 </script>

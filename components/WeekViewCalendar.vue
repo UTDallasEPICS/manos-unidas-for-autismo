@@ -1,6 +1,6 @@
-<!-- 16 Apr 2025
+<!-- 22 Apr 2025
 
-	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed.
+	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed. Given a string array of filters, it will only show appointments with the same session types in the filters.
 -->
 <template>
 	<div class="overflow-auto">
@@ -263,11 +263,20 @@ const user = {
 
 const props = defineProps<{
 	week: Date; // any day in the week wanted to be displayed. week starts at monday
+	filter?: string[]; // filters using session type ids
 }>();
 
 // get new sessions when week chances
 watch(
 	() => props.week,
+	() => {
+		thisWeekSessions.value = getFilteredSessions(user.Sessions);
+	}
+);
+
+// watch when filters change
+watch(
+	() => props.filter,
 	() => {
 		thisWeekSessions.value = getFilteredSessions(user.Sessions);
 	}

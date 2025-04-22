@@ -1,4 +1,4 @@
-<!-- 16 Apr 2025
+<!-- 22 Apr 2025
     A window for users to filter sessions. Currently has a temporary session types object. After submitting, the window should emit the filters to the schedule view and then to the calendar component
  -->
 <template>
@@ -10,7 +10,9 @@
 		></div>
 
 		<!-- Window -->
-		<div class="text-md relative z-52 m-7 flex flex-col bg-white p-4">
+		<div
+			class="text-md relative z-52 m-7 flex flex-col bg-white p-4 text-black"
+		>
 			<div
 				class="flex cursor-pointer justify-end pr-2 text-right"
 				@click="closeWindow"
@@ -20,7 +22,7 @@
 			<!-- Information -->
 			<div class="m-3 flex flex-col gap-3">
 				<h1>Filter Appointments</h1>
-				Tick to show appointment:
+				Tick to hide appointment:
 				<div v-for="(type, index) in sessionTypes" :key="type">
 					<input
 						type="checkbox"
@@ -65,9 +67,9 @@ function closeWindow() {
 
 // temporary object, later should get the appointment types from database
 const sessionTypes: SessionType[] = [
-	{ name: "type 1", id: 123, color: "BLUE" },
-	{ name: "type 2", id: 245, color: "BLUE" },
-	{ name: "type 3", id: 456, color: "BLUE" },
+	{ name: "type 1", id: "123", color: "BLUE" },
+	{ name: "type 2", id: "245", color: "BLUE" },
+	{ name: "type 3", id: "456", color: "BLUE" },
 ];
 
 // the filtered sessions, object should be returned to scheduleview page and be sent to calendar component
@@ -86,7 +88,7 @@ function submitForm() {
 	console.log(result);
 
 	// emit the filter options to week view calendar
-	emit("addFilters");
+	emit("addFilters", result);
 	closeWindow();
 }
 </script>
