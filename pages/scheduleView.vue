@@ -12,11 +12,16 @@
 				<createAppointment v-if="permissions.editAppointments" />
 				<!-- placeholder style for the button so it's not just text lmao -->
 				<button
-					@click="filterAppointments()"
+					@click="showFilterWindow = true"
 					class="cursor-pointer bg-blue-950 p-2 text-white"
 					v-if="permissions.filter"
 				>
 					Filter
+					<div v-if="showFilterWindow">
+						<FilterAppointments
+							@close-filter-window="showFilterWindow = false"
+						/>
+					</div>
 				</button>
 			</div>
 		</div>
@@ -45,7 +50,6 @@ import { AccessPermission } from "~/permissions";
 
 const access = useCookie("AccessPermission");
 
-// will be removed later, for now defines the user's permissions
 const permissions = computed(() => {
 	let actions = {
 		filter: false, // user service/admin = true, admin/patient/therapist = false
@@ -126,7 +130,6 @@ function changeWeek(forward: boolean) {
 	getCurrentWeek();
 }
 
-function filterAppointments() {
-	console.log("filter button clicky clicky");
-}
+// for showing the filter window
+const showFilterWindow = ref(false);
 </script>
