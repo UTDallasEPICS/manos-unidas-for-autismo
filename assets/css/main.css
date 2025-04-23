@@ -5,6 +5,11 @@
 @theme {
 	--color-color1: #06234f;
 	--color-color2: #d9d9d9;
+
+	--color-navy: #06234f;
+	--color-smoky: #d9d9d9;
+	--color-pearl: #ffffff;
+	--color-blay: #b4bbc9;
 }
 
 /*Fonts */
@@ -30,7 +35,7 @@ button.fileSubmit,
 button.btn {
 	font-family: "Encode Sans SC", sans-serif;
 	text-align: center;
-	background: #06234f;
+	background: navy;
 	border: 0;
 	padding: 5px 5px;
 	-webkit-text-fill-color: white;
