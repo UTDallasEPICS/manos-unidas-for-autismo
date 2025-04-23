@@ -7,6 +7,7 @@
 	--color-color2: #d9d9d9;
 }
 
+/*Fonts */
 .cormorant-garamond {
 	font-family: "Cormorant Garamond", serif;
 	font-optical-sizing: auto;
@@ -23,6 +24,7 @@
 	-webkit-text-fill-color: white;
 }
 
+/*Buttons */
 button.fileSubmit {
 	font-family: "Encode Sans SC", sans-serif;
 	text-align: center;
@@ -32,15 +34,6 @@ button.fileSubmit {
 	-webkit-text-fill-color: white;
 	display: flex;
 	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 55);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 100);
-	}
-	@media (width >= 48rem) {
-		width: calc(35 / 100 * 100%);
-	}
 }
 
 button.manosSubmit {
@@ -52,6 +45,7 @@ button.manosSubmit {
 	-webkit-text-fill-color: white;
 }
 
+/*layout*/
 div.fullPage {
 	display: flex;
 	flex-direction: column;
@@ -74,26 +68,16 @@ div.contactFormArea {
 	flex: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
-	@media (width >= 0rem) {
-		width: calc(4 / 5 * 100%);
-	}
-	@media (width >= 48rem) {
-		width: calc(var(--spacing) * 200);
-	}
 }
 
 div.contactFormContent {
 	font-size: var(--text-lg);
 	line-height: var(--tw-leading, var(--text-lg--line-height));
 	justify-content: flex-start;
-	display: flex;
-	width: 100%;
 	padding: calc(var(--spacing) * 5);
 }
 
 form.contactForm {
-	display: flex;
-	width: 100%;
 	flex-direction: column;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -101,8 +85,6 @@ form.contactForm {
 }
 
 div.freeResponseArea {
-	display: flex;
-	width: 100%;
 	flex-wrap: wrap;
 	gap: calc(var(--spacing) * 5);
 }
@@ -112,80 +94,20 @@ div.inputBoxRow {
 	height: auto;
 	width: 100%;
 	gap: calc(var(--spacing) * 7);
-	@media (width >= 0rem) {
-		flex-direction: column;
-	}
-	@media (width >= 48rem) {
-		flex-direction: row;
-	}
 }
 
 div.addressInputBoxRow {
 	height: auto;
 	width: 100%;
 	gap: calc(var(--spacing) * 1);
-	@media (width >= 0rem) {
-		flex-direction: column;
-	}
-	@media (width >= 48rem) {
-		flex-direction: row;
-	}
 }
 
-div.textLabelAndBox_Size1 {
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 50);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 75);
-	}
-	@media (width >= 48rem) {
-		width: calc(3 / 10 * 100%);
-	}
-}
-
-div.textLabelAndBox_Size2 {
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 40);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 60);
-	}
-	@media (width >= 48rem) {
-		width: calc(1 / 4 * 100%);
-	}
-}
-
-div.textLabelAndBox_Size3 {
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 55);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 100);
-	}
-	@media (width >= 48rem) {
-		width: calc(7 / 10 * 100%);
-	}
-}
-
+div.textLabelAndBox_Size1,
+div.textLabelAndBox_Size2,
+div.textLabelAndBox_Size3,
 div.textLabelAndBox_Size4 {
 	display: flex;
 	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 30);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 40);
-	}
-	@media (width >= 48rem) {
-		width: calc(1 / 5 * 100%);
-	}
 }
 
 input.contactInput {
@@ -203,28 +125,100 @@ input.contactInput {
 }
 
 .contactFormListboxButton {
-	display: flex;
-	width: 100%;
 	cursor: pointer;
 	align-content: flex-start;
 	/* padding: 0px 8px 0px 8px; */
 }
 
 .contactFormListboxOptions {
-	display: flex;
-	width: 100%;
 	flex-direction: column;
 	background-color: var(--color-gray-100);
 	/* padding: 0px 8px 0px 8px; */
 }
 
 .contactFormListboxOption {
-	display: flex;
-	width: 100%;
 	cursor: pointer;
 	&:hover {
 		@media (hover: hover) {
 			background-color: var(--color-blue-500);
 		}
+	}
+}
+
+.contactFormListboxOption,
+.contactFormListboxOptions,
+.contactFormListboxButton,
+div.freeResponseArea,
+form.contactForm,
+div.contactFormContent {
+	display: flex;
+	width: 100%;
+}
+
+/* diff media sizes */
+@media (width >= 0rem) {
+	div.textLabelAndBox_Size3,
+	button.fileSubmit {
+		width: calc(var(--spacing) * 55);
+	}
+	div.textLabelAndBox_Size4 {
+		width: calc(var(--spacing) * 30);
+	}
+	div.textLabelAndBox_Size2 {
+		width: calc(var(--spacing) * 40);
+	}
+	div.textLabelAndBox_Size1 {
+		width: calc(var(--spacing) * 50);
+	}
+	div.addressInputBoxRow,
+	div.inputBoxRow {
+		flex-direction: column;
+	}
+	div.contactFormArea {
+		width: calc(4 / 5 * 100%);
+	}
+}
+
+@media (width >= 40rem) {
+	div.textLabelAndBox_Size4 {
+		width: calc(var(--spacing) * 40);
+	}
+
+	div.textLabelAndBox_Size3,
+	button.fileSubmit {
+		width: calc(var(--spacing) * 100);
+	}
+
+	div.textLabelAndBox_Size2 {
+		width: calc(var(--spacing) * 60);
+	}
+
+	div.textLabelAndBox_Size1 {
+		width: calc(var(--spacing) * 75);
+	}
+}
+
+@media (width >= 48rem) {
+	div.textLabelAndBox_Size4 {
+		width: calc(1 / 5 * 100%);
+	}
+	div.textLabelAndBox_Size3 {
+		width: calc(7 / 10 * 100%);
+	}
+	div.textLabelAndBox_Size2 {
+		width: calc(1 / 4 * 100%);
+	}
+	div.textLabelAndBox_Size1 {
+		width: calc(3 / 10 * 100%);
+	}
+	div.addressInputBoxRow,
+	div.inputBoxRow {
+		flex-direction: row;
+	}
+	div.contactFormArea {
+		width: calc(var(--spacing) * 200);
+	}
+	button.fileSubmit {
+		width: calc(35 / 100 * 100%);
 	}
 }
