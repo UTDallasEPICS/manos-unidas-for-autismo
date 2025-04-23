@@ -30,7 +30,7 @@
 }
 
 /*Buttons */
-.manosSubmit,
+button.manosSubmit,
 button.fileSubmit,
 button.btn {
 	font-family: "Encode Sans SC", sans-serif;
