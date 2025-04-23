@@ -1,7 +1,9 @@
 <template>
 	<nav class="flex items-center justify-between p-4 shadow-md">
 		<!-- Logo -->
-		<div class="text-xl font-bold">Connected Care</div>
+		<NuxtLink to="/" class="flex items-center">
+			<div class="text-xl font-bold">Connected Care</div>
+		</NuxtLink>
 
 		<!-- Hamburger menu button: visible only on mobile -->
 		<div class="sm:hidden">
@@ -91,7 +93,7 @@ const userType = ref<"user support" | "it support" | "other">("user support");
 const userLinks = {
 	"user support": [
 		{ path: "/schedule", label: "Manage Schedule" },
-		{ path: "/patients", label: "Patient Info" },
+		{ path: "/profile", label: "Patient Info" },
 		{ path: "/forms", label: "Contact Forms" },
 	],
 	"it support": [

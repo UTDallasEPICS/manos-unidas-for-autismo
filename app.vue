@@ -2,7 +2,6 @@
 	<NavBar />
 	<NuxtPage />
 	<createAppointment />
-	<patientProfile />
 	<Footer />
 </template>
 
