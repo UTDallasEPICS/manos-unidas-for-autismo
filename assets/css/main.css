@@ -30,6 +30,10 @@
 }
 
 /*Buttons */
+/*
+Alright honcho, get rid of extra classes & create base classes & for any other styling use tailwind within the Contact form etc.
+Good luck.
+*/
 button.manosSubmit,
 button.fileSubmit,
 button.btn {
