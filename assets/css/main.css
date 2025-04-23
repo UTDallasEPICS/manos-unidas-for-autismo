@@ -25,32 +25,26 @@
 }
 
 /*Buttons */
-button.fileSubmit {
+.manosSubmit,
+button.fileSubmit,
+button.btn {
 	font-family: "Encode Sans SC", sans-serif;
 	text-align: center;
 	background: #06234f;
 	border: 0;
 	padding: 5px 5px;
 	-webkit-text-fill-color: white;
-	display: flex;
-	flex-direction: column;
 }
 
 button.manosSubmit {
-	font-family: "Encode Sans SC", sans-serif;
-	text-align: center;
-	background: #06234f;
-	border: 0;
-	padding: 5px 5px;
-	-webkit-text-fill-color: white;
+	display: flex;
+	flex-direction: column;
 }
 
 /*layout*/
 div.fullPage {
-	display: flex;
 	flex-direction: column;
 	height: 100%;
-	width: 100%;
 }
 
 div.contactFormPage {
@@ -84,15 +78,14 @@ form.contactForm {
 	background-color: var(--color-white);
 }
 
+/*yippe inputs*/
 div.freeResponseArea {
 	flex-wrap: wrap;
 	gap: calc(var(--spacing) * 5);
 }
 
 div.inputBoxRow {
-	display: flex;
 	height: auto;
-	width: 100%;
 	gap: calc(var(--spacing) * 7);
 }
 
@@ -116,7 +109,8 @@ input.contactInput {
 	padding: 0px 8px 0px 8px;
 }
 
-.contactFormListbox {
+.contactFormListbox,
+.listbox {
 	background-color: #d9d9d9;
 	fill: #d9d9d9;
 	display: flex;
@@ -124,19 +118,22 @@ input.contactInput {
 	overflow: auto;
 }
 
-.contactFormListboxButton {
+.contactFormListboxButton,
+.listboxButton {
 	cursor: pointer;
 	align-content: flex-start;
 	/* padding: 0px 8px 0px 8px; */
 }
 
-.contactFormListboxOptions {
+.contactFormListboxOptions,
+.listboxOptions {
 	flex-direction: column;
 	background-color: var(--color-gray-100);
 	/* padding: 0px 8px 0px 8px; */
 }
 
-.contactFormListboxOption {
+.contactFormListboxOption,
+.listboxOptions {
 	cursor: pointer;
 	&:hover {
 		@media (hover: hover) {
@@ -150,7 +147,9 @@ input.contactInput {
 .contactFormListboxButton,
 div.freeResponseArea,
 form.contactForm,
-div.contactFormContent {
+div.contactFormContent,
+div.inputBoxRow,
+div.fullPage {
 	display: flex;
 	width: 100%;
 }

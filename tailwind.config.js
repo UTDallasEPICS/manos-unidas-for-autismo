@@ -11,7 +11,10 @@ export default {
 	theme: {
 		extend: {
 			colors: {},
-			fontFamily: {},
+			fontFamily: {
+				serif: ['"Cormorant Garamond"', "serif"],
+				sans: ['"Encode Sans SC"', "sans-serif"],
+			},
 		},
 	},
 	plugins: [],
