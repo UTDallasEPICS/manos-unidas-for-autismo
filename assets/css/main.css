@@ -6,7 +6,7 @@
 	--color-color1: #06234f;
 	--color-color2: #d9d9d9;
 
-	--color-navy: #06234f;
+	--color-midnight: #06234f;
 	--color-smoky: #d9d9d9;
 	--color-pearl: #ffffff;
 	--color-blay: #b4bbc9;
@@ -35,7 +35,7 @@ button.fileSubmit,
 button.btn {
 	font-family: "Encode Sans SC", sans-serif;
 	text-align: center;
-	background: navy;
+	background: #06234f;
 	border: 0;
 	padding: 5px 5px;
 	-webkit-text-fill-color: white;

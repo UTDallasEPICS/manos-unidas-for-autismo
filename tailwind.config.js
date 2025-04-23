@@ -14,7 +14,7 @@ export default {
 				/* main colors */
 				pearl: "#FFFFFF",
 				smoky: "#D9D9D9",
-				navy: "#06234F",
+				midnight: "#06234F",
 				/* extras */
 				blay: "#B4BBC9",
 				lilac: "#E3CBF8",
