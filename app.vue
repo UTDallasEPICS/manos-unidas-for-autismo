@@ -1,8 +1,9 @@
 <template>
-	<NavBar />
-	<NuxtPage />
-	<createAppointment />
-	<Footer />
+	<div class="h-screen">
+		<NavBar />
+		<NuxtPage />
+		<Footer />
+	</div>
 </template>
 
 <script></script>

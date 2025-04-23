@@ -1,5 +1,7 @@
 <template>
-	<nav class="flex items-center justify-between p-4 shadow-md">
+	<nav
+		class="flex items-center justify-between bg-blue-950 p-4 text-white shadow-md"
+	>
 		<!-- Logo -->
 		<NuxtLink to="/" class="flex items-center">
 			<div class="text-xl font-bold">Connected Care</div>
@@ -9,32 +11,27 @@
 		<div class="sm:hidden">
 			<button @click="toggleMenu" aria-label="Toggle menu">
 				<!-- Simple hamburger icon -->
-				<svg
-					class="h-6 w-6"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M4 6h16M4 12h16M4 18h16"
-					/>
-				</svg>
+				<Menu />
 			</button>
 		</div>
 
-		<!-- Desktop Navigation Links -->
-		<div class="hidden gap-4 sm:flex">
-			<NuxtLink
-				v-for="(link, idx) in userLinks[userType]"
-				:key="idx"
-				:to="link.path"
-				class="hover:underline"
-			>
-				{{ link.label }}
-			</NuxtLink>
+		<div class="hidden flex-row gap-6 sm:flex">
+			<!-- Desktop Navigation Links -->
+			<div class="gap-4 sm:flex">
+				<NuxtLink
+					v-for="(link, idx) in userLinks"
+					:key="idx"
+					:to="link.path"
+					class="hover:underline"
+				>
+					{{ link.label }}
+				</NuxtLink>
+			</div>
+
+			<!-- Logout Button -->
+			<button v-if="login" class="cursor-pointer" @click="logout">
+				<LogOut />
+			</button>
 		</div>
 	</nav>
 
@@ -54,29 +51,37 @@
 
 			<!-- Slide-out Menu Panel -->
 			<div
-				class="relative z-20 ml-auto w-2/3 max-w-xs bg-white p-4 shadow-lg"
+				class="relative z-20 ml-auto flex h-screen w-2/3 max-w-xs flex-col bg-white p-6 shadow-lg"
 			>
 				<!-- Close button positioned on the right -->
 				<div class="mb-4 flex justify-end">
 					<button
 						@click="toggleMenu"
-						class="p-1"
+						class=""
 						aria-label="Close menu"
 					>
 						<X color="black" :size="30" />
 					</button>
 				</div>
 
-				<nav class="flex flex-col gap-4">
+				<nav class="flex grow flex-col">
 					<NuxtLink
-						v-for="(link, idx) in userLinks[userType]"
+						v-for="(link, idx) in userLinks"
 						:key="idx"
 						:to="link.path"
-						class="py-2 text-lg hover:underline"
+						class="py-2 text-end text-lg hover:underline"
 						@click="toggleMenu"
 					>
 						{{ link.label }}
 					</NuxtLink>
+					<div class="grow"></div>
+					<button
+						v-if="login"
+						class="py-2 text-end text-lg hover:underline"
+						@click="logout"
+					>
+						Log Out
+					</button>
 				</nav>
 			</div>
 		</div>
@@ -84,32 +89,59 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { X } from "lucide-vue-next";
+import { X, LogOut, Menu } from "lucide-vue-next";
+import { ref, computed, useCookie, navigateTo } from "#imports";
+import { AccessPermission } from "~/permissions";
 
 // Replace this with the actual user role from auth/session
-const userType = ref<"user support" | "it support" | "other">("user support");
+const login = useCookie("userId");
+const permissions = useCookie("AccessPermission");
 
-const userLinks = {
-	"user support": [
-		{ path: "/schedule", label: "Manage Schedule" },
-		{ path: "/profile", label: "Patient Info" },
-		{ path: "/forms", label: "Contact Forms" },
-	],
-	"it support": [
-		{ path: "/users", label: "User Accounts" },
-		{ path: "/settings", label: "System Settings" },
-	],
-	other: [
-		{ path: "/my-schedule", label: "My Schedule" },
-		{ path: "/notes", label: "Therapy Notes" },
-		{ path: "/profile", label: "Profile" },
-	],
-};
+const userLinks = computed(() => {
+	let legalRoutes = [];
+	// protect against undefined permissions throwind error
+	if (!permissions.value) {
+		return legalRoutes;
+	}
+	// add relevant links
+	if (permissions.value[AccessPermission.USER]) {
+		legalRoutes.push({ path: "/ScheduleView", label: "Schedule" });
+	}
+	if (permissions.value[AccessPermission.PATIENT]) {
+		legalRoutes.push({ path: "/MyProfile", label: "Profile" });
+	}
+	if (permissions.value[AccessPermission.PARENT]) {
+		legalRoutes.push({ path: "/ChildProfiles", label: "Children" });
+	}
+	if (permissions.value[AccessPermission.THERAPIST]) {
+		legalRoutes.push({ path: "/PatientProfiles", label: "Patients" });
+	}
+	if (permissions.value[AccessPermission.USER_SUPPORT]) {
+		legalRoutes.push({
+			path: "/ReviewContactForms",
+			label: "Review Forms",
+		});
+	}
+	if (permissions.value[AccessPermission.ADMIN]) {
+		legalRoutes.push({ path: "/Admin", label: "Admin" });
+	}
+	return legalRoutes;
+});
 
 const isMenuOpen = ref(false);
 function toggleMenu() {
 	isMenuOpen.value = !isMenuOpen.value;
+}
+
+async function logout() {
+	isMenuOpen.value = false;
+	const userId = useCookie("userId");
+	userId.value = null;
+	permissions.value = null;
+
+	// not having await seems to cause an issue with the order of page components
+	//  putting the footer above the page content
+	await navigateTo("/");
 }
 </script>
 
