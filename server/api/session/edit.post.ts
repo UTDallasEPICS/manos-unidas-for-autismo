@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 // Schema for updating a session (appointment)
 const updateSessionSchema = z.object({
-	id: z.string(), // required for identifying the session to update
+	id: z.string(),
 	typeId: z.string().optional(),
 	time: z.coerce.date().optional(),
 	comment: z.string().nullable().optional(),
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
 			if (prismaError.code === "P2025") {
 				throw createError({
 					statusCode: 404,
-					statusMessage: "Session not found.",
+					statusMessage: "Appointment not found.",
 				});
 			}
 		}
