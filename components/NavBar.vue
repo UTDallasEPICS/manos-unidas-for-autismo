@@ -3,7 +3,9 @@
 		class="flex items-center justify-between bg-blue-950 p-4 text-white shadow-md"
 	>
 		<!-- Logo -->
-		<div class="text-xl font-bold">Connected Care</div>
+		<NuxtLink to="/" class="flex items-center">
+			<div class="text-xl font-bold">Connected Care</div>
+		</NuxtLink>
 
 		<!-- Hamburger menu button: visible only on mobile -->
 		<div class="sm:hidden">
