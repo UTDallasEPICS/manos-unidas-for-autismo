@@ -1,6 +1,14 @@
-<!-- 22 Apr 2025
+<!-- 23 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
+	<!-- Filter modal window -->
+	<FilterAppointments
+		v-if="showFilterWindow"
+		@close-filter-window="showFilterWindow = false"
+		@add-filters="(filter) => addFilters(filter)"
+	/>
+
+	<!-- Page -->
 	<div class="mx-10 h-full">
 		<!-- Title part + option buttons -->
 		<div class="my-5 flex justify-between">
@@ -17,12 +25,6 @@
 					v-if="permissions.filter"
 				>
 					Filter
-					<div v-if="showFilterWindow">
-						<FilterAppointments
-							@close-filter-window="showFilterWindow = false"
-							@add-filters="(filter) => addFilters(filter)"
-						/>
-					</div>
 				</button>
 			</div>
 		</div>
@@ -137,9 +139,6 @@ const showFilterWindow = ref(false);
 const filters = ref<number[]>([]);
 
 function addFilters(filter: number[]) {
-	console.log("filters received: ");
-	console.log(filter);
-
 	filters.value = filter;
 }
 </script>

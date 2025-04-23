@@ -1,4 +1,4 @@
-<!-- 22 Apr 2025
+<!-- 23 Apr 2025
     A window for users to filter sessions. Currently has a temporary session types object. After submitting, the window should emit the filters to the schedule view and then to the calendar component
  -->
 <template>
@@ -11,7 +11,7 @@
 
 		<!-- Window -->
 		<div
-			class="text-md relative z-52 m-7 flex flex-col bg-white p-4 text-black"
+			class="text-md relative z-52 m-7 flex max-h-full flex-col overflow-y-auto bg-white p-4 text-black"
 		>
 			<div
 				class="flex cursor-pointer justify-end pr-2 text-right"
@@ -26,16 +26,12 @@
 				<div v-for="(type, index) in sessionTypes" :key="type">
 					<input
 						type="checkbox"
+						checked
 						v-model="filteredTypes[index]"
 						id="index"
 						:true-value="type.id"
 						:false-value="null"
 					/>{{ type.name }}
-				</div>
-				<!-- below is temporary for testing only -->
-				filtered types:
-				<div v-for="(i, idx) in filteredTypes" :key="i">
-					{{ idx }}:{{ i }}
 				</div>
 			</div>
 
@@ -55,6 +51,7 @@
 </template>
 
 <script lang="ts" setup>
+import { $fetch } from "ofetch";
 import { ref } from "vue";
 import type { SessionType } from "@prisma/client";
 import { X } from "lucide-vue-next";
@@ -65,15 +62,30 @@ function closeWindow() {
 	emit("closeFilterWindow");
 }
 
-// temporary object, later should get the appointment types from database
-const sessionTypes: SessionType[] = [
-	{ name: "type 1", id: "123", color: "BLUE" },
-	{ name: "type 2", id: "245", color: "BLUE" },
-	{ name: "type 3", id: "456", color: "BLUE" },
-];
-
+const sessionTypes = ref<SessionType[]>([]);
 // the filtered sessions, object should be returned to scheduleview page and be sent to calendar component
-const filteredTypes = ref([]);
+const filteredTypes = ref<string[]>([]);
+
+fetchSessionTypes().then((value) => {
+	sessionTypes.value = value;
+
+	for (let i = 0; i < sessionTypes.value.length; i++) {
+		filteredTypes.value.push(sessionTypes.value[i].id);
+	}
+});
+
+// gets the available session types from the database
+async function fetchSessionTypes(): Promise<SessionType[]> {
+	try {
+		const types: SessionType[] = await $fetch("./api/session/sessionType", {
+			method: "GET",
+		});
+
+		return types;
+	} catch {
+		return Promise.reject(new Error("Could not get session types"));
+	}
+}
 
 function submitForm() {
 	let result = filteredTypes.value.slice();
@@ -83,9 +95,6 @@ function submitForm() {
 			result.splice(i, 1);
 		}
 	}
-
-	console.log("submitted");
-	console.log(result);
 
 	// emit the filter options to week view calendar
 	emit("addFilters", result);
