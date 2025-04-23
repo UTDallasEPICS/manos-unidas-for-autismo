@@ -358,7 +358,10 @@
 										multiple
 									/>
 								</label>
-								<div v-if="data.medicalRecordFiles.length > 1">
+								<div
+									class="w-3/5"
+									v-if="data.medicalRecordFiles.length > 0"
+								>
 									<div
 										class="bg-color2 flex flex-col justify-between p-2 md:flex-row"
 										v-for="(
@@ -370,15 +373,15 @@
 											{{ rec }}
 										</div>
 										<button
-											class="fileSubmit w-3/5 cursor-pointer"
+											class="manosSubmit w-1/10 cursor-pointer"
 											type="button"
 											@click="handleDeleteFile(rec)"
 											v-if="
 												data.medicalRecordFiles.length >
-													1 && rec != ''
+												0
 											"
 										>
-											Remove file
+											X
 										</button>
 									</div>
 								</div>
@@ -523,7 +526,31 @@ const therapyOptions = [
 ];
 const therapies = ref([]); //types of therapies
 
-const data = reactive({
+const data = reactive<{
+	firstName: string;
+	middleName: string;
+	lastName: string;
+	age: string;
+	DOB: string;
+	nationality: string;
+	parentFirstName: string;
+	parentLastName: string;
+	ID: string;
+	SSN: string;
+	record: string;
+	address1: string;
+	address2: string;
+	postalCode: string;
+	locality: string;
+	country: string;
+	email: string;
+	comments: string;
+	phone: string;
+	prevPatient: string;
+	diagnosis: string;
+	evaluation: string;
+	medicalRecordFiles: string[]; // Explicitly typed as an array of strings
+}>({
 	//empty strings that will take the entered data. keep empty.
 	firstName: "",
 	middleName: "",
@@ -547,7 +574,7 @@ const data = reactive({
 	prevPatient: "",
 	diagnosis: "",
 	evaluation: "",
-	medicalRecordFiles: [""],
+	medicalRecordFiles: [],
 });
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
@@ -559,8 +586,10 @@ function handleFileUpload() {
 	let formData = new FormData();
 
 	for (let i = 0; i < files.length; i++) {
-		formData.append("files[" + i + "]", files[i]);
-		data.medicalRecordFiles.push(files[i].name);
+		if (data.medicalRecordFiles.indexOf(files[i].name) < 0) {
+			formData.append("files[" + i + "]", files[i]);
+			data.medicalRecordFiles.push(files[i].name);
+		}
 	}
 }
 
@@ -636,7 +665,7 @@ function clearForm() {
 	data.prevPatient = "";
 	data.diagnosis = "";
 	data.evaluation = "";
-	data.medicalRecordFiles = [""];
+	data.medicalRecordFiles = [];
 	gender.value = "";
 	therapies.value = [];
 	insurance.value = "";
