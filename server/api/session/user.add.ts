@@ -4,8 +4,8 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 const addPatientSchema = z.object({
-	sessionId: z.string(),
-	patientId: z.string(),
+	sessionId: z.string().uuid(),
+	patientId: z.string().uuid(),
 	paid: z.boolean().optional().default(false),
 });
 
@@ -22,6 +22,31 @@ export default defineEventHandler(async (event) => {
 	}
 
 	const { sessionId, patientId, paid } = parsed.data;
+
+	//Find session's current count
+	const currentCount = await prisma.sessionPatient.count({
+		where: { sessionId },
+	});
+
+	//Find session's max count
+	const session = await prisma.session.findUnique({
+		where: { id: sessionId },
+		select: { maxAttendance: true },
+	});
+
+	if (!session) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: "Session not found",
+		});
+	}
+
+	if (currentCount >= session.maxAttendance) {
+		throw createError({
+			statusCode: 400,
+			statusMessage: "Session has reached max attendance",
+		});
+	}
 
 	try {
 		const entry = await prisma.sessionPatient.create({

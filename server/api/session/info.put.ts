@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 // Schema for updating a session (appointment)
 const updateSessionSchema = z.object({
-	id: z.string(),
+	id: z.string().uuid(),
 	typeId: z.string().optional(),
 	time: z.coerce.date().optional(),
 	comment: z.string().nullable().optional(),

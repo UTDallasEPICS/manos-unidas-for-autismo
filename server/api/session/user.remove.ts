@@ -4,8 +4,8 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 const removePatientSchema = z.object({
-	sessionId: z.string(),
-	patientId: z.string(),
+	sessionId: z.string().uuid(),
+	patientId: z.string().uuid(),
 });
 
 export default defineEventHandler(async (event) => {
