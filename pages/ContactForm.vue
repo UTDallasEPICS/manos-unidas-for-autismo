@@ -636,7 +636,7 @@ function clearForm() {
 	data.prevPatient = "";
 	data.diagnosis = "";
 	data.evaluation = "";
-	data.medicalRecordFiles = [];
+	data.medicalRecordFiles = [""];
 	gender.value = "";
 	therapies.value = [];
 	insurance.value = "";
