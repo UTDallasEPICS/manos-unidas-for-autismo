@@ -38,8 +38,6 @@ export default defineEventHandler(async (event) => {
 	//friday.setDate(firstDay + 4);
 	friday.setHours(0, 0, 0, 0);
 
-	console.log("for: " + date);
-
 	// if there are filters
 	const sessions = await prisma.session.findMany({
 		where: {

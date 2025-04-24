@@ -69,7 +69,7 @@
 
 <script lang="ts" setup>
 import { $fetch } from "ofetch";
-import { computed, ref, watch, useCookie } from "#imports";
+import { computed, ref, watch, useCookie, useFetch } from "#imports";
 import type { Session } from "@prisma/client";
 import { AccessPermission } from "~/permissions";
 
@@ -298,7 +298,6 @@ const userId = useCookie("userId");
 const allSessions = ref<Session[]>([]);
 fetchSessions().then((value) => {
 	allSessions.value = value;
-	console.log(allSessions.value);
 });
 // gets the available sessions from the database
 async function fetchSessions(): Promise<Session[]> {
@@ -307,33 +306,41 @@ async function fetchSessions(): Promise<Session[]> {
 
 	try {
 		if (
-			access.value == AccessPermission.ADMIN ||
-			access.value == AccessPermission.USER_SUPPORT
+			access.value[AccessPermission.ADMIN] ||
+			access.value[AccessPermission.USER_SUPPORT]
 		) {
-			console.log("test"); // is not printing
-			sessions = await $fetch("/api/session/allSessions", {
+			// sessions = await $fetch("/api/session/allSessions", {
+			// 	method: "GET",
+			// 	body: {
+			// 		date: new Date(props.week),
+			// 		filter: props.filter,
+			// 	},
+			// });
+
+			const { types } = await useFetch("/api/session/allSessions", {
 				method: "GET",
-				query: {
+				body: {
 					date: props.week,
 					filter: props.filter,
 				},
 			});
-		} else if (access.value == AccessPermission.THERAPIST) {
+			console.log("data: " + types);
+			return types;
+		} else if (access.value[AccessPermission.THERAPIST]) {
 			sessions = await $fetch("/api/session/therapistSessions", {
 				method: "GET",
 				query: { userId: userId, date: props.week },
 			});
+			return sessions;
 		} else {
 			sessions = await $fetch("/api/session/patientSessions", {
 				method: "GET",
 				query: { userId: userId, date: props.week },
 			});
+			return sessions;
 		}
-
-		console.log("test after"); // not printing either
-
-		return sessions;
-	} catch {
+	} catch (e) {
+		console.log(e);
 		return Promise.reject(new Error("Could not get sessions"));
 	}
 }
