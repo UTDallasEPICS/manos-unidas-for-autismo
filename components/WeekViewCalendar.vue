@@ -68,8 +68,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { $fetch } from "ofetch";
+import { computed, ref, watch, useCookie } from "#imports";
 import type { Session } from "@prisma/client";
+import { AccessPermission } from "~/permissions";
 
 const user = {
 	id: "123",
@@ -271,6 +273,10 @@ watch(
 	() => props.week,
 	() => {
 		thisWeekSessions.value = getFilteredSessions(user.Sessions);
+		fetchSessions().then((value) => {
+			allSessions.value = value;
+			console.log(allSessions.value);
+		});
 	}
 );
 
@@ -278,9 +284,59 @@ watch(
 watch(
 	() => props.filter,
 	() => {
-		thisWeekSessions.value = getFilteredSessions(user.Sessions);
+		fetchSessions().then((value) => {
+			allSessions.value = value;
+			console.log(allSessions.value);
+		});
 	}
 );
+
+// get sessions
+const access = useCookie("AccessPermission");
+const userId = useCookie("userId");
+
+const allSessions = ref<Session[]>([]);
+fetchSessions().then((value) => {
+	allSessions.value = value;
+	console.log(allSessions.value);
+});
+// gets the available sessions from the database
+async function fetchSessions(): Promise<Session[]> {
+	let sessions: Session[] = [];
+	console.log("Fetching sessions..."); // is printing yippee
+
+	try {
+		if (
+			access.value == AccessPermission.ADMIN ||
+			access.value == AccessPermission.USER_SUPPORT
+		) {
+			console.log("test"); // is not printing
+			sessions = await $fetch("/api/session/allSessions", {
+				method: "GET",
+				query: {
+					date: props.week,
+					filter: props.filter,
+				},
+			});
+		} else if (access.value == AccessPermission.THERAPIST) {
+			sessions = await $fetch("/api/session/therapistSessions", {
+				method: "GET",
+				query: { userId: userId, date: props.week },
+			});
+		} else {
+			sessions = await $fetch("/api/session/patientSessions", {
+				method: "GET",
+				query: { userId: userId, date: props.week },
+			});
+		}
+
+		console.log("test after"); // not printing either
+
+		return sessions;
+	} catch {
+		return Promise.reject(new Error("Could not get sessions"));
+	}
+}
 
 // a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
 const thisWeekSessions = ref(getFilteredSessions(user.Sessions));
