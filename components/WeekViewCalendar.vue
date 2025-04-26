@@ -274,7 +274,40 @@ watch(
 );
 
 // a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
-const thisWeekSessions = ref(getFilteredSessions(user.Sessions));
+const thisWeekSessions = ref([
+	[
+		{
+			id: "123",
+			time: new Date(), // makes sure it's today!
+			duration: 60,
+			comment: "Test appointment for edit",
+			maxAttendance: 3,
+			typeId: "1",
+			Type: { id: "1", name: "Test Therapy", color: "BLUE" },
+			therapistId: "99",
+			Therapist: {
+				id: "99",
+				fName: "Test",
+				lName: "Therapist",
+				email: "test@example.com",
+				contactPref: "EMAIL",
+			},
+			Patients: [
+				{
+					id: "1",
+					fName: "Sample",
+					lName: "Patient",
+					email: "patient@example.com",
+					contactPref: "EMAIL",
+				},
+			],
+		},
+	],
+	[],
+	[],
+	[],
+	[],
+]);
 
 // 2d array holding the widths for each session that should be displayed. indexes correspond to thisWeekSessions
 const boxWidths: string[][] = computed(() => {
