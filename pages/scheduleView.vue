@@ -1,4 +1,4 @@
-<!-- 23 Apr 2025
+<!-- 26 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
 	<!-- Filter modal window -->
@@ -136,9 +136,9 @@ function changeWeek(forward: boolean) {
 // for showing the filter window
 const showFilterWindow = ref(false);
 
-const filters = ref<number[]>([]);
+const filters = ref<string[]>([]);
 
-function addFilters(filter: number[]) {
+function addFilters(filter: string[]) {
 	filters.value = filter;
 }
 </script>

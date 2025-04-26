@@ -5,13 +5,20 @@ const prisma = new PrismaClient();
 
 const schema = z.object({
 	date: z.coerce.date(),
-	filter: z.array(z.string()).optional(),
+	filter: z.string().array().optional(),
 });
 
 const validateSchema = schema.strict();
+//console.log(schema);
 
 export default defineEventHandler(async (event) => {
-	const validatedQuery = await getValidatedQuery(event, (query) =>
+	// get query
+	const query = getQuery(event);
+	if (typeof query.filter == "string") {
+		query.filter = [query.filter];
+	}
+
+	const validatedQuery = await getValidatedQuery(event, () =>
 		validateSchema.safeParse(query)
 	);
 	if (!validatedQuery.success) {
@@ -22,8 +29,7 @@ export default defineEventHandler(async (event) => {
 			data: zodError,
 		});
 	}
-	//const { date, filter } = validatedQuery.data;
-	const { date } = validatedQuery.data;
+	const { date, filter } = validatedQuery.data;
 
 	// get monday & friday
 	const firstDay =
@@ -31,25 +37,28 @@ export default defineEventHandler(async (event) => {
 	const monday = new Date(date.getTime());
 	monday.setDate(firstDay);
 	monday.setHours(0, 0, 0, 0);
-	const friday = new Date(date.getTime());
+	const saturday = new Date(date.getTime());
+	saturday.setDate(firstDay + 5);
+	saturday.setHours(0, 0, 0, 0);
 
-	// needs to be set to friday later
-	friday.setDate(firstDay + 6);
-	//friday.setDate(firstDay + 4);
-	friday.setHours(0, 0, 0, 0);
+	// construct the filter object
+	const constructedFilter = [];
+	if (filter != null || filter != undefined) {
+		for (let i = 0; i < filter.length; i++) {
+			constructedFilter.push({ typeId: filter[i] });
+		}
+	}
 
-	// if there are filters
 	const sessions = await prisma.session.findMany({
 		where: {
 			time: {
 				gte: monday,
-				lte: friday,
+				lt: saturday,
 			},
-			// typeId: {
-			// 	hasSome: filter,
-			// },
+			NOT: {
+				OR: constructedFilter,
+			},
 		},
 	});
-
 	return sessions;
 });

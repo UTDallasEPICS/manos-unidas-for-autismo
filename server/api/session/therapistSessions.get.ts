@@ -29,15 +29,17 @@ export default defineEventHandler(async (event) => {
 		date.getDate() - date.getDay() + (date.getDay() == 0 ? -6 : 1);
 	const monday = new Date(date.getTime());
 	monday.setDate(firstDay);
-	const friday = new Date(date.getTime());
-	friday.setDate(firstDay + 4);
+	monday.setHours(0, 0, 0, 0);
+	const saturday = new Date(date.getTime());
+	saturday.setDate(firstDay + 5);
+	saturday.setHours(0, 0, 0, 0);
 
 	// get session using therapistId
 	const sessions = await prisma.session.findMany({
 		where: {
 			time: {
-				gte: friday,
-				lte: monday,
+				gte: monday,
+				lt: saturday,
 			},
 			therapistId: userId,
 		},

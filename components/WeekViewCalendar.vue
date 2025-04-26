@@ -1,4 +1,4 @@
-<!-- 22 Apr 2025
+<!-- 26 Apr 2025
 
 	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed. Given a string array of filters, it will only show appointments with the same session types in the filters.
 -->
@@ -68,7 +68,6 @@
 </template>
 
 <script lang="ts" setup>
-import { $fetch } from "ofetch";
 import { computed, ref, watch, useCookie, useFetch } from "#imports";
 import type { Session } from "@prisma/client";
 import { AccessPermission } from "~/permissions";
@@ -275,7 +274,6 @@ watch(
 		thisWeekSessions.value = getFilteredSessions(user.Sessions);
 		fetchSessions().then((value) => {
 			allSessions.value = value;
-			console.log(allSessions.value);
 		});
 	}
 );
@@ -286,7 +284,7 @@ watch(
 	() => {
 		fetchSessions().then((value) => {
 			allSessions.value = value;
-			console.log(allSessions.value);
+			console.log(props.filter);
 		});
 	}
 );
@@ -300,44 +298,32 @@ fetchSessions().then((value) => {
 	allSessions.value = value;
 });
 // gets the available sessions from the database
-async function fetchSessions(): Promise<Session[]> {
-	let sessions: Session[] = [];
-	console.log("Fetching sessions..."); // is printing yippee
-
+async function fetchSessions() {
 	try {
 		if (
 			access.value[AccessPermission.ADMIN] ||
 			access.value[AccessPermission.USER_SUPPORT]
 		) {
-			// sessions = await $fetch("/api/session/allSessions", {
-			// 	method: "GET",
-			// 	body: {
-			// 		date: new Date(props.week),
-			// 		filter: props.filter,
-			// 	},
-			// });
-
-			const { types } = await useFetch("/api/session/allSessions", {
+			const sessions = await useFetch("/api/session/allSessions", {
 				method: "GET",
-				body: {
-					date: props.week,
+				query: {
+					date: props.week.toISOString(),
 					filter: props.filter,
 				},
 			});
-			console.log("data: " + types);
-			return types;
+			return sessions.data.value;
 		} else if (access.value[AccessPermission.THERAPIST]) {
-			sessions = await $fetch("/api/session/therapistSessions", {
+			const sessions = await useFetch("/api/session/therapistSessions", {
 				method: "GET",
 				query: { userId: userId, date: props.week },
 			});
-			return sessions;
+			return sessions.data.value;
 		} else {
-			sessions = await $fetch("/api/session/patientSessions", {
+			const sessions = await useFetch("/api/session/patientSessions", {
 				method: "GET",
 				query: { userId: userId, date: props.week },
 			});
-			return sessions;
+			return sessions.data.value;
 		}
 	} catch (e) {
 		console.log(e);

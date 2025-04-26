@@ -26,7 +26,6 @@
 				<div v-for="(type, index) in sessionTypes" :key="type">
 					<input
 						type="checkbox"
-						checked
 						v-model="filteredTypes[index]"
 						id="index"
 						:true-value="type.id"
@@ -51,8 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { $fetch } from "ofetch";
-import { ref } from "vue";
+import { ref, useFetch } from "#imports";
 import type { SessionType } from "@prisma/client";
 import { X } from "lucide-vue-next";
 
@@ -68,31 +66,33 @@ const filteredTypes = ref<string[]>([]);
 
 fetchSessionTypes().then((value) => {
 	sessionTypes.value = value;
-
-	for (let i = 0; i < sessionTypes.value.length; i++) {
-		filteredTypes.value.push(sessionTypes.value[i].id);
-	}
 });
 
 // gets the available session types from the database
 async function fetchSessionTypes(): Promise<SessionType[]> {
 	try {
-		const types: SessionType[] = await $fetch("./api/session/sessionType", {
+		// const types: SessionType[] = await $fetch("./api/session/sessionType", {
+		// 	method: "GET",
+		// });
+		const types = await useFetch("./api/session/sessionType", {
 			method: "GET",
 		});
 
-		return types;
+		return types.data.value;
 	} catch {
 		return Promise.reject(new Error("Could not get session types"));
 	}
 }
 
 function submitForm() {
-	let result = filteredTypes.value.slice();
-	// remove any null, undefined, empty, or false
-	for (let i = 0; i < result.length; i++) {
-		if (result[i] == null || result[i] == undefined) {
-			result.splice(i, 1);
+	let result: string[] = [];
+
+	for (let i = 0; i < filteredTypes.value.length; i++) {
+		if (
+			filteredTypes.value[i] != null ||
+			filteredTypes.value[i] != undefined
+		) {
+			result.push(filteredTypes.value[i]);
 		}
 	}
 
