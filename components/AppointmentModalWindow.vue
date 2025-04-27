@@ -100,8 +100,6 @@ import { AccessPermission } from "~/permissions";
 const props = defineProps<{
 	session: Session;
 }>();
-console.log("opened appt window, session info:");
-console.log(props.session);
 
 const emit = defineEmits(["closeWindow"]);
 

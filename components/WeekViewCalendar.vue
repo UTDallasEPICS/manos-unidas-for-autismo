@@ -278,16 +278,6 @@ function militaryTimeToTwelveHr(h: number): string {
 
 const rowHeight = ref(26); // height in pixels of each row of time for the appointment box component
 
-// given a date, gets the monday of that week (assuming the week starts on monday)
-/*
-function getMonday(d: Date): Date {
-	// if day is sunday, go back to the monday of that week
-	const firstDay = d.getDate() - d.getDay() + (d.getDay() == 0 ? -6 : 1);
-	let monday = new Date(d.getTime());
-	monday.setDate(firstDay);
-	return monday;
-}*/
-
 // given a time and a duration, return the end of the session time
 function getSessionEndTime(d: Date, sessionLength: number): Date {
 	let endTime = new Date(d.getTime());
