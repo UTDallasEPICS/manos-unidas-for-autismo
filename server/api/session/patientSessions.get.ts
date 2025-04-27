@@ -42,8 +42,14 @@ export default defineEventHandler(async (event) => {
 				lt: saturday,
 			},
 			Patients: {
-				has: userId,
+				some: {
+					patientId: userId,
+				},
 			},
+		},
+		include: {
+			Type: true,
+			Therapist: true,
 		},
 	});
 
