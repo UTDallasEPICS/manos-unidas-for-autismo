@@ -1,12 +1,12 @@
 import { z } from "zod";
 import {
+	Prisma,
 	PrismaClient,
 	Gender,
 	Status,
 	InsuranceCompany,
 	ContactType,
 } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
@@ -137,7 +137,7 @@ export default defineEventHandler(async (event) => {
 
 		return result;
 	} catch (e) {
-		if (e instanceof PrismaClientKnownRequestError) {
+		if (e instanceof Prisma.PrismaClientKnownRequestError) {
 			switch (String(e.code)) {
 				case "P2002":
 					console.log("uniqueness error");
