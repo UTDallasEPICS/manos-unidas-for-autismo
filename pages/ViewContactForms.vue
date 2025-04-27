@@ -55,6 +55,7 @@ import { $fetch } from "ofetch";
 try {
 	const response = await $fetch("/api/contactForm/viewForm", {
 		method: "GET",
+		body: { term: "patient" },
 	});
 
 	console.log(response);
