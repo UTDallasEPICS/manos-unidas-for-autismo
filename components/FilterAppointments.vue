@@ -21,16 +21,19 @@
 			</div>
 			<!-- Information -->
 			<div class="m-3 flex flex-col gap-3">
-				<h1>Filter Appointments</h1>
-				Tick to hide appointment:
-				<div v-for="(type, index) in sessionTypes" :key="type">
-					<input
-						type="checkbox"
-						v-model="filteredTypes[index]"
-						id="index"
-						:true-value="type.id"
-						:false-value="null"
-					/>{{ type.name }}
+				<h1 class="text-3xl">Filter Appointments</h1>
+				<h3 class="font-bold">Tick to hide appointment:</h3>
+				<div>
+					<div v-for="(type, index) in sessionTypes" :key="type">
+						<input
+							type="checkbox"
+							v-model="filteredTypes[index]"
+							id="index"
+							:true-value="type.id"
+							:false-value="null"
+						/>
+						<span class="px-2">{{ type.name }}</span>
+					</div>
 				</div>
 			</div>
 
