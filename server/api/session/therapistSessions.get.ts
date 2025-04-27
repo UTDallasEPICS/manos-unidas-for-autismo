@@ -46,6 +46,19 @@ export default defineEventHandler(async (event) => {
 		include: {
 			Type: true,
 			Therapist: true,
+			Patients: {
+				include: {
+					Patient: {
+						include: {
+							User: {
+								include: {
+									User: true,
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	});
 

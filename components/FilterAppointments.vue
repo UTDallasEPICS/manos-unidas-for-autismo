@@ -1,4 +1,4 @@
-<!-- 23 Apr 2025
+<!-- 27 Apr 2025
     A window for users to filter sessions. Currently has a temporary session types object. After submitting, the window should emit the filters to the schedule view and then to the calendar component
  -->
 <template>
@@ -71,9 +71,6 @@ fetchSessionTypes().then((value) => {
 // gets the available session types from the database
 async function fetchSessionTypes(): Promise<SessionType[]> {
 	try {
-		// const types: SessionType[] = await $fetch("./api/session/sessionType", {
-		// 	method: "GET",
-		// });
 		const types = await useFetch("./api/session/sessionType", {
 			method: "GET",
 		});

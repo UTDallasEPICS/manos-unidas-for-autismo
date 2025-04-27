@@ -1,4 +1,4 @@
-<!-- 26 Apr 2025
+<!-- 27 Apr 2025
 
 	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed. Given a string array of filters, it will only show appointments with the same session types in the filters.
 -->
@@ -110,33 +110,47 @@ fetchSessions().then((value) => {
 // gets the available sessions from the database
 async function fetchSessions() {
 	try {
-		if (
-			access.value[AccessPermission.ADMIN] ||
-			access.value[AccessPermission.USER_SUPPORT]
-		) {
-			const { data: sessions } = await useFetch(
-				"/api/session/allSessions",
-				{
-					method: "GET",
-					query: {
-						date: props.week.toISOString(),
-						filter: props.filter,
-					},
-				}
-			);
-			return sessions.value;
-		} else if (access.value[AccessPermission.THERAPIST]) {
-			const sessions = await useFetch("/api/session/therapistSessions", {
-				method: "GET",
-				query: { userId: userId, date: props.week.toISOString() },
-			});
-			return sessions.data.value;
-		} else {
-			const sessions = await useFetch("/api/session/patientSessions", {
-				method: "GET",
-				query: { userId: userId, date: props.week.toISOString() },
-			});
-			return sessions.data.value;
+		if (access.value) {
+			if (
+				access.value[AccessPermission.ADMIN] ||
+				access.value[AccessPermission.USER_SUPPORT]
+			) {
+				const { data: sessions } = await useFetch(
+					"/api/session/allSessions",
+					{
+						method: "GET",
+						query: {
+							date: props.week.toISOString(),
+							filter: props.filter,
+						},
+					}
+				);
+				return sessions.value;
+			} else if (access.value[AccessPermission.THERAPIST]) {
+				const sessions = await useFetch(
+					"/api/session/therapistSessions",
+					{
+						method: "GET",
+						query: {
+							userId: userId,
+							date: props.week.toISOString(),
+						},
+					}
+				);
+				return sessions.data.value;
+			} else {
+				const sessions = await useFetch(
+					"/api/session/patientSessions",
+					{
+						method: "GET",
+						query: {
+							userId: userId,
+							date: props.week.toISOString(),
+						},
+					}
+				);
+				return sessions.data.value;
+			}
 		}
 	} catch (e) {
 		console.log(e);
@@ -291,9 +305,6 @@ function getFilteredSessions(): Session[][] {
 	if (allSessions.value == null) {
 		return filteredSessions;
 	}
-
-	console.log("all sessions:");
-	console.log(allSessions.value);
 
 	for (let i = 0; i < allSessions.value.length; i++) {
 		let currSessionDay = new Date(allSessions.value[i].time);

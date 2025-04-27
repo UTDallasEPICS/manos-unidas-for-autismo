@@ -1,4 +1,4 @@
-<!-- 14 Apr 2025
+<!-- 27 Apr 2025
     When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information.
  -->
 <template>
@@ -45,11 +45,8 @@
 					</span>
 				</button>
 				<div v-if="showPatients" class="px-5">
-					<li
-						v-for="patient in props.session.Patients"
-						:key="patient.id"
-					>
-						{{ patient.fName + " " + patient.lName }}
+					<li v-for="patient in patientNames" :key="patient">
+						{{ patient }}
 						<!-- replace with link to patient profile later -->
 						<span class="cursor-pointer px-3 text-xs text-blue-400">
 							View Profile &gt;
@@ -95,13 +92,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, useCookie } from "#imports";
 import type { Session } from "@prisma/client";
 import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
+import { AccessPermission } from "~/permissions";
 
 const props = defineProps<{
 	session: Session;
 }>();
+console.log("opened appt window, session info:");
+console.log(props.session);
 
 const emit = defineEmits(["closeWindow"]);
 
@@ -109,11 +109,29 @@ function closeWindow() {
 	emit("closeWindow");
 }
 
-// will be removed later, for now defines the user's permissions
-const permissions = {
-	nonEmployee: false, // patient = true, user service/admin/therapist = false
-	editAppointments: true, // user service = true, admin/patient/therapist = false
-};
+const access = useCookie("AccessPermission");
+
+const permissions = computed(() => {
+	let actions = {
+		nonEmployee: true, // patient = true, user service/admin/therapist = false
+		editAppointments: false, // user service = true, admin/patient/therapist = false
+	};
+
+	if (access.value) {
+		if (
+			access.value[AccessPermission.USER_SUPPORT] ||
+			access.value[AccessPermission.ADMIN] ||
+			access.value[AccessPermission.THERAPIST]
+		) {
+			actions.nonEmployee = false;
+		}
+		if (access.value[AccessPermission.USER_SUPPORT]) {
+			actions.editAppointments = true;
+		}
+	}
+
+	return actions;
+});
 
 const showPatients = ref(false);
 
@@ -156,4 +174,19 @@ function getSessionEndTime(d: Date, sessionLength: number): Date {
 	endTime.setMinutes(d.getMinutes() + sessionLength);
 	return endTime;
 }
+
+const patientNames = computed(() => {
+	const result = [];
+
+	for (let i = 0; i < props.session.Patients.length; i++) {
+		let patient = props.session.Patients[i];
+		result.push(
+			patient.Patient.User.User.fName +
+				" " +
+				patient.Patient.User.User.lName
+		);
+	}
+
+	return result;
+});
 </script>
