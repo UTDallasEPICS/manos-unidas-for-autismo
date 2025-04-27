@@ -9,7 +9,6 @@ const schema = z.object({
 });
 
 const validateSchema = schema.strict();
-//console.log(schema);
 
 export default defineEventHandler(async (event) => {
 	// get query
@@ -58,6 +57,10 @@ export default defineEventHandler(async (event) => {
 			NOT: {
 				OR: constructedFilter,
 			},
+		},
+		include: {
+			Type: true,
+			Therapist: true,
 		},
 	});
 	return sessions;
