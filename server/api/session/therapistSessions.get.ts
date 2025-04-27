@@ -43,6 +43,10 @@ export default defineEventHandler(async (event) => {
 			},
 			therapistId: userId,
 		},
+		include: {
+			Type: true,
+			Therapist: true,
+		},
 	});
 
 	return sessions;

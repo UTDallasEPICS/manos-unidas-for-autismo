@@ -128,13 +128,13 @@ async function fetchSessions() {
 		} else if (access.value[AccessPermission.THERAPIST]) {
 			const sessions = await useFetch("/api/session/therapistSessions", {
 				method: "GET",
-				query: { userId: userId, date: props.week },
+				query: { userId: userId, date: props.week.toISOString() },
 			});
 			return sessions.data.value;
 		} else {
 			const sessions = await useFetch("/api/session/patientSessions", {
 				method: "GET",
-				query: { userId: userId, date: props.week },
+				query: { userId: userId, date: props.week.toISOString() },
 			});
 			return sessions.data.value;
 		}
