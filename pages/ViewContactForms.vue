@@ -5,7 +5,7 @@
 				class="flex w-4/5 flex-col justify-between md:w-200 md:flex-row"
 			>
 				<div class="cormorant-garamond">
-					<h1 class="text-2xl">View Contact Forms</h1>
+					<h1 class="text-2xl">View Incoming Contact Forms</h1>
 				</div>
 				<div class="flex w-full flex-row md:w-1/3">
 					<Listbox v-model="sortBy" as="div" class="w-2/3 md:w-66">
@@ -36,28 +36,92 @@
 							</ListboxOptions>
 						</div>
 					</Listbox>
-					<button @click="getPatients" class="manosSubmit w-1/2">
+					<button
+						@click="sort(sortBy)"
+						class="manosSubmit w-1/2 cursor-pointer"
+					>
 						Sort
 					</button>
 				</div>
 			</div>
-			<div>
+			<div class="flex flex-col gap-5">
+				<div class="flex justify-end">
+					<button
+						@click="getPatients"
+						class="manosSubmit w-1/4 cursor-pointer"
+					>
+						Load Contact Forms
+					</button>
+				</div>
 				<table
 					class="cormorant-garamond w-full border-collapse border-2 border-b-black"
 				>
 					<tr class="border-collapse border-2 border-b-black">
-						<th class="border-collapse border-2 border-b-black">
+						<th
+							class="border-collapse border-2 border-b-black px-2"
+						>
 							First Name
 						</th>
-						<th class="border-collapse border-2 border-b-black">
+						<th
+							class="border-collapse border-2 border-b-black px-2"
+						>
 							Last Name
 						</th>
-						<th class="border-collapse border-2 border-b-black">
-							Processing Status
+						<th
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							SSN
 						</th>
-						<th class="border-collapse border-2 border-b-black">
-							More Details
+						<th
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							Insurance
 						</th>
+						<th
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							Comments
+						</th>
+					</tr>
+					<tr
+						class="border-collapse border-2 border-b-black"
+						v-for="(user, index) in processingPatients"
+						:key="index"
+					>
+						<td
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							{{ user.fName }}
+						</td>
+						<td
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							{{ user.lName }}
+						</td>
+						<td
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							{{ user.NonEmployee?.Patient?.identification }}
+						</td>
+						<td
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							{{
+								user.NonEmployee?.Patient?.ContactForm
+									?.insurance
+							}}
+						</td>
+						<td
+							class="border-collapse border-2 border-b-black px-2"
+						>
+							{{
+								user.NonEmployee?.Patient?.ContactForm
+									?.comment == ""
+									? "None"
+									: user.NonEmployee?.Patient?.ContactForm
+											?.comment
+							}}
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -73,31 +137,61 @@ import {
 	ListboxOption,
 } from "@headlessui/vue";
 
-const sortOptions = ["SSN", "Last Name", "ID", ""];
+const sortOptions = ["SSN", "Last Name"];
 const sortBy = ref("");
+const processingPatients = ref([]);
 import { $fetch } from "ofetch";
-
-// import { PrismaClient } from "@prisma/client";
-
-// const prisma = new PrismaClient();
-// const users = await prisma.contactForm.findMany();
-// console.log(users);
 
 async function getPatients() {
 	try {
+		const getData = {
+			term: "PROCESSING",
+		};
 		const response = await $fetch("/api/contactForm/viewForm", {
 			method: "GET",
-			body: { term: "patient" },
+			params: getData,
 		});
 
-		console.log(response);
+		processingPatients.value = response;
 
 		if (response == null || !response) {
 			throw new Error("Could not submit form");
 		}
-		return "hi";
 	} catch {
 		console.log("Could not submit form");
 	}
+}
+
+async function sort(sortByCategory) {
+	if (sortByCategory == "Last Name")
+		processingPatients.value = processingPatients.value.sort(compareFn1);
+	else if (sortByCategory == "SSN")
+		processingPatients.value = processingPatients.value.sort(compareFn2);
+}
+
+function compareFn1(a, b) {
+	if (a.lName < b.lName) {
+		return -1;
+	} else if (a.lName > b.lName) {
+		return 1;
+	}
+	// a must be equal to b
+	return 0;
+}
+
+function compareFn2(a, b) {
+	if (
+		a.NonEmployee?.Patient?.identification <
+		b.NonEmployee?.Patient?.identification
+	) {
+		return -1;
+	} else if (
+		a.NonEmployee?.Patient?.identification >
+		b.NonEmployee?.Patient?.identification
+	) {
+		return 1;
+	}
+	// a must be equal to b
+	return 0;
 }
 </script>

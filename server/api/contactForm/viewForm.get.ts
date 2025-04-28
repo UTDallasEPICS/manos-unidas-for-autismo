@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Status } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const schema = z.object({
-	term: z.string(),
+	term: z.enum(["PROCESSING", "COMPLETED", "PENDING"]),
 });
 
 const validateSchema = schema.strict();
@@ -24,10 +24,29 @@ export default defineEventHandler(async (event) => {
 
 	const { term } = queries.data;
 
-	const isPatient = term.toLocaleLowerCase() === "patient";
-
-	const items = prisma.contactForm.findMany({
-		where: { returnPatient: { equals: isPatient } },
+	const items = prisma.user.findMany({
+		where: {
+			NonEmployee: {
+				Patient: {
+					ContactForm: {
+						status: {
+							equals: term as Status,
+						},
+					},
+				},
+			},
+		},
+		include: {
+			NonEmployee: {
+				include: {
+					Patient: {
+						include: {
+							ContactForm: true,
+						},
+					},
+				},
+			},
+		},
 	});
 
 	console.log(items);
