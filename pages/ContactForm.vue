@@ -26,23 +26,25 @@
     -->
 
 	<!--div container for the whole app-->
-	<div class="fullPage">
+	<div class="fullPage h-full flex-col">
 		<!--Navigation bar-->
 
 		<!--div container for the contact form-->
-		<div class="contactFormPage">
-			<div class="contactFormArea">
+		<div class="contactFormPage flex h-auto place-content-center">
+			<div class="contactFormArea flex-col flex-wrap font-light">
 				<!--Title of contact form-->
 				<h1 class="mt-5 text-2xl sm:mr-3">Patient Contact Form</h1>
 
 				<!--div container for the form-->
-				<div class="contactFormContent">
+				<div
+					class="contactFormContent font-Cormor justify-start p-5 text-lg"
+				>
 					<!--Form for contact form-->
 					<form @submit.prevent="handleSubmit" class="contactForm">
 						<!-- div class for the short answer type of responses-->
-						<div class="freeResponseArea py-5">
+						<div class="freeResponseArea flex-wrap gap-5 py-5">
 							<!--div class for the name portion (the name components should occupy the same line)-->
-							<div class="inputBoxRow">
+							<div class="inputBoxRow h-auto gap-7">
 								<div class="textLabelAndBox_Size1">
 									<label class="">Patient First name:</label>
 
@@ -76,7 +78,7 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
+							<div class="inputBoxRow h-auto gap-7">
 								<div class="textLabelAndBox_Size2 relative">
 									<label class="">Gender:</label>
 
@@ -137,7 +139,7 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
+							<div class="inputBoxRow h-auto gap-7">
 								<div class="textLabelAndBox_Size1">
 									<label class="">ID Number:</label>
 									<input
@@ -160,7 +162,7 @@
 								</div>
 							</div>
 
-							<div class="addressInputBoxRow">
+							<div class="addressInputBoxRow h-auto w-full gap-1">
 								<div class="textLabelAndBox_Size3">
 									<label class="">Address Line 1:</label>
 									<input
@@ -214,7 +216,7 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
+							<div class="inputBoxRow h-auto gap-7">
 								<div class="textLabelAndBox_Size1">
 									<label class="">Parent First Name:</label>
 									<input
@@ -235,7 +237,7 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
+							<div class="inputBoxRow h-auto gap-7">
 								<div class="textLabelAndBox_Size3">
 									<label class="">Email:</label>
 									<input
@@ -259,7 +261,7 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
+							<div class="inputBoxRow h-auto gap-7">
 								<div class="textLabelAndBox_Size3 relative">
 									<label class="">Medical Insurance:</label>
 

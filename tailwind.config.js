@@ -26,8 +26,8 @@ export default {
 				sandy: "#ECE4B9",
 			},
 			fontFamily: {
-				serif: ['"Cormorant Garamond"', "serif"],
-				sans: ['"Encode Sans SC"', "sans-serif"],
+				Cormor: ['"Cormorant Garamond"', "serif"],
+				EncodeSC: ['"Encode Sans SC"', "sans-serif"],
 			},
 		},
 	},
