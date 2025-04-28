@@ -1,4 +1,4 @@
-<!-- 9 Apr 2025 coder-Mika
+<!-- 14 Apr 2025 
 	Appointment box displays an overview of the session details: the appointment name, the therapist, and the duration of the session. It's position and size depends on the duration and on the hour the calendar starts with. When clicked, it displays the details of the session
 -->
 <template>

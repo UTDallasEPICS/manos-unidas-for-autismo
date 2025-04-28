@@ -1,7 +1,9 @@
 <template>
-	<Nav />
-	<NuxtPage />
-	<Footer />
+	<div class="h-screen">
+		<NavBar />
+		<NuxtPage />
+		<Footer />
+	</div>
 </template>
 
 <script></script>
