@@ -20,7 +20,7 @@
 							>
 							<ListboxOptions
 								as="div"
-								class="bg-color2 absolute w-91/200 md:w-44"
+								class="bg-color2 absolute w-1/5 md:w-66"
 							>
 								<ListboxOption
 									as="div"
@@ -36,25 +36,11 @@
 							</ListboxOptions>
 						</div>
 					</Listbox>
-					<button
-						@click="sort(sortBy)"
-						class="manosSubmit w-1/2 cursor-pointer"
-					>
-						Sort
-					</button>
 				</div>
 			</div>
 			<div class="flex flex-col gap-5">
-				<div class="flex justify-end">
-					<button
-						@click="getPatients"
-						class="manosSubmit w-1/4 cursor-pointer"
-					>
-						Load Contact Forms
-					</button>
-				</div>
 				<table
-					class="cormorant-garamond w-full border-collapse border-2 border-b-black"
+					class="cormorant-garamond w-full border-collapse border-2 border-b-black text-2xl"
 				>
 					<tr class="border-collapse border-2 border-b-black">
 						<th
@@ -129,7 +115,7 @@
 	</div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch } from "vue";
 import {
 	Listbox,
 	ListboxButton,
@@ -194,4 +180,13 @@ function compareFn2(a, b) {
 	// a must be equal to b
 	return 0;
 }
+
+watch(sortBy, (newSortBy) => {
+	sort(newSortBy);
+});
+
+onMounted(() => {
+	getPatients();
+	sort(sortBy);
+});
 </script>
