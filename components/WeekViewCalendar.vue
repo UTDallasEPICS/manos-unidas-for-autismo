@@ -61,6 +61,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch, useCookie, useFetch } from "#imports";
+import { computedAsync } from "@vueuse/core";
 import type { Session } from "@prisma/client";
 import { AccessPermission } from "~/permissions";
 
@@ -73,11 +74,7 @@ const props = defineProps<{
 watch(
 	() => props.week,
 	() => {
-		fetchSessions().then((value) => {
-			allSessions.value = value;
-			setHours();
-			thisWeekSessions.value = getFilteredSessions();
-		});
+		thisWeekSessions.value = getFilteredSessions();
 	}
 );
 
@@ -85,11 +82,7 @@ watch(
 watch(
 	() => props.filter,
 	() => {
-		fetchSessions().then((value) => {
-			allSessions.value = value;
-			setHours();
-			thisWeekSessions.value = getFilteredSessions();
-		});
+		thisWeekSessions.value = getFilteredSessions();
 	}
 );
 
@@ -98,15 +91,13 @@ const access = useCookie("AccessPermission");
 const userId = useCookie("userId");
 
 // a 2d array holding all the sessions that should be displayed. [day-1][session in the list]
-const thisWeekSessions = ref([[]]);
+const thisWeekSessions = computedAsync(
+	async () => {
+		return getFilteredSessions();
+	},
+	[[], [], [], [], []] // initial state
+);
 
-// fetches all the sessions
-const allSessions = ref<Session[]>([]);
-fetchSessions().then((value) => {
-	allSessions.value = value;
-	setHours();
-	thisWeekSessions.value = getFilteredSessions();
-});
 // gets the available sessions from the database
 async function fetchSessions() {
 	try {
@@ -161,9 +152,15 @@ async function fetchSessions() {
 // 2d array holding the widths for each session that should be displayed. indexes correspond to thisWeekSessions
 const boxWidths: string[][] = computed(() => {
 	let result: string[][] = [];
+
 	for (let i = 0; i < 5; i++) {
 		result.push([]);
-		result[i] = getBoxWidths(thisWeekSessions.value[i]);
+		if (
+			thisWeekSessions.value != null ||
+			thisWeekSessions.value != undefined
+		) {
+			result[i] = getBoxWidths(thisWeekSessions.value[i]);
+		}
 	}
 	return result;
 });
@@ -171,72 +168,52 @@ const boxWidths: string[][] = computed(() => {
 const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 // hours to display
-const startHr = ref(23);
-const endHr = ref(0);
-const hours = ref<number[]>([]);
-setHours();
-
-function setHours() {
-	startHr.value = getStartHour();
-	endHr.value = getEndHour();
-	hours.value = getAllHours();
-}
-
-watch(
-	() => startHr,
-	() => {
-		setHours();
-	}
-);
-watch(
-	() => endHr,
-	() => {
-		setHours();
-	}
-);
-
-function getStartHour() {
+const startHr = computed(() => {
 	let earliestHr = 23;
 
-	if (allSessions.value == null) {
+	if (thisWeekSessions.value == null || thisWeekSessions.value == undefined) {
 		return 0;
 	}
 
-	for (let i = 0; i < allSessions.value.length; i++) {
-		let sessionTime = new Date(allSessions.value[i].time);
-		//check its starting hour
-		if (sessionTime.getHours() < earliestHr) {
-			earliestHr = sessionTime.getHours();
+	for (let day = 0; day < 5; day++) {
+		for (let i = 0; i < thisWeekSessions.value[day].length; i++) {
+			let sessionTime = new Date(thisWeekSessions.value[day][i].time);
+			//check its starting hour
+			if (sessionTime.getHours() < earliestHr) {
+				earliestHr = sessionTime.getHours();
+			}
 		}
 	}
 
 	return earliestHr;
-}
+});
 
-function getEndHour() {
+const endHr = computed(() => {
 	let latestHr = 0;
-	if (allSessions.value == null) {
+	if (thisWeekSessions.value == null || thisWeekSessions.value == undefined) {
 		return 23;
 	}
 
-	for (let i = 0; i < allSessions.value.length; i++) {
-		let sessionTime = new Date(allSessions.value[i].time);
-		// get the end time
-		let sessionEnd = getSessionEndTime(
-			sessionTime,
-			allSessions.value[i].duration
-		);
+	for (let day = 0; day < 5; day++) {
+		for (let i = 0; i < thisWeekSessions.value[day].length; i++) {
+			let sessionTime = new Date(thisWeekSessions.value[day][i].time);
+			// get the end time
+			let sessionEnd = getSessionEndTime(
+				sessionTime,
+				thisWeekSessions.value[day][i].duration
+			);
 
-		//check its ending hour
-		if (sessionEnd.getHours() > latestHr) {
-			latestHr = sessionEnd.getHours();
+			//check its ending hour
+			if (sessionEnd.getHours() > latestHr) {
+				latestHr = sessionEnd.getHours();
+			}
 		}
 	}
 
 	return latestHr;
-}
+});
 
-function getAllHours() {
+const hours = computed(() => {
 	const hoursBuild = [];
 	if (
 		startHr.value < endHr.value &&
@@ -255,7 +232,7 @@ function getAllHours() {
 		}
 	}
 	return hoursBuild;
-}
+});
 
 // converts 24 hour military time to AM & PM
 function militaryTimeToTwelveHr(h: number): string {
@@ -286,23 +263,24 @@ function getSessionEndTime(d: Date, sessionLength: number): Date {
 }
 
 // filters sessions into the day of the week they belong to
-function getFilteredSessions(): Session[][] {
+
+async function getFilteredSessions(): Session[][] {
+	const sessions = await fetchSessions();
+
 	let filteredSessions: Session[][] = [];
 	for (let i = 0; i < 5; i++) {
 		filteredSessions.push([]);
 	}
 
-	if (allSessions.value == null) {
+	if (sessions == null) {
 		return filteredSessions;
 	}
 
-	for (let i = 0; i < allSessions.value.length; i++) {
-		let currSessionDay = new Date(allSessions.value[i].time);
+	for (let i = 0; i < sessions.length; i++) {
+		let currSessionDay = new Date(sessions[i].time);
 
 		// append to the filtered sessions
-		filteredSessions[currSessionDay.getDay() - 1].push(
-			allSessions.value[i]
-		);
+		filteredSessions[currSessionDay.getDay() - 1].push(sessions[i]);
 	}
 
 	// sort sessions
