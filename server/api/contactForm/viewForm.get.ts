@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
-// import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
@@ -30,5 +29,7 @@ export default defineEventHandler(async (event) => {
 	const items = prisma.contactForm.findMany({
 		where: { returnPatient: { equals: isPatient } },
 	});
+
+	console.log(items);
 	return items;
 });
