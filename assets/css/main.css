@@ -10,16 +10,6 @@
 	--color-smoky: #d9d9d9;
 	--color-pearl: #ffffff;
 	--color-blay: #b4bbc9; /*get it? blue gray?? haha*/
-
-	--font-display: "Cormorant Garamond", "sans-serif";
-}
-@font-face {
-	font-family: "Cormorant Garamond", serif;
-	font-optical-sizing: auto;
-	font-weight: 300;
-	font-style: normal;
-	-webkit-text-fill-color: black;
-	src: url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap");
 }
 
 /*Fonts */
@@ -40,11 +30,6 @@
 }
 
 /*Buttons */
-/*
-Alright honcho, get rid of extra classes & create base classes. For any other specific styling use tailwind ie. the ContactForm etc.
-get rid of like.. pg & form area bc those can be made as tw in vue.
-Good luck. Do all of this & you will be reincarnated into a beautiful lotus flower
-*/
 button.manosSubmit,
 button.fileSubmit,
 button.btn {
@@ -62,21 +47,6 @@ button.manosSubmit {
 }
 
 /*layout*/
-/*
-div.fullPage {		
-	flex-direction: column;
-	height: 100%;
-}
-
-
-div.contactFormPage {
-	display: flex;
-	height: auto;
-	place-content: center;
-}
-
-*/
-
 div.contactFormArea {
 	/*font wont work :(( */
 	font-family: "Cormorant Garamond", serif;
@@ -86,17 +56,7 @@ div.contactFormArea {
 	-webkit-text-fill-color: black;
 }
 
-/*
-div.contactFormContent {
-	font-size: var(--text-lg);
-	line-height: var(--tw-leading, var(--text-lg--line-height));
-	justify-content: flex-start;
-	padding: calc(var(--spacing) * 5);
-}
-	 */
-
 form.contactForm {
-	/*what is ths????? */
 	flex-direction: column;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -104,25 +64,6 @@ form.contactForm {
 }
 
 /*yippe inputs*/
-/*
-div.freeResponseArea {
-	flex-wrap: wrap;
-	gap: calc(var(--spacing) * 5);
-}
-*/
-/*
-div.inputBoxRow {
-	height: auto;
-	gap: calc(var(--spacing) * 7);
-}
-
-div.addressInputBoxRow {
-	height: auto;
-	width: 100%;
-	gap: calc(var(--spacing) * 1);
-}
-*/
-
 div.textLabelAndBox_Size1,	/*1-med. 2-small. 3-big. 4-tiny*/
 div.textLabelAndBox_Size2,
 div.textLabelAndBox_Size3,
@@ -174,11 +115,10 @@ input.input {
 .contactFormListboxOption,
 .contactFormListboxOptions,
 .contactFormListboxButton,
-div.freeResponseArea,
-form.contactForm,
-div.contactFormContent,
-div.inputBoxRow,
-div.fullPage {
+.listboxOption,
+.listboxOptions,
+.listboxButton form.contactForm,
+div.inputBoxRow {
 	display: flex;
 	width: 100%;
 }
