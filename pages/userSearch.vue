@@ -39,6 +39,18 @@
 					<td class="px-4 py-2">{{ user.type }}</td>
 					<td class="px-4 py-2">{{ user.age }}</td>
 					<td class="px-4 py-2">{{ user.gender }}</td>
+					<td>
+						<NuxtLink
+							:to="`/PatientProfile/${user.id}`"
+							class="flex justify-center"
+						>
+							<button
+								class="rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-700"
+							>
+								View Profile
+							</button>
+						</NuxtLink>
+					</td>
 				</tr>
 				<tr v-if="!filteredUsers.length">
 					<td colspan="5" class="px-4 py-2 text-center">
@@ -71,6 +83,16 @@ const users = ref<User[]>([
 	{ id: 3, name: "Dr. Patel", type: "therapist", age: 36, gender: "Female" },
 	// …fetch real list here
 ]);
+// Fetch from our new API route; runs on server & client
+/* const { data: usersData } = await useAsyncData<User[]>("users", () =>
+	$fetch("/api/users")
+);
+*/
+
+/*
+// Default to empty array if no data yet
+const users = computed(() => usersData.value ?? []);
+*/
 
 const filteredUsers = computed(() =>
 	users.value.filter((u) =>

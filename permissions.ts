@@ -27,11 +27,13 @@ const pageAccessMap: { [route: string]: AccessPermission } = {
 	// Parent Pages
 	"/ChildProfiles": AccessPermission.PARENT,
 	// Therapist Pages
-	"/PatientProfiles": AccessPermission.THERAPIST,
+	"/patientProfile": AccessPermission.THERAPIST,
 	// User Support Pages
 	"/ReviewContactForms": AccessPermission.USER_SUPPORT,
 	// Admin Pages
 	"/Admin": AccessPermission.ADMIN,
+	// User Search Page
+	"/userSearch": AccessPermission.THERAPIST,
 };
 const apiAccessMap: {
 	[route: string]: { [method: string]: AccessPermission };
