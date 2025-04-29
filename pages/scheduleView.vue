@@ -1,8 +1,9 @@
-<!-- 26 Apr 2025
+<!-- 27 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
 	<!-- Filter modal window -->
 	<FilterAppointments
+		:filter="filters"
 		v-if="showFilterWindow"
 		@close-filter-window="showFilterWindow = false"
 		@add-filters="(filter) => addFilters(filter)"

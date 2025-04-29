@@ -31,6 +31,7 @@
 							id="index"
 							:true-value="type.id"
 							:false-value="null"
+							:checked="oldFilters[index]"
 						/>
 						<span class="px-2">{{ type.name }}</span>
 					</div>
@@ -53,9 +54,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, useFetch } from "#imports";
+import { ref, watch, useFetch } from "#imports";
+import { computedAsync } from "@vueuse/core";
 import type { SessionType } from "@prisma/client";
 import { X } from "lucide-vue-next";
+
+const props = defineProps<{
+	filter?: string[]; // filters using session type ids
+}>();
 
 const emit = defineEmits(["closeFilterWindow", "addFilters"]);
 
@@ -63,13 +69,43 @@ function closeWindow() {
 	emit("closeFilterWindow");
 }
 
-const sessionTypes = ref<SessionType[]>([]);
+//const sessionTypes = ref<SessionType[]>([]);
+const sessionTypes = computedAsync(
+	async () => {
+		return await fetchSessionTypes();
+	},
+	[] // initial state
+);
+
+watch(
+	() => sessionTypes.value,
+	() => {
+		oldFilters.value = getOldFilterSettings();
+	}
+);
+
+const oldFilters = ref(getOldFilterSettings());
+
+function getOldFilterSettings() {
+	const result: boolean[] = [];
+
+	if (props.filter == null || props.filter == undefined) {
+		return result;
+	}
+
+	for (let i = 0; i < sessionTypes.value.length; i++) {
+		// check if there's a existing filter for session type
+		if (props.filter.indexOf(sessionTypes.value[i].id) != -1) {
+			result.push(true);
+		} else {
+			result.push(false);
+		}
+	}
+	return result;
+}
+
 // the filtered sessions, object should be returned to scheduleview page and be sent to calendar component
 const filteredTypes = ref<string[]>([]);
-
-fetchSessionTypes().then((value) => {
-	sessionTypes.value = value;
-});
 
 // gets the available session types from the database
 async function fetchSessionTypes(): Promise<SessionType[]> {

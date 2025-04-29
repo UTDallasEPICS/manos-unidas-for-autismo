@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, useCookie, useFetch } from "#imports";
+import { computed, ref, useCookie, useFetch } from "#imports";
 import { computedAsync } from "@vueuse/core";
 import type { Session } from "@prisma/client";
 import { AccessPermission } from "~/permissions";
@@ -69,22 +69,6 @@ const props = defineProps<{
 	week: Date; // any day in the week wanted to be displayed. week starts at monday
 	filter?: string[]; // filters using session type ids
 }>();
-
-// get new sessions when week chances
-watch(
-	() => props.week,
-	() => {
-		thisWeekSessions.value = getFilteredSessions();
-	}
-);
-
-// watch when filters change
-watch(
-	() => props.filter,
-	() => {
-		thisWeekSessions.value = getFilteredSessions();
-	}
-);
 
 // get sessions
 const access = useCookie("AccessPermission");
