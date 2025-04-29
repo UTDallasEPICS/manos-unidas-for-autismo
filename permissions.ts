@@ -48,6 +48,9 @@ const apiAccessMap: {
 	"/api/session/create": {
 		POST: AccessPermission.USER_SUPPORT,
 	},
+	"/api/session/sessionType": {
+		GET: AccessPermission.USER_SUPPORT || AccessPermission.ADMIN,
+	},
 };
 
 export { AccessPermission, pageAccessMap, apiAccessMap };
