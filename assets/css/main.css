@@ -10,6 +10,8 @@
 	--color-smoky: #d9d9d9;
 	--color-pearl: #ffffff;
 	--color-blay: #b4bbc9; /*get it? blue gray?? haha*/
+
+	--font-display: "CormorantGaramond", "serif";
 }
 
 /*Fonts */
@@ -40,15 +42,6 @@ button.btn {
 }
 
 /*layout*/
-div.contactFormArea {
-	/*font wont work :(( */
-	font-family: "Cormorant Garamond", serif;
-	font-optical-sizing: auto;
-	font-weight: 300;
-	font-style: normal;
-	-webkit-text-fill-color: black;
-}
-
 form.contactForm {
 	flex-direction: column;
 	flex-wrap: wrap;

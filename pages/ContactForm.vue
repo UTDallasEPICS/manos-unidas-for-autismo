@@ -24,9 +24,10 @@
 	11. Submit button
     
     -->
+	<div></div>
 
 	<!--div container for the whole app-->
-	<div class="fullPage h-full flex-col">
+	<div class="cormorant-garamond h-full flex-col">
 		<!--Navigation bar-->
 
 		<!--div container for the contact form-->
