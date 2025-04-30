@@ -27,19 +27,17 @@
 	<div></div>
 
 	<!--div container for the whole app-->
-	<div class="cormorant-garamond h-full flex-col">
+	<div class="font-cormorant-garamond h-full flex-col">
 		<!--Navigation bar-->
 
 		<!--div container for the contact form-->
 		<div class="contactFormPage flex h-auto place-content-center">
 			<div class="contactFormArea flex-col flex-wrap font-light">
 				<!--Title of contact form-->
-				<h1 class="mt-5 text-2xl sm:mr-3">Patient Contact Form</h1>
+				<h1 class="mt-5 text-4xl sm:mr-3">Patient Contact Form</h1>
 
 				<!--div container for the form-->
-				<div
-					class="contactFormContent font-Cormor justify-start p-5 text-lg"
-				>
+				<div class="contactFormContent justify-start p-5 text-lg">
 					<!--Form for contact form-->
 					<form @submit.prevent="handleSubmit" class="contactForm">
 						<!-- div class for the short answer type of responses-->
