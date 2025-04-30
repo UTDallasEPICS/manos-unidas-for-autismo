@@ -3,12 +3,26 @@
 		<div class="grow">
 			<h1 class="mb-4 text-2xl font-bold">Edit Appointment</h1>
 
+			<div
+				v-if="error"
+				class="mb-4 rounded border bg-red-100 p-4 text-red-500"
+			>
+				<p>{{ error }}</p>
+				<button
+					@click="$router.go(0)"
+					class="mt-3 rounded bg-blue-600 px-3 py-1 text-white"
+				>
+					Try Again
+				</button>
+			</div>
+
 			<form @submit.prevent="submitForm" class="max-w-md space-y-4">
 				<div>
 					<label class="block font-medium">Therapist:</label>
 					<select
 						v-model="form.therapist"
 						class="w-full rounded border px-3 py-2"
+						required
 					>
 						<option disabled value="">Select therapist</option>
 						<option
@@ -16,7 +30,8 @@
 							:key="therapist.id"
 							:value="therapist.id"
 						>
-							{{ therapist.fName }} {{ therapist.lName }}
+							{{ therapist.fName || "(Missing)" }}
+							{{ therapist.lName || "" }}
 						</option>
 					</select>
 				</div>
@@ -26,6 +41,7 @@
 					<select
 						v-model="form.sessionType"
 						class="w-full rounded border px-3 py-2"
+						required
 					>
 						<option disabled value="">Select session type</option>
 						<option
@@ -45,11 +61,13 @@
 							v-model="form.date"
 							type="date"
 							class="w-1/2 rounded border px-3 py-2"
+							required
 						/>
 						<input
 							v-model="form.time"
 							type="time"
 							class="w-1/2 rounded border px-3 py-2"
+							required
 						/>
 					</div>
 				</div>
@@ -61,6 +79,7 @@
 						type="number"
 						min="1"
 						class="w-full rounded border px-3 py-2"
+						required
 					/>
 				</div>
 
@@ -71,6 +90,7 @@
 						type="number"
 						min="1"
 						class="w-full rounded border px-3 py-2"
+						required
 					/>
 				</div>
 
@@ -83,27 +103,36 @@
 					></textarea>
 				</div>
 
-				<button
-					type="submit"
-					class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					:disabled="!form.therapist || !form.sessionType"
-				>
-					Save Changes
-				</button>
+				<div class="flex space-x-2">
+					<button
+						type="button"
+						class="rounded bg-gray-300 px-4 py-2"
+						@click="$router.push('/scheduleView')"
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+					>
+						Save Changes
+					</button>
+				</div>
 			</form>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useFetch } from "#app";
+import { $fetch } from "ofetch";
 
 interface Therapist {
 	id: string;
-	fName: string;
-	lName: string;
+	fName: string | null;
+	lName: string | null;
 }
 
 interface SessionType {
@@ -111,27 +140,27 @@ interface SessionType {
 	name: string;
 }
 
+interface SessionData {
+	id: string;
+	therapistId: string;
+	typeId: string;
+	time: string;
+	duration: number;
+	maxAttendance: number;
+	comment?: string;
+}
+
 const route = useRoute();
-const appointmentId = route.query.id as string;
+const sessionId = ref("");
+watchEffect(() => {
+	if (route.query.id && typeof route.query.id === "string") {
+		sessionId.value = route.query.id;
+	}
+});
 
 const therapists = ref<Therapist[]>([]);
 const sessionTypes = ref<SessionType[]>([]);
-
-onMounted(async () => {
-	const { data: therapistData } =
-		await useFetch<Therapist[]>("/api/therapists");
-	const { data: sessionTypeData } =
-		await useFetch<SessionType[]>("/api/sessionTypes");
-
-	if (therapistData.value) {
-		therapists.value = therapistData.value;
-	}
-	if (sessionTypeData.value) {
-		sessionTypes.value = sessionTypeData.value;
-	}
-
-	console.log("Editing appointment ID:", appointmentId);
-});
+const error = ref<string | null>(null);
 
 const form = reactive({
 	therapist: "",
@@ -143,8 +172,76 @@ const form = reactive({
 	comments: "",
 });
 
-function submitForm() {
-	console.log("Submitted form data:", { ...form });
-	alert("Form submitted! Check the console to see the data.");
+onMounted(async () => {
+	try {
+		const therapistResult = await $fetch<Therapist[]>("/api/therapists");
+		const sessionTypeResult =
+			await $fetch<SessionType[]>("/api/sessionTypes");
+
+		console.log("Therapists:", therapistResult);
+		console.log("SessionTypes:", sessionTypeResult);
+
+		if (therapistResult) therapists.value = therapistResult;
+		if (sessionTypeResult) sessionTypes.value = sessionTypeResult;
+
+		if (!sessionId.value) return;
+
+		const sessionResult = await $fetch<SessionData>(
+			`/api/session/${sessionId.value}`
+		);
+
+		if (!sessionResult) {
+			error.value = "No session data returned from API";
+			console.error("No session data received");
+			return;
+		}
+
+		console.log("Fetched session data:", sessionResult);
+
+		form.therapist = sessionResult.therapistId;
+		form.sessionType = sessionResult.typeId;
+
+		if (sessionResult.time) {
+			const [datePart, timePart] = sessionResult.time.split("T");
+			form.date = datePart || "";
+			form.time = timePart ? timePart.slice(0, 5) : "";
+		}
+
+		form.duration = sessionResult.duration;
+		form.max = sessionResult.maxAttendance;
+		form.comments = sessionResult.comment || "";
+	} catch (e) {
+		error.value = `Unexpected error: ${e instanceof Error ? e.message : String(e)}`;
+		console.error("Failed to load data:", e);
+	}
+});
+
+async function submitForm() {
+	const sessionData = {
+		id: sessionId.value,
+		therapistId: form.therapist,
+		typeId: form.sessionType,
+		time: form.date && form.time ? `${form.date}T${form.time}:00` : "",
+		duration: form.duration,
+		maxAttendance: form.max,
+		comment: form.comments,
+	};
+
+	console.log("Submitted session data:", sessionData);
+
+	const { error: putError } = await useFetch(
+		`/api/session/${sessionId.value}`,
+		{
+			method: "PUT",
+			body: sessionData,
+		}
+	);
+
+	if (putError.value) {
+		alert("Failed to save changes.");
+		console.error("PUT error:", putError.value);
+	} else {
+		alert("Changes saved successfully.");
+	}
 }
 </script>

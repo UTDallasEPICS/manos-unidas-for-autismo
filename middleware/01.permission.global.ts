@@ -2,11 +2,6 @@ import { defineNuxtRouteMiddleware } from "nuxt/app";
 import { pageAccessMap } from "~/permissions";
 
 export default defineNuxtRouteMiddleware((to) => {
-	// Bypass check while in development mode
-	if (process.dev) {
-		console.warn("Bypassing auth middleware for development testing.");
-		return;
-	}
 	const accessCookie = useCookie("AccessPermission");
 	const permissions = accessCookie.value;
 
