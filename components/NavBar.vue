@@ -114,8 +114,7 @@ const userLinks = computed(() => {
 		legalRoutes.push({ path: "/ChildProfiles", label: "Children" });
 	}
 	if (permissions.value[AccessPermission.THERAPIST]) {
-		legalRoutes.push({ path: "/PatientProfile", label: "Patients" });
-		legalRoutes.push({ path: "/patientSearch", label: "Patient Search" });
+		legalRoutes.push({ path: "/patientSearch", label: "Patients" });
 	}
 	if (permissions.value[AccessPermission.USER_SUPPORT]) {
 		legalRoutes.push({

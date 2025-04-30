@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full p-4">
+	<div class="flex min-h-screen flex-col p-4">
 		<!-- Header + Search -->
 		<div class="mb-4 flex items-center">
 			<h1 class="text-2xl font-bold">View All Patients</h1>
@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter, useFetch } from "#imports";
+import { useFetch, navigateTo } from "#imports";
 import { Search } from "lucide-vue-next";
 
 interface User {
@@ -66,9 +66,8 @@ interface User {
 	gender: string;
 }
 
-const router = useRouter();
-const goToProfile = (id: number) => {
-	router.push(`/PatientProfile/${id}`);
+const goToProfile = async (id: number) => {
+	await navigateTo(`/PatientProfile/${id}`);
 };
 
 const searchQuery = ref("");
