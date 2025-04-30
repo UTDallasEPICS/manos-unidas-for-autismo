@@ -30,8 +30,6 @@
 }
 
 /*Buttons */
-button.manosSubmit,
-button.fileSubmit,
 button.btn {
 	font-family: "Encode Sans SC", sans-serif;
 	text-align: center;
@@ -39,11 +37,6 @@ button.btn {
 	border: 0;
 	padding: 5px 5px;
 	-webkit-text-fill-color: white;
-}
-
-button.manosSubmit {
-	display: flex;
-	flex-direction: column;
 }
 
 /*layout*/
@@ -79,7 +72,6 @@ input.input {
 	padding: 0px 8px 0px 8px;
 }
 
-.contactFormListbox,
 .listbox {
 	background-color: #d9d9d9;
 	fill: #d9d9d9;
@@ -88,21 +80,19 @@ input.input {
 	overflow: auto;
 }
 
-.contactFormListboxButton,
 .listboxButton {
 	cursor: pointer;
 	align-content: flex-start;
 	/* padding: 0px 8px 0px 8px; */
 }
 
-.contactFormListboxOptions,
 .listboxOptions {
 	flex-direction: column;
 	background-color: var(--color-gray-100);
 	/* padding: 0px 8px 0px 8px; */
 }
 
-.contactFormListboxOption, /* singular option make it clear*/
+/* singular option make it clear*/
 .listboxOption {
 	cursor: pointer;
 	&:hover {
@@ -112,12 +102,10 @@ input.input {
 	}
 }
 
-.contactFormListboxOption,
-.contactFormListboxOptions,
-.contactFormListboxButton,
 .listboxOption,
 .listboxOptions,
-.listboxButton form.contactForm,
+.listboxButton,
+form.contactForm,
 div.inputBoxRow {
 	display: flex;
 	width: 100%;

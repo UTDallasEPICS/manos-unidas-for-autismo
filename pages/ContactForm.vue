@@ -85,11 +85,11 @@
 									<Listbox
 										v-model="gender"
 										as="div"
-										class="contactFormListbox"
+										class="listbox"
 									>
 										<div>
 											<ListboxButton
-												class="contactFormListboxButton"
+												class="listboxButton"
 												>{{
 													gender == ""
 														? "Select Gender:"
@@ -98,11 +98,11 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="contactFormListboxOptions absolute"
+												class="listboxOptions absolute"
 											>
 												<ListboxOption
 													as="div"
-													class="contactFormListboxOption"
+													class="listboxOption"
 													v-for="(
 														g, index
 													) in genders"
@@ -268,11 +268,11 @@
 									<Listbox
 										v-model="insurance"
 										as="div"
-										class="contactFormListbox"
+										class="listbox"
 									>
 										<div>
 											<ListboxButton
-												class="contactFormListboxButton"
+												class="listboxButton"
 												>{{
 													insurance == ""
 														? "Select the insurance:"
@@ -281,11 +281,11 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="contactFormListboxOptions absolute"
+												class="listboxOptions absolute"
 											>
 												<ListboxOption
 													as="div"
-													class="contactFormListboxOption"
+													class="listboxOption"
 													v-for="(
 														ins, index
 													) in insuranceOptions"
@@ -309,11 +309,11 @@
 										v-model="therapies"
 										multiple
 										as="div"
-										class="contactFormListbox content-start"
+										class="listbox content-start"
 									>
 										<div>
 											<ListboxButton
-												class="contactFormListboxButton"
+												class="listboxButton"
 												>{{
 													therapies.length > 0
 														? therapies
@@ -327,12 +327,12 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="contactFormListboxOptions absolute"
+												class="listboxOptions absolute"
 											>
 												<ul>
 													<ListboxOption
 														as="div"
-														class="contactFormListboxOption"
+														class="listboxOption"
 														v-for="therapy in therapyOptions"
 														:key="therapy.name"
 														:value="therapy"
@@ -354,7 +354,7 @@
 								<!--only takes 1 doc... don't even know if it transfers to database ;;-->
 								<p>Please sumbit any medical records.</p>
 								<label class="">
-									<button class="fileSubmit">
+									<button class="btn">
 										<input
 											@change="registerMedRec"
 											type="file"
@@ -450,7 +450,7 @@
 							</div>
 
 							<div class="submit">
-								<button class="manosSubmit mt-5">
+								<button class="btn mt-5 flex flex-col">
 									Submit form
 								</button>
 							</div>
