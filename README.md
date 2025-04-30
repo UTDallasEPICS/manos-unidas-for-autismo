@@ -1,8 +1,20 @@
-# Nuxt Minimal Starter
+# Fundacion Manos Unidas Por Autismo: Connected Care, a Comprehensive Therapy Management Platform
+## Project Overview
+--
+## Functional Requirements
+--
+## Third Party Integrations
+--
+## Tech Stack
+--
+## Running the Project
+
+
+### Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Setup
+#### Setup
 
 Make sure to install dependencies:
 
@@ -20,7 +32,7 @@ yarn install
 bun install
 ```
 
-## Development Server
+#### Development Server
 
 Start the development server on `http://localhost:3000`:
 
@@ -38,7 +50,7 @@ yarn dev
 bun run dev
 ```
 
-## Production
+#### Production
 
 Build the application for production:
 
