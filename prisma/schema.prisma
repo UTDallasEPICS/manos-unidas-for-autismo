@@ -14,168 +14,168 @@ datasource db {
 }
 
 model User {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    fName               String
-    mInit               String?
-    lName               String
-    email               String          @unique
-    phone               String?         @unique
-    whatsApp            String?         @unique
-    contactPref         ContactType     @default(EMAIL)
-    type                UserType?
+    fName       String
+    mInit       String?
+    lName       String
+    email       String      @unique
+    phone       String?     @unique
+    whatsApp    String?     @unique
+    contactPref ContactType @default(EMAIL)
+    type        UserType?
 
-    Specializations     Specialization[]
-    Sessions            Session[]
+    Specializations Specialization[]
+    Sessions        Session[]
 
-    NonEmployee         NonEmployee?
+    NonEmployee NonEmployee?
 }
 
 // if performance becomes an issue, denomailize to directly join parent/patient to user
 model NonEmployee {
-    id                  String          @id @unique
-    User                User            @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id   String @id @unique
+    User User   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    dob                 DateTime
-    gender              Gender
-    streetName          String
-    streetNum           Int
-    buildingNum         Int?
+    dob         DateTime
+    gender      Gender
+    streetName  String
+    streetNum   Int
+    buildingNum Int?
 
-    postCode            Int
-    PostCodeCity        PostCodeCity    @relation(fields: [postCode], references: [postCode], onDelete: Restrict, onUpdate: Cascade)
+    postCode     Int
+    PostCodeCity PostCodeCity @relation(fields: [postCode], references: [postCode], onDelete: Restrict, onUpdate: Cascade)
 
-    Children            Patient[]       @relation(name: "parent")
+    Children Patient[] @relation(name: "parent")
 
-    Patient             Patient?
+    Patient Patient?
 }
 
 model PostCodeCity {
-    postCode            Int             @id @unique
-    city                String
+    postCode Int    @id @unique
+    city     String
 
-    person              NonEmployee[]
+    person NonEmployee[]
 }
 
 model Patient {
-    id                  String          @id @unique
-    User                NonEmployee     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id   String      @id @unique
+    User NonEmployee @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    identification      String          @unique
-    diagnosed           Boolean
+    identification String  @unique
+    diagnosed      Boolean
 
-    Appointments        SessionPatient[]
-    MedicalRecords      MedicalRecord[]
-    ProgressReports     Report[]
-    ContactForm         ContactForm?
+    Appointments    SessionPatient[]
+    MedicalRecords  MedicalRecord[]
+    ProgressReports Report[]
+    ContactForm     ContactForm?
 
-    sponsorId           String?
-    Sponsor             Sponsor?        @relation(fields: [sponsorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    sponsorId String?
+    Sponsor   Sponsor? @relation(fields: [sponsorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
-    Parents             NonEmployee[]   @relation(name: "parent")
+    Parents NonEmployee[] @relation(name: "parent")
 }
 
 // define therapist specializations here
 model Specialization {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    name                String          @unique
+    name String @unique
 
-    Therapists          User[]
+    Therapists User[]
 }
 
 model Session {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    time                DateTime        @default(now())
-    duration            Int
-    comment             String?
-    maxAttendance       Int             @default(1)
+    time          DateTime @default(now())
+    duration      Int
+    comment       String?
+    maxAttendance Int      @default(1)
 
-    typeId              String
-    Type                SessionType     @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    typeId String
+    Type   SessionType @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    therapistId         String
-    Therapist           User            @relation(fields: [therapistId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    therapistId String
+    Therapist   User   @relation(fields: [therapistId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    Patients            SessionPatient[]
+    Patients SessionPatient[]
 
     @@unique([time, therapistId])
 }
 
 // define session types in this table
 model SessionType {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    name                String          @unique
-    color               Color
+    name  String @unique
+    color Color
 
-    Sessions            Session[]
+    Sessions Session[]
 }
 
 model SessionPatient {
-    sessionId           String
-    Session             Session         @relation(fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    sessionId String
+    Session   Session @relation(fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    patientId           String
-    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete:Restrict, onUpdate:Cascade)
+    patientId String
+    Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    paid                Boolean         @default(false)
+    paid Boolean @default(false)
 
     @@id([sessionId, patientId])
 }
 
 model MedicalRecord {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    data                String
+    data String
 
-    patientId           String
-    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    patientId String
+    Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Sponsor {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    name                String
-    contact             String
+    name    String
+    contact String
 
-    Patients            Patient[]
+    Patients Patient[]
 }
 
 model Report {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    date                DateTime        @default(now())
+    date DateTime @default(now())
 
-    patientId           String
-    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    patientId String
+    Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    Questions           ReportData[]
+    Questions ReportData[]
 }
 
 model ReportData {
-    reportId            String
-    Report              Report          @relation(fields: [reportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    reportId String
+    Report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    question            String
-    answer              String
+    question String
+    answer   String
 
     @@id([reportId, question])
 }
 
 model ContactForm {
-    id                  String          @id @default(uuid())
+    id String @id @default(uuid())
 
-    nationality         String
-    returnPatient       Boolean
-    wantsEval           Boolean
-    insurance           InsuranceCompany
-    comment             String?
-    status              Status          @default(PROCESSING)
+    nationality   String
+    returnPatient Boolean
+    wantsEval     Boolean
+    insurance     InsuranceCompany
+    comment       String?
+    status        Status           @default(PROCESSING)
 
-    patientId           String          @unique
-    Patient             Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    patientId String  @unique
+    Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum ContactType {
@@ -187,7 +187,7 @@ enum ContactType {
 enum UserType {
     ADMIN
     USER_SUPPORT
-    THERAPIST       //should be unness
+    THERAPIST //should be unness
 }
 
 enum Gender {

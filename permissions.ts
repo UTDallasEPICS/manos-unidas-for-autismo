@@ -27,11 +27,13 @@ const pageAccessMap: { [route: string]: AccessPermission } = {
 	// Parent Pages
 	"/ChildProfiles": AccessPermission.PARENT,
 	// Therapist Pages
-	"/PatientProfiles": AccessPermission.THERAPIST,
+	"/patientProfile": AccessPermission.THERAPIST,
 	// User Support Pages
 	"/ReviewContactForms": AccessPermission.USER_SUPPORT,
 	// Admin Pages
 	"/Admin": AccessPermission.ADMIN,
+	// User Search Page
+	"/patientSearch": AccessPermission.THERAPIST,
 };
 const apiAccessMap: {
 	[route: string]: { [method: string]: AccessPermission };
@@ -47,6 +49,9 @@ const apiAccessMap: {
 	},
 	"/api/session/create": {
 		POST: AccessPermission.USER_SUPPORT,
+	},
+	"/api/session/sessionType": {
+		GET: AccessPermission.USER_SUPPORT || AccessPermission.ADMIN,
 	},
 };
 

@@ -1,39 +1,50 @@
-<!-- 9 Apr 2025
+<!-- 27 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
-	<div class="mx-10 h-full">
-		<!-- Title part + option buttons -->
-		<div class="my-5 flex justify-between">
-			<div class="flex flex-col justify-center">
-				<div class="text-xl">Schedule for</div>
-				<div class="text-3xl">{{ currentWeek }}</div>
-			</div>
-			<div class="justify-right flex flex-col gap-2">
-				<createAppointment v-if="permissions.editAppointments" />
-				<!-- placeholder style for the button so it's not just text lmao -->
-				<button
-					@click="filterAppointments()"
-					class="cursor-pointer bg-blue-950 p-2 text-white"
-					v-if="permissions.filter"
-				>
-					Filter
-				</button>
-			</div>
-		</div>
+	<div class="grow pb-8">
+		<!-- Filter modal window -->
+		<FilterAppointments
+			:filter="filters"
+			v-if="showFilterWindow"
+			@close-filter-window="showFilterWindow = false"
+			@add-filters="(filter) => addFilters(filter)"
+		/>
 
-		<!-- Calendar part -->
-		<div class="flex w-full justify-center">
-			<div class="pr-3 align-top text-3xl">
-				<button class="cursor-pointer" @click="changeWeek(false)">
-					&#x25C0;
-				</button>
+		<!-- Page -->
+		<div class="mx-10 h-full">
+			<!-- Title part + option buttons -->
+			<div class="my-5 flex justify-between">
+				<div class="flex flex-col justify-center">
+					<div class="text-xl">Schedule for</div>
+					<div class="text-3xl">{{ currentWeek }}</div>
+				</div>
+				<div class="justify-right flex flex-col gap-2">
+					<createAppointment v-if="permissions.editAppointments" />
+					<!-- placeholder style for the button so it's not just text lmao -->
+					<button
+						@click="showFilterWindow = true"
+						class="cursor-pointer bg-blue-950 p-2 text-white"
+						v-if="permissions.filter"
+					>
+						Filter
+					</button>
+				</div>
 			</div>
 
-			<WeekViewCalendar :week="date" class="grow" />
-			<div class="pl-3 align-top text-3xl">
-				<button class="cursor-pointer" @click="changeWeek(true)">
-					&#x25B6;
-				</button>
+			<!-- Calendar part -->
+			<div class="flex w-full justify-center">
+				<div class="pr-3 align-top text-3xl">
+					<button class="cursor-pointer" @click="changeWeek(false)">
+						&#x25C0;
+					</button>
+				</div>
+
+				<WeekViewCalendar :week="date" :filter="filters" class="grow" />
+				<div class="pl-3 align-top text-3xl">
+					<button class="cursor-pointer" @click="changeWeek(true)">
+						&#x25B6;
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -45,7 +56,6 @@ import { AccessPermission } from "~/permissions";
 
 const access = useCookie("AccessPermission");
 
-// will be removed later, for now defines the user's permissions
 const permissions = computed(() => {
 	let actions = {
 		filter: false, // user service/admin = true, admin/patient/therapist = false
@@ -126,7 +136,12 @@ function changeWeek(forward: boolean) {
 	getCurrentWeek();
 }
 
-function filterAppointments() {
-	console.log("filter button clicky clicky");
+// for showing the filter window
+const showFilterWindow = ref(false);
+
+const filters = ref<string[]>([]);
+
+function addFilters(filter: string[]) {
+	filters.value = filter;
 }
 </script>
