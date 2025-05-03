@@ -39,46 +39,49 @@
 				<!--div container for the form-->
 				<div class="contactFormContent justify-start p-5 text-lg">
 					<!--Form for contact form-->
-					<form @submit.prevent="handleSubmit" class="contactForm">
+					<form
+						@submit.prevent="handleSubmit"
+						class="contactForm flex w-full flex-col flex-wrap justify-center bg-white"
+					>
 						<!-- div class for the short answer type of responses-->
 						<div class="freeResponseArea flex-wrap gap-5 py-5">
 							<!--div class for the name portion (the name components should occupy the same line)-->
-							<div class="inputBoxRow h-auto gap-7">
-								<div class="textLabelAndBox_Size1">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox">
 									<label class="">Patient First name:</label>
 
 									<input
 										type="text"
-										class="contactInput"
+										class="input"
 										required
 										v-model="firstName"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size2">
+								<div class="textLabelBox">
 									<label class="">Patient Middle name:</label>
 									<!--takes a string, type/enter box-->
 									<input
 										type="middleName"
-										class="contactInput"
+										class="input"
 										v-model="middleName"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox">
 									<label class="">Patient Last name:</label>
 									<!--takes a string, type/enter box-->
 									<input
 										type="lastName"
-										class="contactInput"
+										class="input"
 										required
 										v-model="lastName"
 									/>
 								</div>
 							</div>
 
-							<div class="inputBoxRow h-auto gap-7">
-								<div class="textLabelAndBox_Size2 relative">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox relative">
 									<label class="">Gender:</label>
 
 									<Listbox
@@ -117,20 +120,20 @@
 									</Listbox>
 								</div>
 
-								<div class="textLabelAndBox_Size2">
+								<div class="textLabelBox">
 									<label class="">Date of Birth:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="date"
 										required
 										v-model="DOB"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox">
 									<label class="">Nationality:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="nationality"
 										required
 										v-model="nationality"
@@ -138,22 +141,22 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow h-auto gap-7">
-								<div class="textLabelAndBox_Size1">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox">
 									<label class="">ID Number:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="ID"
 										required
 										v-model="ID"
 									/>
 								</div>
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox">
 									<label class=""
 										>Social Security Number:</label
 									>
 									<input
-										class="contactInput"
+										class="input"
 										type="SSN"
 										required
 										v-model="SSN"
@@ -161,21 +164,21 @@
 								</div>
 							</div>
 
-							<div class="addressInputBoxRow h-auto w-full gap-1">
-								<div class="textLabelAndBox_Size3">
+							<div class="addressInputBoxRow h-auto gap-1">
+								<div class="textLabelBox">
 									<label class="">Address Line 1:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="address1"
 										required
 										v-model="address1"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size3">
+								<div class="textLabelBox">
 									<label class="">Address Line 2:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="address2"
 										required
 										v-model="address2"
@@ -185,28 +188,28 @@
 								<!-- couldn't transfer this to css from 
 								 tailwind (there is something wrong with responsive design)-->
 								<div class="flex flex-col md:flex-row md:gap-5">
-									<div class="textLabelAndBox_Size4">
+									<div class="textLabelBox">
 										<label class="">Postal Code:</label>
 										<input
-											class="contactInput"
+											class="input"
 											type="postalCode"
 											required
 											v-model="postalCode"
 										/>
 									</div>
-									<div class="textLabelAndBox_Size2">
+									<div class="textLabelBox">
 										<label class="">Locality:</label>
 										<input
-											class="contactInput"
+											class="input"
 											type="locality"
 											required
 											v-model="locality"
 										/>
 									</div>
-									<div class="textLabelAndBox_Size2">
+									<div class="textLabelBox">
 										<label class="">Country:</label>
 										<input
-											class="contactInput"
+											class="input"
 											type="country"
 											required
 											v-model="country"
@@ -215,20 +218,20 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow h-auto gap-7">
-								<div class="textLabelAndBox_Size1">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox">
 									<label class="">Parent First Name:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="parentFirstName"
 										required
 										v-model="parentFirstName"
 									/>
 								</div>
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox">
 									<label class="">Parent Last Name:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="parentLastName"
 										required
 										v-model="parentLastName"
@@ -236,23 +239,23 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow h-auto gap-7">
-								<div class="textLabelAndBox_Size3">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox">
 									<label class="">Email:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="email"
 										required
 										v-model="email"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size3">
+								<div class="textLabelBox">
 									<label class=""
 										>Phone Number/Whatsapp:</label
 									>
 									<input
-										class="contactInput"
+										class="input"
 										type="phone"
 										required
 										v-model="phone"
@@ -260,8 +263,8 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow h-auto gap-7">
-								<div class="textLabelAndBox_Size3 relative">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox relative">
 									<label class="">Medical Insurance:</label>
 
 									<Listbox
@@ -300,7 +303,7 @@
 									</Listbox>
 								</div>
 
-								<div class="textLabelAndBox_Size3 relative">
+								<div class="textLabelBox relative">
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
@@ -435,7 +438,7 @@
 								</div>
 							</div>
 
-							<div class="textLabelAndBox_Size3">
+							<div class="textLabelBox">
 								<label class=""
 									>Any Comments for the therapist?</label
 								>
