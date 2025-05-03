@@ -440,7 +440,7 @@
 									>Any Comments for the therapist?</label
 								>
 								<textarea
-									class="bg-color2 px-2"
+									class="bg-smoky px-2"
 									type="comments"
 									required
 									v-model="comments"

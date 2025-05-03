@@ -3,13 +3,18 @@
 @import "tailwindcss";
 
 @theme {
-	--color-color1: #06234f;
-	--color-color2: #d9d9d9;
-
 	--color-midnight: #06234f;
 	--color-smoky: #d9d9d9;
 	--color-pearl: #ffffff;
 	--color-blay: #b4bbc9; /*get it? blue gray?? haha*/
+	/*extra therapy colors */
+	--color-lilac: #e3cbf8;
+	--color-peach: ##ffe1b8;
+	--color-salmon: #eeb586;
+	--color-lime: #ddf492;
+	--color-sky: #b8d3fb;
+	--color-buttercup: #f6e274;
+	--color-sandy: #ece4b9;
 
 	--font-cormorant-garamond: "Cormorant Garamond", serif;
 	--font-sc-encode: "Encode Sans SC", sans-serif;

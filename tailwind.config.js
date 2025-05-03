@@ -10,21 +10,7 @@ export default {
 	],
 	theme: {
 		extend: {
-			colors: {
-				/* main colors */
-				pearl: "#FFFFFF",
-				smoky: "#D9D9D9",
-				midnight: "#06234F",
-				/* extras */
-				blay: "#B4BBC9",
-				lilac: "#E3CBF8",
-				salmon: "#EEB586",
-				peach: "#FFE1B8",
-				lime: "#DDF492",
-				sky: "#B8D3FB",
-				buttercup: "#F6E274",
-				sandy: "#ECE4B9",
-			},
+			colors: {},
 			fontFamily: {
 				Cormor: ['"Cormorant Garamond"', "serif"],
 				EncodeSC: ['"Encode Sans SC"', "sans-serif"],
