@@ -31,48 +31,8 @@
 }
 
 /*yippe inputs*/
-.textLabelBox {
-	display: flex;
-	flex-direction: column;
-}
-
 .input {
 	background-color: #d9d9d9;
 	fill: #d9d9d9;
 	padding: 0px 8px 0px 8px;
-}
-
-.listbox {
-	background-color: #d9d9d9;
-	fill: #d9d9d9;
-	display: flex;
-	flex-direction: column;
-	overflow: auto;
-}
-
-.listboxButton {
-	cursor: pointer;
-	align-content: flex-start;
-}
-
-.listboxOptions {
-	flex-direction: column;
-	background-color: var(--color-gray-100);
-}
-
-/* singular option make it clear*/
-.listboxOption {
-	cursor: pointer;
-	&:hover {
-		@media (hover: hover) {
-			background-color: var(--color-blue-500);
-		}
-	}
-}
-
-.listboxOption,
-.listboxOptions,
-.listboxButton {
-	display: flex;
-	width: 100%;
 }

@@ -47,7 +47,7 @@
 						<div class="freeResponseArea flex-wrap gap-5 py-5">
 							<!--div class for the name portion (the name components should occupy the same line)-->
 							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Patient First name:</label>
 
 									<input
@@ -58,7 +58,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Patient Middle name:</label>
 									<!--takes a string, type/enter box-->
 									<input
@@ -68,7 +68,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Patient Last name:</label>
 									<!--takes a string, type/enter box-->
 									<input
@@ -81,13 +81,15 @@
 							</div>
 
 							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox relative">
+								<div
+									class="textLabelBox relative flex flex-col"
+								>
 									<label class="">Gender:</label>
 
 									<Listbox
 										v-model="gender"
 										as="div"
-										class="listbox"
+										class="listbox fill-smoky bg-smoky flex w-full flex-col overflow-auto"
 									>
 										<div>
 											<ListboxButton
@@ -100,11 +102,11 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions absolute"
+												class="listboxOptions bg-blay absolute flex w-full flex-col"
 											>
 												<ListboxOption
 													as="div"
-													class="listboxOption"
+													class="listboxOption flex w-full cursor-pointer"
 													v-for="(
 														g, index
 													) in genders"
@@ -120,7 +122,7 @@
 									</Listbox>
 								</div>
 
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Date of Birth:</label>
 									<input
 										class="input"
@@ -130,7 +132,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Nationality:</label>
 									<input
 										class="input"
@@ -142,7 +144,7 @@
 							</div>
 
 							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">ID Number:</label>
 									<input
 										class="input"
@@ -151,7 +153,7 @@
 										v-model="ID"
 									/>
 								</div>
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class=""
 										>Social Security Number:</label
 									>
@@ -165,7 +167,7 @@
 							</div>
 
 							<div class="addressInputBoxRow h-auto gap-1">
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Address Line 1:</label>
 									<input
 										class="input"
@@ -175,7 +177,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Address Line 2:</label>
 									<input
 										class="input"
@@ -188,7 +190,7 @@
 								<!-- couldn't transfer this to css from 
 								 tailwind (there is something wrong with responsive design)-->
 								<div class="flex flex-col md:flex-row md:gap-5">
-									<div class="textLabelBox">
+									<div class="textLabelBox flex flex-col">
 										<label class="">Postal Code:</label>
 										<input
 											class="input"
@@ -197,7 +199,7 @@
 											v-model="postalCode"
 										/>
 									</div>
-									<div class="textLabelBox">
+									<div class="textLabelBox flex flex-col">
 										<label class="">Locality:</label>
 										<input
 											class="input"
@@ -206,7 +208,7 @@
 											v-model="locality"
 										/>
 									</div>
-									<div class="textLabelBox">
+									<div class="textLabelBox flex flex-col">
 										<label class="">Country:</label>
 										<input
 											class="input"
@@ -219,7 +221,7 @@
 							</div>
 
 							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Parent First Name:</label>
 									<input
 										class="input"
@@ -228,7 +230,7 @@
 										v-model="parentFirstName"
 									/>
 								</div>
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Parent Last Name:</label>
 									<input
 										class="input"
@@ -240,7 +242,7 @@
 							</div>
 
 							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Email:</label>
 									<input
 										class="input"
@@ -250,7 +252,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox">
+								<div class="textLabelBox flex flex-col">
 									<label class=""
 										>Phone Number/Whatsapp:</label
 									>
@@ -264,17 +266,19 @@
 							</div>
 
 							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox relative">
+								<div
+									class="textLabelBox relative flex flex-col"
+								>
 									<label class="">Medical Insurance:</label>
 
 									<Listbox
 										v-model="insurance"
 										as="div"
-										class="listbox"
+										class="listbox fill-smoky bg-smoky flex w-full flex-col overflow-auto"
 									>
 										<div>
 											<ListboxButton
-												class="listboxButton"
+												class="listboxButton cursor-pointer content-start"
 												>{{
 													insurance == ""
 														? "Select the insurance:"
@@ -283,11 +287,11 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions absolute"
+												class="listboxOptions bg-blay absolute flex w-full flex-col"
 											>
 												<ListboxOption
 													as="div"
-													class="listboxOption"
+													class="listboxOption flex w-full cursor-pointer"
 													v-for="(
 														ins, index
 													) in insuranceOptions"
@@ -303,7 +307,9 @@
 									</Listbox>
 								</div>
 
-								<div class="textLabelBox relative">
+								<div
+									class="textLabelBox relative flex flex-col"
+								>
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
@@ -311,11 +317,11 @@
 										v-model="therapies"
 										multiple
 										as="div"
-										class="listbox content-start"
+										class="listbox fill-smoky bg-smoky flex flex-col content-start overflow-auto"
 									>
 										<div>
 											<ListboxButton
-												class="listboxButton"
+												class="listboxButton cursor-pointer content-start"
 												>{{
 													therapies.length > 0
 														? therapies
@@ -329,12 +335,12 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions absolute"
+												class="listboxOptions bg-blay absolute w-full flex-col"
 											>
 												<ul>
 													<ListboxOption
 														as="div"
-														class="listboxOption"
+														class="listboxOption flex w-full cursor-pointer"
 														v-for="therapy in therapyOptions"
 														:key="therapy.name"
 														:value="therapy"
@@ -438,7 +444,7 @@
 								</div>
 							</div>
 
-							<div class="textLabelBox">
+							<div class="textLabelBox flex flex-col">
 								<label class=""
 									>Any Comments for the therapist?</label
 								>
