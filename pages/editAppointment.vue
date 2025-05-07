@@ -217,11 +217,14 @@ onMounted(async () => {
 });
 
 async function submitForm() {
+	const sessionTime = new Date(
+		form.date && form.time ? `${form.date}T${form.time}:00` : ""
+	);
 	const sessionData = {
 		id: sessionId.value,
 		therapistId: form.therapist,
 		typeId: form.sessionType,
-		time: form.date && form.time ? `${form.date}T${form.time}:00` : "",
+		time: sessionTime.toISOstring(),
 		duration: form.duration,
 		maxAttendance: form.max,
 		comment: form.comments,
