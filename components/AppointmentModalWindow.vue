@@ -82,6 +82,11 @@
 							!permissions.nonEmployee &&
 							permissions.editAppointments
 						"
+						@click="
+							navigateTo(
+								`/editAppointment?id=${props.session.id}`
+							)
+						"
 					>
 						Edit Appointment
 					</button>
@@ -95,6 +100,7 @@
 import { computed, ref, useCookie } from "#imports";
 import type { Session } from "@prisma/client";
 import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
+import { navigateTo } from "#imports";
 import { AccessPermission } from "~/permissions";
 
 const props = defineProps<{
