@@ -76,18 +76,3 @@
 	display: flex;
 	width: 100%;
 }
-
-/* diff media sizes */
-@media (width >= 0rem) {
-	div.addressInputBoxRow,
-	div.inputBoxRow {
-		flex-direction: column;
-	}
-}
-
-@media (width >= 48rem) {
-	div.addressInputBoxRow,
-	div.inputBoxRow {
-		flex-direction: row;
-	}
-}
