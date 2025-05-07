@@ -24,70 +24,76 @@
 	11. Submit button
     
     -->
+	<div></div>
 
 	<!--div container for the whole app-->
-	<div class="fullPage">
+	<div class="font-cormorant-garamond h-full flex-col">
 		<!--Navigation bar-->
 
 		<!--div container for the contact form-->
-		<div class="contactFormPage">
-			<div class="contactFormArea">
+		<div class="contactFormPage flex h-auto place-content-center">
+			<div class="contactFormArea flex-col flex-wrap font-light">
 				<!--Title of contact form-->
-				<h1 class="mt-5 text-2xl sm:mr-3">Patient Contact Form</h1>
+				<h1 class="mt-5 text-4xl sm:mr-3">Patient Contact Form</h1>
 
 				<!--div container for the form-->
-				<div class="contactFormContent">
+				<div class="contactFormContent justify-start p-5 text-lg">
 					<!--Form for contact form-->
-					<form @submit.prevent="handleSubmit" class="contactForm">
+					<form
+						@submit.prevent="handleSubmit"
+						class="contactForm flex w-full flex-col flex-wrap justify-center bg-white"
+					>
 						<!-- div class for the short answer type of responses-->
-						<div class="freeResponseArea py-5">
+						<div class="freeResponseArea flex-wrap gap-5 py-5">
 							<!--div class for the name portion (the name components should occupy the same line)-->
-							<div class="inputBoxRow">
-								<div class="textLabelAndBox_Size1">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Patient First name:</label>
 
 									<input
 										type="text"
-										class="contactInput"
+										class="input"
 										required
 										v-model="data.firstName"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size2">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Patient Middle name:</label>
 									<!--takes a string, type/enter box-->
 									<input
 										type="middleName"
-										class="contactInput"
-										v-model="data.middleName"
+										class="input"
+										v-model="middleName"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Patient Last name:</label>
 									<!--takes a string, type/enter box-->
 									<input
 										type="lastName"
-										class="contactInput"
+										class="input"
 										required
 										v-model="data.lastName"
 									/>
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
-								<div class="textLabelAndBox_Size2 relative">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div
+									class="textLabelBox relative flex flex-col"
+								>
 									<label class="">Gender:</label>
 
 									<Listbox
 										v-model="gender"
 										as="div"
-										class="contactFormListbox"
+										class="listbox fill-smoky bg-smoky flex w-full flex-col overflow-auto"
 									>
 										<div>
 											<ListboxButton
-												class="contactFormListboxButton"
+												class="listboxButton"
 												>{{
 													gender == ""
 														? "Select Gender:"
@@ -96,11 +102,11 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="contactFormListboxOptions absolute"
+												class="listboxOptions bg-blay absolute flex w-full flex-col"
 											>
 												<ListboxOption
 													as="div"
-													class="contactFormListboxOption"
+													class="listboxOption flex w-full cursor-pointer"
 													v-for="(
 														g, index
 													) in genders"
@@ -116,20 +122,20 @@
 									</Listbox>
 								</div>
 
-								<div class="textLabelAndBox_Size2">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Date of Birth:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="date"
 										required
 										v-model="data.DOB"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Nationality:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="nationality"
 										required
 										v-model="data.nationality"
@@ -137,22 +143,22 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
-								<div class="textLabelAndBox_Size1">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox flex flex-col">
 									<label class="">ID Number:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="ID"
 										required
 										v-model="data.ID"
 									/>
 								</div>
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox flex flex-col">
 									<label class=""
 										>Social Security Number:</label
 									>
 									<input
-										class="contactInput"
+										class="input"
 										type="SSN"
 										required
 										v-model="data.SSN"
@@ -160,21 +166,21 @@
 								</div>
 							</div>
 
-							<div class="addressInputBoxRow">
-								<div class="textLabelAndBox_Size3">
+							<div class="addressInputBoxRow h-auto gap-1">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Address Line 1:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="address1"
 										required
 										v-model="data.address1"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size3">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Address Line 2:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="address2"
 										v-model="data.address2"
 									/>
@@ -183,28 +189,28 @@
 								<!-- couldn't transfer this to css from 
 								 tailwind (there is something wrong with responsive design)-->
 								<div class="flex flex-col md:flex-row md:gap-5">
-									<div class="textLabelAndBox_Size4">
+									<div class="textLabelBox flex flex-col">
 										<label class="">Postal Code:</label>
 										<input
-											class="contactInput"
+											class="input"
 											type="postalCode"
 											required
 											v-model="data.postalCode"
 										/>
 									</div>
-									<div class="textLabelAndBox_Size2">
+									<div class="textLabelBox flex flex-col">
 										<label class="">Locality:</label>
 										<input
-											class="contactInput"
+											class="input"
 											type="locality"
 											required
 											v-model="data.locality"
 										/>
 									</div>
-									<div class="textLabelAndBox_Size2">
+									<div class="textLabelBox flex flex-col">
 										<label class="">Country:</label>
 										<input
-											class="contactInput"
+											class="input"
 											type="country"
 											required
 											v-model="data.country"
@@ -213,42 +219,42 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
-								<div class="textLabelAndBox_Size1">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Parent First Name:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="parentFirstName"
 										v-model="data.parentFirstName"
 									/>
 								</div>
-								<div class="textLabelAndBox_Size1">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Parent Last Name:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="parentLastName"
 										v-model="data.parentLastName"
 									/>
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
-								<div class="textLabelAndBox_Size3">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div class="textLabelBox flex flex-col">
 									<label class="">Email:</label>
 									<input
-										class="contactInput"
+										class="input"
 										type="email"
 										required
 										v-model="data.email"
 									/>
 								</div>
 
-								<div class="textLabelAndBox_Size3">
+								<div class="textLabelBox flex flex-col">
 									<label class=""
 										>Phone Number/Whatsapp:</label
 									>
 									<input
-										class="contactInput"
+										class="input"
 										type="phone"
 										required
 										v-model="data.phone"
@@ -256,18 +262,20 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow">
-								<div class="textLabelAndBox_Size3 relative">
+							<div class="inputBoxRow flex h-auto w-full gap-7">
+								<div
+									class="textLabelBox relative flex flex-col"
+								>
 									<label class="">Medical Insurance:</label>
 
 									<Listbox
 										v-model="insurance"
 										as="div"
-										class="contactFormListbox"
+										class="listbox fill-smoky bg-smoky flex w-full flex-col overflow-auto"
 									>
 										<div>
 											<ListboxButton
-												class="contactFormListboxButton"
+												class="listboxButton cursor-pointer content-start"
 												>{{
 													insurance == ""
 														? "Select the insurance:"
@@ -276,11 +284,11 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="contactFormListboxOptions absolute"
+												class="listboxOptions bg-blay absolute flex w-full flex-col"
 											>
 												<ListboxOption
 													as="div"
-													class="contactFormListboxOption"
+													class="listboxOption flex w-full cursor-pointer"
 													v-for="(
 														ins, index
 													) in insuranceOptions"
@@ -296,7 +304,9 @@
 									</Listbox>
 								</div>
 
-								<div class="textLabelAndBox_Size3 relative">
+								<div
+									class="textLabelBox relative flex flex-col"
+								>
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
@@ -304,11 +314,11 @@
 										v-model="therapies"
 										multiple
 										as="div"
-										class="contactFormListbox content-start"
+										class="listbox fill-smoky bg-smoky flex flex-col content-start overflow-auto"
 									>
 										<div>
 											<ListboxButton
-												class="contactFormListboxButton"
+												class="listboxButton cursor-pointer content-start"
 												>{{
 													therapies.length > 0
 														? therapies
@@ -322,12 +332,12 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="contactFormListboxOptions absolute"
+												class="listboxOptions bg-blay absolute w-full flex-col"
 											>
 												<ul>
 													<ListboxOption
 														as="div"
-														class="contactFormListboxOption"
+														class="listboxOption flex w-full cursor-pointer"
 														v-for="therapy in therapyOptions"
 														:key="therapy.name"
 														:value="therapy.name"
@@ -348,15 +358,12 @@
 							<div class="medicalRecords flex flex-col">
 								<p>Please sumbit any medical records.</p>
 								<label class="">
-									<input
-										v-on:change="handleFileUpload"
-										class="fileSubmit h-full w-full cursor-pointer p-2"
-										ref="fileInputRef"
-										type="file"
-										name="file"
-										accept=".jpg, .jpeg, .png, .pdf"
-										multiple
-									/>
+									<button class="btn">
+										<input
+											@change="registerMedRec"
+											type="file"
+										/>
+									</button>
 								</label>
 								<div
 									class="w-3/5"
@@ -460,12 +467,12 @@
 								</div>
 							</div>
 
-							<div class="textLabelAndBox_Size3">
+							<div class="textLabelBox flex flex-col">
 								<label class=""
 									>Any Comments for the therapist?</label
 								>
 								<textarea
-									class="bg-color2 px-2"
+									class="bg-smoky px-2"
 									type="comments"
 									v-model="data.comments"
 								>
@@ -473,7 +480,7 @@
 							</div>
 
 							<div class="submit">
-								<button class="manosSubmit mt-5">
+								<button class="btn mt-5 flex flex-col">
 									Submit form
 								</button>
 							</div>
