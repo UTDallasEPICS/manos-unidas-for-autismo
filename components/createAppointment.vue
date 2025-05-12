@@ -96,6 +96,21 @@
 						</div>
 					</div>
 
+					<!-- Duration (optional, defaults to 1) -->
+					<div class="mb-4">
+						<label class="mb-1 block font-medium" for="max"
+							>Duration (Minutes)
+						</label>
+						<input
+							type="number"
+							id="duration"
+							v-model.number="form.duration"
+							min="1"
+							@blur="enforceMin()"
+							class="w-full rounded border border-gray-300 px-3 py-2"
+						/>
+					</div>
+
 					<!-- Max (optional, defaults to 1) -->
 					<div class="mb-4">
 						<label class="mb-1 block font-medium" for="max"
@@ -158,12 +173,14 @@ const form = reactive({
 	sessionType: "",
 	date: "",
 	time: "",
+	duration: 60,
 	max: 1, // defaults to 1
 	comments: "",
 });
 
 function enforceMin() {
 	if (form.max < 1 || isNaN(form.max)) form.max = 1;
+	if (form.duration < 1 || isNaN(form.duration)) form.duration = 1;
 }
 
 // Submit form handler
@@ -189,6 +206,7 @@ function closeModal() {
 		therapist: "",
 		sessionType: "",
 		time: "",
+		duration: 60,
 		max: 1,
 		comments: "",
 	});
