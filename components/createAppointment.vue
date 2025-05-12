@@ -1,17 +1,14 @@
 <template>
 	<div>
 		<!-- Button to open modal -->
-		<button
-			class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-			@click="showModal = true"
-		>
+		<button class="btn cursor-pointer" @click="showModal = true">
 			Create Appointment
 		</button>
 
 		<!-- Modal -->
 		<div
 			v-if="showModal"
-			class="fixed inset-0 z-50 flex items-center justify-center"
+			class="font-sc-encode fixed inset-0 z-50 flex items-center justify-center"
 			aria-modal="true"
 			role="dialog"
 		>
@@ -23,7 +20,7 @@
 
 			<!-- Modal content box -->
 			<div
-				class="relative z-10 w-full max-w-md rounded bg-white p-6 shadow-md"
+				class="relative z-10 w-full max-w-md bg-white p-6 shadow-md"
 				@click.stop
 			>
 				<h2 class="mb-4 text-xl font-bold">New Appointment</h2>
@@ -40,7 +37,7 @@
 							id="therapist"
 							v-model="form.therapist"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Enter therapist name"
 						/>
 					</div>
@@ -55,7 +52,7 @@
 							id="sessionType"
 							v-model="form.sessionType"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 						>
 							<option disabled value="">
 								Select a session type
@@ -77,7 +74,7 @@
 								type="date"
 								v-model="form.date"
 								required
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 							/>
 						</div>
 
@@ -91,7 +88,7 @@
 								type="time"
 								v-model="form.time"
 								required
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 							/>
 						</div>
 					</div>
@@ -107,7 +104,7 @@
 							v-model.number="form.duration"
 							min="1"
 							@blur="enforceMin()"
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 						/>
 					</div>
 
@@ -122,7 +119,7 @@
 							v-model.number="form.max"
 							min="1"
 							@blur="enforceMin()"
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 						/>
 					</div>
 
@@ -134,7 +131,7 @@
 						<textarea
 							id="comments"
 							v-model="form.comments"
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Additional details..."
 						></textarea>
 					</div>
@@ -143,15 +140,12 @@
 					<div class="flex justify-end space-x-2">
 						<button
 							type="button"
-							class="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
+							class="bg-blay cursor-pointer px-2"
 							@click="closeModal"
 						>
 							Cancel
 						</button>
-						<button
-							type="submit"
-							class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-						>
+						<button type="submit" class="btn cursor-pointer">
 							Save
 						</button>
 					</div>
