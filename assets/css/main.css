@@ -3,229 +3,36 @@
 @import "tailwindcss";
 
 @theme {
-	--color-color1: #06234f;
-	--color-color2: #d9d9d9;
+	--color-midnight: #06234f;
+	--color-smoky: #d9d9d9;
+	--color-pearl: #ffffff;
+	--color-blay: #b4bbc9; /*get it? blue gray?? haha*/
+	/*extra therapy colors */
+	--color-lilac: #e3cbf8;
+	--color-peach: ##ffe1b8;
+	--color-salmon: #eeb586;
+	--color-lime: #ddf492;
+	--color-sky: #b8d3fb;
+	--color-buttercup: #f6e274;
+	--color-sandy: #ece4b9;
+
+	--font-cormorant-garamond: "Cormorant Garamond", serif;
+	--font-sc-encode: "Encode Sans SC", sans-serif;
 }
 
-.cormorant-garamond {
-	font-family: "Cormorant Garamond", serif;
-	font-optical-sizing: auto;
-	font-weight: 300;
-	font-style: normal;
-	-webkit-text-fill-color: black;
-}
-
-.SC-encode {
-	font-family: "Encode Sans SC", sans-serif;
-	font-optical-sizing: auto;
-	font-weight: 300;
-	font-style: normal;
-	-webkit-text-fill-color: white;
-}
-
-.fileSubmit {
+/* Buttons */
+.btn {
 	font-family: "Encode Sans SC", sans-serif;
 	text-align: center;
 	background: #06234f;
 	border: 0;
 	padding: 5px 5px;
 	-webkit-text-fill-color: white;
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 55);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 100);
-	}
-	@media (width >= 48rem) {
-		width: calc(35 / 100 * 100%);
-	}
 }
 
-button.manosSubmit {
-	font-family: "Encode Sans SC", sans-serif;
-	text-align: center;
-	background: #06234f;
-	border: 0;
-	padding: 5px 5px;
-	cursor: pointer;
-	-webkit-text-fill-color: white;
-}
-
-div.fullPage {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	width: 100%;
-}
-
-div.contactFormPage {
-	display: flex;
-	height: auto;
-	place-content: center;
-}
-
-div.contactFormArea {
-	font-family: "Cormorant Garamond", serif;
-	font-optical-sizing: auto;
-	font-weight: 300;
-	font-style: normal;
-	-webkit-text-fill-color: black;
-	flex: flex;
-	flex-direction: column;
-	flex-wrap: wrap;
-	@media (width >= 0rem) {
-		width: calc(4 / 5 * 100%);
-	}
-	@media (width >= 48rem) {
-		width: calc(var(--spacing) * 200);
-	}
-}
-
-div.contactFormContent {
-	font-size: var(--text-lg);
-	line-height: var(--tw-leading, var(--text-lg--line-height));
-	justify-content: flex-start;
-	display: flex;
-	width: 100%;
-	padding: calc(var(--spacing) * 5);
-}
-
-form.contactForm {
-	display: flex;
-	width: 100%;
-	flex-direction: column;
-	flex-wrap: wrap;
-	justify-content: center;
-	background-color: var(--color-white);
-}
-
-div.freeResponseArea {
-	display: flex;
-	width: 100%;
-	flex-wrap: wrap;
-	gap: calc(var(--spacing) * 5);
-}
-
-div.inputBoxRow {
-	display: flex;
-	height: auto;
-	width: 100%;
-	gap: calc(var(--spacing) * 7);
-	@media (width >= 0rem) {
-		flex-direction: column;
-	}
-	@media (width >= 48rem) {
-		flex-direction: row;
-	}
-}
-
-div.addressInputBoxRow {
-	height: auto;
-	width: 100%;
-	gap: calc(var(--spacing) * 1);
-	@media (width >= 0rem) {
-		flex-direction: column;
-	}
-	@media (width >= 48rem) {
-		flex-direction: row;
-	}
-}
-
-div.textLabelAndBox_Size1 {
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 50);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 75);
-	}
-	@media (width >= 48rem) {
-		width: calc(3 / 10 * 100%);
-	}
-}
-
-div.textLabelAndBox_Size2 {
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 40);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 60);
-	}
-	@media (width >= 48rem) {
-		width: calc(1 / 4 * 100%);
-	}
-}
-
-div.textLabelAndBox_Size3 {
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 55);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 100);
-	}
-	@media (width >= 48rem) {
-		width: calc(7 / 10 * 100%);
-	}
-}
-
-div.textLabelAndBox_Size4 {
-	display: flex;
-	flex-direction: column;
-	@media (width >= 0rem) {
-		width: calc(var(--spacing) * 30);
-	}
-	@media (width >= 40rem) {
-		width: calc(var(--spacing) * 40);
-	}
-	@media (width >= 48rem) {
-		width: calc(1 / 5 * 100%);
-	}
-}
-
-input.contactInput {
+/* Text Inputs */
+.input {
 	background-color: #d9d9d9;
 	fill: #d9d9d9;
 	padding: 0px 8px 0px 8px;
-}
-
-.contactFormListbox {
-	background-color: #d9d9d9;
-	fill: #d9d9d9;
-	display: flex;
-	flex-direction: column;
-	overflow: auto;
-}
-
-.contactFormListboxButton {
-	display: flex;
-	width: 100%;
-	cursor: pointer;
-	align-content: flex-start;
-	/* padding: 0px 8px 0px 8px; */
-}
-
-.contactFormListboxOptions {
-	display: flex;
-	width: 100%;
-	flex-direction: column;
-	background-color: var(--color-gray-100);
-	/* padding: 0px 8px 0px 8px; */
-}
-
-.contactFormListboxOption {
-	display: flex;
-	width: 100%;
-	cursor: pointer;
-	&:hover {
-		@media (hover: hover) {
-			background-color: var(--color-blue-500);
-		}
-	}
 }
