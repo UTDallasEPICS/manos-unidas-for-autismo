@@ -9,9 +9,9 @@
 	/>
 	<div
 		ref="container"
-		class="absolute grid w-full cursor-pointer grid-cols-2 grid-rows-3 overflow-hidden rounded-md border-4 text-center"
+		class="font-sc-encode absolute grid w-full cursor-pointer grid-cols-2 grid-rows-3 overflow-hidden rounded-md border-4 text-center"
+		:class="boxColor"
 		:style="{
-			backgroundColor: boxColor,
 			height: boxHeight,
 			top: boxTop,
 		}"
@@ -28,7 +28,9 @@
 			}"
 			:style="{ fontSize: sessionTypeFontSize }"
 		>
-			<span class="line-clamp-2">{{ props.session.Type.name }}</span>
+			<span class="line-clamp-2 font-bold">{{
+				props.session.Type.name
+			}}</span>
 		</div>
 		<div
 			ref="therapistBox"
@@ -92,8 +94,26 @@ const duration = computed(() => {
 
 // style
 const boxColor = computed(() => {
-	// needs to be replaced with tailwind values later
 	switch (props.session.Type.color) {
+		case Color.BLUE:
+			return "bg-sky";
+		case Color.GREEN:
+			return "bg-lime";
+		case Color.ORANGE:
+			return "bg-salmon";
+		case Color.PURPLE:
+			return "bg-lilac";
+		case Color.RED:
+			return "bg-rose";
+		case Color.TEAL:
+			return "bg-blue-green";
+		case Color.YELLOW:
+			return "bg-buttercup";
+		default:
+			return "bg-peach";
+	}
+
+	/*switch (props.session.Type.color) {
 		case Color.BLUE:
 			return "#3878c2";
 		case Color.GREEN:
@@ -110,7 +130,7 @@ const boxColor = computed(() => {
 			return "#f7d439";
 		default:
 			return "#c0e9ed";
-	}
+	} */
 });
 
 const boxHeight = computed(() => {

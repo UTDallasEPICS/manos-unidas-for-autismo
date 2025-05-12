@@ -2,7 +2,9 @@
     A window for users to filter sessions. Currently has a temporary session types object. After submitting, the window should emit the filters to the schedule view and then to the calendar component
  -->
 <template>
-	<div class="fixed top-0 right-0 z-50 h-full w-full items-center text-left">
+	<div
+		class="font-sc-encode fixed top-0 right-0 z-50 h-full w-full items-center text-left"
+	>
 		<!-- Background -->
 		<div
 			class="fixed z-51 h-full w-full bg-black/70"
@@ -21,7 +23,9 @@
 			</div>
 			<!-- Information -->
 			<div class="m-3 flex flex-col gap-3">
-				<h1 class="text-3xl">Filter Appointments</h1>
+				<h1 class="font-cormorant-garamond text-3xl font-bold">
+					Filter Appointments
+				</h1>
 				<h3 class="font-bold">Tick to hide appointment:</h3>
 				<div>
 					<div v-for="(type, index) in sessionTypes" :key="type">
@@ -41,10 +45,7 @@
 			<!-- Submit button -->
 			<div class="flex flex-col justify-center gap-3">
 				<div class="flex justify-center">
-					<button
-						class="cursor-pointer bg-blue-950 p-2 text-center text-white"
-						@click="submitForm"
-					>
+					<button class="btn cursor-pointer" @click="submitForm">
 						Submit
 					</button>
 				</div>

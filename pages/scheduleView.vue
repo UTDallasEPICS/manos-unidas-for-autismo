@@ -1,7 +1,7 @@
 <!-- 27 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
-	<div class="grow pb-8">
+	<div class="font-sc-encode grow pb-8">
 		<!-- Filter modal window -->
 		<FilterAppointments
 			:filter="filters"
@@ -14,8 +14,10 @@
 		<div class="mx-10 h-full">
 			<!-- Title part + option buttons -->
 			<div class="my-5 flex justify-between">
-				<div class="flex flex-col justify-center">
-					<div class="text-xl">Schedule for</div>
+				<div
+					class="font-cormorant-garamond flex flex-col justify-center"
+				>
+					<div class="text-2xl">Schedule for</div>
 					<div class="text-3xl">{{ currentWeek }}</div>
 				</div>
 				<div class="justify-right flex flex-col gap-2">
@@ -23,7 +25,7 @@
 					<!-- placeholder style for the button so it's not just text lmao -->
 					<button
 						@click="showFilterWindow = true"
-						class="cursor-pointer bg-blue-950 p-2 text-white"
+						class="btn cursor-pointer"
 						v-if="permissions.filter"
 					>
 						Filter
