@@ -28,8 +28,8 @@
 	<!--div container for the whole app-->
 	<div class="font-cormorant-garamond h-auto flex-col">
 		<!--div container for the contact form-->
-		<div class="contactFormPage flex h-auto place-content-center">
-			<div class="contactFormArea flex-col flex-wrap font-light md:w-180">
+		<div class="flex h-auto place-content-center">
+			<div class="flex-col flex-wrap font-light md:w-180">
 				<!--Title of contact form-->
 				<h1 class="mt-5 text-4xl sm:mr-5">Patient Contact Form</h1>
 
@@ -57,7 +57,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Patient Middle name:</label>
 									<!--takes a string, type/enter box-->
 									<input
@@ -67,7 +67,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Patient Last name:</label>
 									<!--takes a string, type/enter box-->
 									<input
@@ -131,7 +131,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Nationality:</label>
 									<input
 										class="input"
@@ -178,7 +178,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Address Line 2:</label>
 									<input
 										class="input"
@@ -190,7 +190,7 @@
 								<!-- couldn't transfer this to css from 
 								 tailwind (there is something wrong with responsive design)-->
 								<div class="flex flex-col md:flex-row md:gap-5">
-									<div class="textLabelBox flex flex-col">
+									<div class="flex flex-col">
 										<label class="">Postal Code:</label>
 										<input
 											class="input"
@@ -199,7 +199,7 @@
 											v-model="data.postalCode"
 										/>
 									</div>
-									<div class="textLabelBox flex flex-col">
+									<div class="flex flex-col">
 										<label class="">Locality:</label>
 										<input
 											class="input"
@@ -208,7 +208,7 @@
 											v-model="data.locality"
 										/>
 									</div>
-									<div class="textLabelBox flex flex-col">
+									<div class="flex flex-col">
 										<label class="">Country:</label>
 										<input
 											class="input"
@@ -221,9 +221,9 @@
 							</div>
 
 							<div
-								class="inputBoxRow flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
+								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
 							>
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Parent First Name:</label>
 									<input
 										class="input"
@@ -231,7 +231,7 @@
 										v-model="data.parentFirstName"
 									/>
 								</div>
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Parent Last Name:</label>
 									<input
 										class="input"
@@ -253,7 +253,7 @@
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class=""
 										>Phone Number/Whatsapp:</label
 									>
@@ -269,7 +269,7 @@
 							<div
 								class="flex h-auto w-full flex-col gap-7 sm:flex-row"
 							>
-								<div class="relative flex w-2/5 flex-col">
+								<div class="relative flex w-1/2 flex-col">
 									<label class="">Medical Insurance:</label>
 
 									<Listbox
@@ -279,7 +279,7 @@
 									>
 										<div>
 											<ListboxButton
-												class="listboxButton cursor-pointer content-start px-2"
+												class="flex w-full cursor-pointer items-start px-2"
 												>{{
 													insurance == ""
 														? "Select the insurance:"
@@ -288,12 +288,12 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions bg-blay absolute flex w-full flex-col"
+												class="bg-blay absolute flex w-full flex-col"
 												style="z-index: 20"
 											>
 												<ListboxOption
 													as="div"
-													class="listboxOption flex w-full cursor-pointer"
+													class="flex w-full cursor-pointer hover:bg-blue-500"
 													style="z-index: 20"
 													v-for="(
 														ins, index
@@ -310,9 +310,7 @@
 									</Listbox>
 								</div>
 
-								<div
-									class="textLabelBox relative flex w-3/5 flex-col"
-								>
+								<div class="relative flex w-1/2 flex-col">
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
@@ -324,7 +322,7 @@
 									>
 										<div>
 											<ListboxButton
-												class="cursor-pointer content-start px-2"
+												class="flex w-full cursor-pointer items-start px-2"
 												>{{
 													therapies.length > 0
 														? therapies
@@ -338,13 +336,13 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions bg-blay absolute w-full flex-col"
+												class="bg-blay absolute flex w-full flex-col"
 												style="z-index: 10"
 											>
 												<ul>
 													<ListboxOption
 														as="div"
-														class="listboxOption flex w-full cursor-pointer"
+														class="flex w-full cursor-pointer hover:bg-blue-500"
 														v-for="therapy in therapyOptions"
 														:key="therapy.name"
 														:value="therapy.name"
@@ -363,7 +361,7 @@
 						</div>
 
 						<div class="flex flex-col gap-5">
-							<div class="medicalRecords flex flex-col">
+							<div class="flex flex-col">
 								<p>Please sumbit any medical records.</p>
 								<label class="">
 									<input
@@ -405,7 +403,7 @@
 								</div>
 							</div>
 
-							<div class="prevPaitent flex flex-col">
+							<div class="flex flex-col">
 								<label
 									>Have you been a paitent previously with us?
 								</label>
@@ -429,7 +427,7 @@
 								</div>
 							</div>
 
-							<div class="diagnosis">
+							<div class="">
 								<label class=""
 									>Have you been formally daignosed?</label
 								>
@@ -453,7 +451,7 @@
 								</div>
 							</div>
 
-							<div class="evaluation">
+							<div class="">
 								<label class=""
 									>Do you want to perform a Diagnostic
 									Evaluation on the patient?</label
@@ -478,7 +476,7 @@
 								</div>
 							</div>
 
-							<div class="textLabelBox flex flex-col">
+							<div class="flex flex-col">
 								<label class=""
 									>Any Comments for the therapist?</label
 								>
@@ -490,7 +488,7 @@
 								</textarea>
 							</div>
 
-							<div class="submit">
+							<div class="">
 								<button class="btn mt-5 flex flex-col">
 									Submit form
 								</button>
