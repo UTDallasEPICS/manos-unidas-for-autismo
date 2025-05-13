@@ -4,14 +4,18 @@
 			<div
 				class="flex w-4/5 flex-col justify-between md:w-200 md:flex-row"
 			>
-				<div class="cormorant-garamond">
+				<div class="font-cormorant-garamond">
 					<h1 class="text-2xl">View Incoming Contact Forms</h1>
 				</div>
 				<div class="flex w-full flex-row md:w-1/3">
-					<Listbox v-model="sortBy" as="div" class="w-2/3 md:w-66">
+					<Listbox
+						v-model="sortBy"
+						as="div"
+						class="fill-smoky bg-smoky w-2/3 md:w-66"
+					>
 						<div>
 							<ListboxButton
-								class="bg-color2 w-full cursor-pointer py-2"
+								class="bg-smoky w-full cursor-pointer py-2"
 								>{{
 									sortBy == ""
 										? "Sort By:"
@@ -20,11 +24,11 @@
 							>
 							<ListboxOptions
 								as="div"
-								class="bg-color2 absolute w-1/5 md:w-66"
+								class="bg-smoky absolute w-1/5 md:w-66"
 							>
 								<ListboxOption
 									as="div"
-									class="bg-color2 w-full cursor-pointer px-5 hover:bg-blue-500"
+									class="bg-smoky w-full cursor-pointer px-5 hover:bg-blue-500"
 									v-for="(option, index) in sortOptions"
 									:key="index"
 									:value="option"
@@ -40,7 +44,7 @@
 			</div>
 			<div class="flex flex-col gap-5">
 				<table
-					class="cormorant-garamond w-full border-collapse border-2 border-b-black text-2xl"
+					class="font-cormorant-garamond w-full border-collapse border-2 border-b-black text-2xl"
 				>
 					<tr class="border-collapse border-2 border-b-black">
 						<th
