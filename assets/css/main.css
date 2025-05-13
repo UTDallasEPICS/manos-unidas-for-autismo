@@ -37,10 +37,4 @@
 	padding-right: 2rem;
 	fill: #d9d9d9;
 	padding: 0px 8px 0px 8px;
-	@media (width <= 40rem) {
-		width: calc(var(--spacing) * 70);
-	}
-	@media (width >= 40rem) {
-		width: calc(100%);
-	}
 }

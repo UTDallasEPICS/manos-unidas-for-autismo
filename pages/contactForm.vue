@@ -31,7 +31,9 @@
 		<div class="flex h-auto place-content-center">
 			<div class="flex-col flex-wrap font-light md:w-180">
 				<!--Title of contact form-->
-				<h1 class="mt-5 text-4xl sm:mr-5">Patient Contact Form</h1>
+				<h1 class="mt-5 ml-5 text-4xl sm:mr-5 sm:ml-0">
+					Patient Contact Form
+				</h1>
 
 				<!--div container for the form-->
 				<div class="justify-start p-5 text-lg">
@@ -41,17 +43,17 @@
 						class="flex w-full flex-col flex-wrap bg-white"
 					>
 						<!-- div class for the short answer type of responses-->
-						<div class="flex flex-wrap justify-center gap-5 py-5">
+						<div class="flex w-full flex-wrap gap-5 py-5">
 							<!--div class for the name portion (the name components should occupy the same line)-->
 							<div
-								class="flex h-auto w-full flex-col gap-3 sm:flex-row md:gap-7"
+								class="flex h-auto w-9/10 flex-col gap-3 sm:flex-row md:w-full md:gap-7"
 							>
 								<div class="flex flex-col">
 									<label class="">Patient First name:</label>
 
 									<input
 										type="text"
-										class="input"
+										class="input w-70 sm:w-full"
 										required
 										v-model="data.firstName"
 									/>
@@ -62,7 +64,7 @@
 									<!--takes a string, type/enter box-->
 									<input
 										type="middleName"
-										class="input"
+										class="input w-70 sm:w-full"
 										v-model="data.middleName"
 									/>
 								</div>
@@ -72,7 +74,7 @@
 									<!--takes a string, type/enter box-->
 									<input
 										type="lastName"
-										class="input"
+										class="input w-70 sm:w-full"
 										required
 										v-model="data.lastName"
 									/>
@@ -124,7 +126,7 @@
 								<div class="flex flex-col">
 									<label class="">Date of Birth:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="date"
 										required
 										v-model="data.DOB"
@@ -134,7 +136,7 @@
 								<div class="flex flex-col">
 									<label class="">Nationality:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="nationality"
 										required
 										v-model="data.nationality"
@@ -148,7 +150,7 @@
 								<div class="flex flex-col">
 									<label class="">ID Number:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="ID"
 										required
 										v-model="data.ID"
@@ -159,7 +161,7 @@
 										>Social Security Number:</label
 									>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="SSN"
 										required
 										v-model="data.SSN"
@@ -167,11 +169,13 @@
 								</div>
 							</div>
 
-							<div class="flex h-auto w-full flex-col gap-1">
+							<div
+								class="flex h-auto w-4/5 flex-col content-start gap-1 md:w-full"
+							>
 								<div class="flex flex-col">
 									<label class="">Address Line 1:</label>
 									<input
-										class="input w-full"
+										class="input w-90 sm:w-full"
 										type="address1"
 										required
 										v-model="data.address1"
@@ -181,19 +185,17 @@
 								<div class="flex flex-col">
 									<label class="">Address Line 2:</label>
 									<input
-										class="input"
+										class="input w-90 sm:w-full"
 										type="address2"
 										v-model="data.address2"
 									/>
 								</div>
 
-								<!-- couldn't transfer this to css from 
-								 tailwind (there is something wrong with responsive design)-->
-								<div class="flex flex-col md:flex-row md:gap-5">
+								<div class="flex flex-col sm:flex-row sm:gap-5">
 									<div class="flex flex-col">
 										<label class="">Postal Code:</label>
 										<input
-											class="input"
+											class="input w-70 sm:w-full"
 											type="postalCode"
 											required
 											v-model="data.postalCode"
@@ -202,7 +204,7 @@
 									<div class="flex flex-col">
 										<label class="">Locality:</label>
 										<input
-											class="input"
+											class="input w-70 sm:w-full"
 											type="locality"
 											required
 											v-model="data.locality"
@@ -211,7 +213,7 @@
 									<div class="flex flex-col">
 										<label class="">Country:</label>
 										<input
-											class="input"
+											class="input w-70 sm:w-full"
 											type="country"
 											required
 											v-model="data.country"
@@ -226,7 +228,7 @@
 								<div class="flex flex-col">
 									<label class="">Parent First Name:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="parentFirstName"
 										v-model="data.parentFirstName"
 									/>
@@ -234,7 +236,7 @@
 								<div class="flex flex-col">
 									<label class="">Parent Last Name:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="parentLastName"
 										v-model="data.parentLastName"
 									/>
@@ -247,7 +249,7 @@
 								<div class="flex flex-col">
 									<label class="">Email:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="email"
 										v-model="data.email"
 									/>
@@ -258,7 +260,7 @@
 										>Phone Number/Whatsapp:</label
 									>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="phone"
 										required
 										v-model="data.phone"
@@ -267,7 +269,7 @@
 							</div>
 
 							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-row"
+								class="flex h-auto w-9/10 flex-col gap-7 sm:flex-row md:w-full"
 							>
 								<div
 									class="relative flex w-50 flex-col sm:w-1/2"
@@ -485,7 +487,7 @@
 									>Any Comments for the therapist?</label
 								>
 								<textarea
-									class="bg-smoky px-2"
+									class="bg-smoky w-90 px-2 sm:w-full"
 									type="comments"
 									v-model="data.comments"
 								>
