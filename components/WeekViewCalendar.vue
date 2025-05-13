@@ -3,13 +3,17 @@
 	Calendar displays days from Monday-Friday given a list of appointments. The hours adjust to the earliest and latest times of all the appointments being displayed. Given a string array of filters, it will only show appointments with the same session types in the filters.
 -->
 <template>
-	<div class="overflow-auto">
+	<div class="font-sc-encode overflow-auto">
 		<!-- Header part -->
 		<div class="grid min-w-2xl grid-cols-11 text-center">
-			<div class="col-span-1 min-w-15">
+			<div class="bg-blay col-span-1 min-w-15 text-xl">
 				<div class="row-span-1 overflow-hidden">Time</div>
 			</div>
-			<div class="col-span-2" v-for="day in dayNames" :key="day">
+			<div
+				class="bg-blay col-span-2 text-xl"
+				v-for="day in dayNames"
+				:key="day"
+			>
 				<div class="row-span-1 overflow-hidden">
 					{{ day }}
 				</div>
@@ -17,24 +21,18 @@
 			<!-- Times -->
 			<div class="col-span-1 min-w-15">
 				<div class="row-span-4 flex-none" v-for="hr in hours" :key="hr">
-					<div class="h-24px border-1 border-gray-400">
+					<div class="h-24px border-smoky border-1">
 						<b>{{ militaryTimeToTwelveHr(hr) }}</b>
 					</div>
-					<div class="h-24px border-1 border-gray-400">
-						{{ hr }}:15
-					</div>
-					<div class="h-24px border-1 border-gray-400">
-						{{ hr }}:30
-					</div>
-					<div class="h-24px border-1 border-gray-400">
-						{{ hr }}:45
-					</div>
+					<div class="h-24px border-smoky border-1">{{ hr }}:15</div>
+					<div class="h-24px border-smoky border-1">{{ hr }}:30</div>
+					<div class="h-24px border-smoky border-1">{{ hr }}:45</div>
 				</div>
 			</div>
 
 			<!-- Appointments -->
 			<div
-				class="col-span-2 overflow-hidden border-1 border-gray-400"
+				class="border-smoky bg-pearl col-span-2 overflow-hidden border-1"
 				v-for="day in 5"
 				:key="day"
 			>

@@ -2,7 +2,9 @@
     When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information.
  -->
 <template>
-	<div class="fixed top-0 right-0 z-50 h-full w-full items-center text-left">
+	<div
+		class="font-sc-encode fixed top-0 right-0 z-50 h-full w-full items-center text-left"
+	>
 		<!-- Background -->
 		<div
 			class="fixed z-51 h-full w-full bg-black/70"
@@ -19,7 +21,7 @@
 			</div>
 			<!-- Information -->
 			<div class="m-3 flex flex-col gap-3">
-				<h1 class="text-3xl">
+				<h1 class="font-cormorant-garamond text-3xl font-bold">
 					{{ props.session.Type.name + " - " + duration }}
 				</h1>
 				<h2 class="text-xl">
@@ -48,7 +50,10 @@
 					<li v-for="patient in patientNames" :key="patient">
 						{{ patient }}
 						<!-- replace with link to patient profile later -->
-						<span class="cursor-pointer px-3 text-xs text-blue-400">
+						<span
+							class="cursor-pointer px-3 text-xs text-blue-400"
+							@click="goToPatient(patient.id)"
+						>
 							View Profile &gt;
 						</span>
 					</li>
@@ -69,7 +74,7 @@
 			<div class="flex flex-col justify-center gap-3">
 				<div class="flex justify-center">
 					<button
-						class="cursor-pointer bg-blue-950 p-2 text-center text-white"
+						class="btn cursor-pointer"
 						v-if="!permissions.nonEmployee"
 					>
 						Therapy Notes
@@ -77,7 +82,7 @@
 				</div>
 				<div class="flex justify-center">
 					<button
-						class="cursor-pointer bg-blue-950 p-2 text-center text-white"
+						class="btn cursor-pointer"
 						v-if="
 							!permissions.nonEmployee &&
 							permissions.editAppointments

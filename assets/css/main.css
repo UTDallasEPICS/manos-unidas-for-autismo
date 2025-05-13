@@ -9,12 +9,13 @@
 	--color-blay: #b4bbc9; /*get it? blue gray?? haha*/
 	/*extra therapy colors */
 	--color-lilac: #e3cbf8;
-	--color-peach: ##ffe1b8;
+	--color-peach: #ffe1b8;
 	--color-salmon: #eeb586;
 	--color-lime: #ddf492;
 	--color-sky: #b8d3fb;
 	--color-buttercup: #f6e274;
-	--color-sandy: #ece4b9;
+	--color-rose: #ea7b7b;
+	--color-blue-green: #85e0c2;
 
 	--font-cormorant-garamond: "Cormorant Garamond", serif;
 	--font-sc-encode: "Encode Sans SC", sans-serif;
@@ -26,7 +27,7 @@
 	text-align: center;
 	background: #06234f;
 	border: 0;
-	padding: 5px 5px;
+	padding: 8px 8px;
 	-webkit-text-fill-color: white;
 }
 
