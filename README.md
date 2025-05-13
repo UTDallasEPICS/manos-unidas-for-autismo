@@ -14,6 +14,15 @@ The purpose of the platform is to:
 
 Refer to overall and semester documentation in [GitHub Wiki](https://github.com/UTDallasEPICS/manos-unidas-for-autismo/wiki)
 
+## Installations on VScode
+Prisma, Thunder Client, Azure Repos, Github Pull Requests, GitHub Repositories, Gitlens, HTML css Support by ecmel, Prettier - code formater by prettier, remote repositories, tailwind CSS, and vue.
+### Helpful Guides
+[tailwind CSS](https://tailwindcss.com/docs/responsive-design) How to use tailwind CSS.
+
+[Prisma](https://www.prisma.io/docs/getting-started/quickstart-prismaPostgres) Starter for databases. 
+
+[vue](https://vuejs.org/tutorial/#step-1) Basically, our website hoster. Not quite that important compared to learning Tailwind. 
+
 ## Running the Project
 
 ### Nuxt Minimal Starter
@@ -91,3 +100,9 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Getting Started
+- Create a contact form list page.
+- Be able to search through patient profiles on the list page.
+- Be able to retrieve session information & contact form information from the database.
+  
