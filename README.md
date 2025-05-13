@@ -25,12 +25,6 @@ Ensure Node.js, npm, Visual Studio Code, Git are installed. Ensure that everyone
 
 Usually, you can get away with using Git Bash (on its own or within VS Code) as your terminal.
 
-#### Install the repo
-```bash
-git clone https://github.com/UTDallasEPICS/manos-unidas-for-autismo.git
-cd manos-unidas-for-autismo
-npm install
-```
 #### Database Setup
 ```bash
 # Initialize the database and test data seeding
@@ -111,7 +105,7 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ## Useful dev tips
 #### Prettier formatting
 ```bash
-npm run format
+npm run checker
 ```
 #### Prisma
 ```bash
