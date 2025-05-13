@@ -24,76 +24,77 @@
 	11. Submit button
     
     -->
-	<div></div>
 
 	<!--div container for the whole app-->
-	<div class="font-cormorant-garamond h-full flex-col">
-		<!--Navigation bar-->
-
+	<div class="font-cormorant-garamond h-auto flex-col">
 		<!--div container for the contact form-->
-		<div class="contactFormPage flex h-auto place-content-center">
-			<div class="contactFormArea flex-col flex-wrap font-light">
+		<div class="flex h-auto place-content-center">
+			<div class="flex-col flex-wrap font-light md:w-180">
 				<!--Title of contact form-->
-				<h1 class="mt-5 text-4xl sm:mr-3">Patient Contact Form</h1>
+				<h1 class="mt-5 ml-5 text-4xl sm:mr-5 sm:ml-0">
+					Patient Contact Form
+				</h1>
 
 				<!--div container for the form-->
-				<div class="contactFormContent justify-start p-5 text-lg">
+				<div class="justify-start p-5 text-lg">
 					<!--Form for contact form-->
 					<form
 						@submit.prevent="handleSubmit"
-						class="contactForm flex w-full flex-col flex-wrap justify-center bg-white"
+						class="flex w-full flex-col flex-wrap bg-white"
 					>
 						<!-- div class for the short answer type of responses-->
-						<div class="freeResponseArea flex-wrap gap-5 py-5">
+						<div class="flex w-full flex-wrap gap-5 py-5">
 							<!--div class for the name portion (the name components should occupy the same line)-->
-							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox flex flex-col">
+							<div
+								class="flex h-auto w-9/10 flex-col gap-3 sm:flex-row md:w-full md:gap-7"
+							>
+								<div class="flex flex-col">
 									<label class="">Patient First name:</label>
 
 									<input
 										type="text"
-										class="input"
+										class="input w-70 sm:w-full"
 										required
 										v-model="data.firstName"
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Patient Middle name:</label>
 									<!--takes a string, type/enter box-->
 									<input
 										type="middleName"
-										class="input"
-										v-model="middleName"
+										class="input w-70 sm:w-full"
+										v-model="data.middleName"
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Patient Last name:</label>
 									<!--takes a string, type/enter box-->
 									<input
 										type="lastName"
-										class="input"
+										class="input w-70 sm:w-full"
 										required
 										v-model="data.lastName"
 									/>
 								</div>
 							</div>
 
-							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div
-									class="textLabelBox relative flex flex-col"
-								>
+							<div
+								class="flex h-auto w-full flex-col gap-7 sm:flex-row"
+							>
+								<div class="relative flex flex-col sm:w-1/5">
 									<label class="">Gender:</label>
 
 									<Listbox
 										v-model="gender"
 										as="div"
-										class="listbox fill-smoky bg-smoky flex w-full flex-col overflow-auto"
+										class="fill-smoky bg-smoky flex w-40 flex-col overflow-auto sm:w-full"
 									>
 										<div>
 											<ListboxButton
-												class="listboxButton"
+												class="flex w-full cursor-pointer items-start px-2"
 												>{{
 													gender == ""
 														? "Select Gender:"
@@ -102,11 +103,11 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions bg-blay absolute flex w-full flex-col"
+												class="bg-blay absolute flex w-full flex-col"
 											>
 												<ListboxOption
 													as="div"
-													class="listboxOption flex w-full cursor-pointer"
+													class="flex w-full cursor-pointer hover:bg-blue-500"
 													v-for="(
 														g, index
 													) in genders"
@@ -122,20 +123,20 @@
 									</Listbox>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Date of Birth:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="date"
 										required
 										v-model="data.DOB"
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Nationality:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="nationality"
 										required
 										v-model="data.nationality"
@@ -143,22 +144,24 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox flex flex-col">
+							<div
+								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
+							>
+								<div class="flex flex-col">
 									<label class="">ID Number:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="ID"
 										required
 										v-model="data.ID"
 									/>
 								</div>
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class=""
 										>Social Security Number:</label
 									>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="SSN"
 										required
 										v-model="data.SSN"
@@ -166,51 +169,51 @@
 								</div>
 							</div>
 
-							<div class="addressInputBoxRow h-auto gap-1">
-								<div class="textLabelBox flex flex-col">
+							<div
+								class="flex h-auto w-4/5 flex-col content-start gap-1 md:w-full"
+							>
+								<div class="flex flex-col">
 									<label class="">Address Line 1:</label>
 									<input
-										class="input"
+										class="input w-90 sm:w-full"
 										type="address1"
 										required
 										v-model="data.address1"
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Address Line 2:</label>
 									<input
-										class="input"
+										class="input w-90 sm:w-full"
 										type="address2"
 										v-model="data.address2"
 									/>
 								</div>
 
-								<!-- couldn't transfer this to css from 
-								 tailwind (there is something wrong with responsive design)-->
-								<div class="flex flex-col md:flex-row md:gap-5">
-									<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col sm:flex-row sm:gap-5">
+									<div class="flex flex-col">
 										<label class="">Postal Code:</label>
 										<input
-											class="input"
+											class="input w-70 sm:w-full"
 											type="postalCode"
 											required
 											v-model="data.postalCode"
 										/>
 									</div>
-									<div class="textLabelBox flex flex-col">
+									<div class="flex flex-col">
 										<label class="">Locality:</label>
 										<input
-											class="input"
+											class="input w-70 sm:w-full"
 											type="locality"
 											required
 											v-model="data.locality"
 										/>
 									</div>
-									<div class="textLabelBox flex flex-col">
+									<div class="flex flex-col">
 										<label class="">Country:</label>
 										<input
-											class="input"
+											class="input w-70 sm:w-full"
 											type="country"
 											required
 											v-model="data.country"
@@ -219,42 +222,45 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox flex flex-col">
+							<div
+								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
+							>
+								<div class="flex flex-col">
 									<label class="">Parent First Name:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="parentFirstName"
 										v-model="data.parentFirstName"
 									/>
 								</div>
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class="">Parent Last Name:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="parentLastName"
 										v-model="data.parentLastName"
 									/>
 								</div>
 							</div>
 
-							<div class="inputBoxRow flex h-auto w-full gap-7">
-								<div class="textLabelBox flex flex-col">
+							<div
+								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
+							>
+								<div class="flex flex-col">
 									<label class="">Email:</label>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="email"
-										required
 										v-model="data.email"
 									/>
 								</div>
 
-								<div class="textLabelBox flex flex-col">
+								<div class="flex flex-col">
 									<label class=""
 										>Phone Number/Whatsapp:</label
 									>
 									<input
-										class="input"
+										class="input w-70 sm:w-full"
 										type="phone"
 										required
 										v-model="data.phone"
@@ -262,20 +268,22 @@
 								</div>
 							</div>
 
-							<div class="inputBoxRow flex h-auto w-full gap-7">
+							<div
+								class="flex h-auto w-9/10 flex-col gap-7 sm:flex-row md:w-full"
+							>
 								<div
-									class="textLabelBox relative flex flex-col"
+									class="relative flex w-50 flex-col sm:w-1/2"
 								>
 									<label class="">Medical Insurance:</label>
 
 									<Listbox
 										v-model="insurance"
 										as="div"
-										class="listbox fill-smoky bg-smoky flex w-full flex-col overflow-auto"
+										class="fill-smoky bg-smoky flex w-full flex-col overflow-auto"
 									>
 										<div>
 											<ListboxButton
-												class="listboxButton cursor-pointer content-start"
+												class="flex w-full cursor-pointer items-start px-2"
 												>{{
 													insurance == ""
 														? "Select the insurance:"
@@ -284,11 +292,13 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions bg-blay absolute flex w-full flex-col"
+												class="bg-blay absolute flex w-full flex-col"
+												style="z-index: 20"
 											>
 												<ListboxOption
 													as="div"
-													class="listboxOption flex w-full cursor-pointer"
+													class="flex w-full cursor-pointer hover:bg-blue-500"
+													style="z-index: 20"
 													v-for="(
 														ins, index
 													) in insuranceOptions"
@@ -305,7 +315,7 @@
 								</div>
 
 								<div
-									class="textLabelBox relative flex flex-col"
+									class="relative flex w-70 flex-col sm:w-1/2"
 								>
 									<label class=""
 										>Preferred Services/Therapies:</label
@@ -314,11 +324,11 @@
 										v-model="therapies"
 										multiple
 										as="div"
-										class="listbox fill-smoky bg-smoky flex flex-col content-start overflow-auto"
+										class="fill-smoky bg-smoky flex w-full flex-col content-start overflow-y-scroll"
 									>
 										<div>
 											<ListboxButton
-												class="listboxButton cursor-pointer content-start"
+												class="flex w-full cursor-pointer items-start px-2"
 												>{{
 													therapies.length > 0
 														? therapies
@@ -332,15 +342,17 @@
 											>
 											<ListboxOptions
 												as="div"
-												class="listboxOptions bg-blay absolute w-full flex-col"
+												class="bg-blay absolute flex w-full flex-col"
+												style="z-index: 10"
 											>
 												<ul>
 													<ListboxOption
 														as="div"
-														class="listboxOption flex w-full cursor-pointer"
+														class="flex w-full cursor-pointer hover:bg-blue-500"
 														v-for="therapy in therapyOptions"
 														:key="therapy.name"
 														:value="therapy.name"
+														style="z-index: 10"
 													>
 														<div class="px-5">
 															{{ therapy.name }}
@@ -355,18 +367,21 @@
 						</div>
 
 						<div class="flex flex-col gap-5">
-							<div class="medicalRecords flex flex-col">
+							<div class="flex flex-col">
 								<p>Please sumbit any medical records.</p>
 								<label class="">
-									<button class="btn">
-										<input
-											@change="registerMedRec"
-											type="file"
-										/>
-									</button>
+									<input
+										v-on:change="handleFileUpload"
+										class="btn h-full w-40 cursor-pointer p-2 sm:w-2/5"
+										ref="fileInputRef"
+										type="file"
+										name="file"
+										accept=".jpg, .jpeg, .png, .pdf"
+										multiple
+									/>
 								</label>
 								<div
-									class="w-3/5"
+									class="bg-smoky w-90 sm:w-3/5"
 									v-if="data.medicalRecordFiles.length > 0"
 								>
 									<div
@@ -380,7 +395,7 @@
 											{{ rec }}
 										</div>
 										<button
-											class="manosSubmit w-1/10 cursor-pointer"
+											class="btn w-1/10 cursor-pointer"
 											type="button"
 											@click="handleDeleteFile(rec)"
 											v-if="
@@ -394,7 +409,7 @@
 								</div>
 							</div>
 
-							<div class="prevPaitent flex flex-col">
+							<div class="flex flex-col">
 								<label
 									>Have you been a paitent previously with us?
 								</label>
@@ -418,7 +433,7 @@
 								</div>
 							</div>
 
-							<div class="diagnosis">
+							<div class="">
 								<label class=""
 									>Have you been formally daignosed?</label
 								>
@@ -442,7 +457,7 @@
 								</div>
 							</div>
 
-							<div class="evaluation">
+							<div class="">
 								<label class=""
 									>Do you want to perform a Diagnostic
 									Evaluation on the patient?</label
@@ -467,19 +482,19 @@
 								</div>
 							</div>
 
-							<div class="textLabelBox flex flex-col">
+							<div class="flex flex-col">
 								<label class=""
 									>Any Comments for the therapist?</label
 								>
 								<textarea
-									class="bg-smoky px-2"
+									class="bg-smoky w-90 px-2 sm:w-full"
 									type="comments"
 									v-model="data.comments"
 								>
 								</textarea>
 							</div>
 
-							<div class="submit">
+							<div class="">
 								<button class="btn mt-5 flex flex-col">
 									Submit form
 								</button>
@@ -628,8 +643,6 @@ async function handleSubmit() {
 		wantsEval: data.evaluation === "true",
 		comment: data.comments,
 	};
-
-	console.log(formData);
 
 	try {
 		const response = await $fetch("/api/contactForm/form", {
