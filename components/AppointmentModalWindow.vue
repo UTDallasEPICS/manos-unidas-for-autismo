@@ -184,21 +184,6 @@ function getSessionEndTime(d: Date, sessionLength: number): Date {
 	return endTime;
 }
 
-// const patients = computed(() => {
-// 	const result = [];
-
-// 	for (let i = 0; i < props.session.Patients.length; i++) {
-// 		let patient = props.session.Patients[i];
-// 		result.push(patient.Patient.User.User);
-// 	}
-
-// 	return result;
-// });
-
-// function goToPatient(id: string) {
-// 	await navigateTo(("/patientProfile?id=" += id));
-// }
-
 const patientNames = computed(() => {
 	const result = [];
 

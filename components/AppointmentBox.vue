@@ -112,25 +112,6 @@ const boxColor = computed(() => {
 		default:
 			return "bg-peach";
 	}
-
-	/*switch (props.session.Type.color) {
-		case Color.BLUE:
-			return "#3878c2";
-		case Color.GREEN:
-			return "#4cc255";
-		case Color.ORANGE:
-			return "#e87d25";
-		case Color.PURPLE:
-			return "#d4a1f0";
-		case Color.RED:
-			return "#e34229";
-		case Color.TEAL:
-			return "#5aeddc";
-		case Color.YELLOW:
-			return "#f7d439";
-		default:
-			return "#c0e9ed";
-	} */
 });
 
 const boxHeight = computed(() => {
