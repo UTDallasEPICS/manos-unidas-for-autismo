@@ -38,10 +38,10 @@
 					<!--Form for contact form-->
 					<form
 						@submit.prevent="handleSubmit"
-						class="flex w-full flex-col flex-wrap justify-center bg-white"
+						class="flex w-full flex-col flex-wrap bg-white"
 					>
 						<!-- div class for the short answer type of responses-->
-						<div class="flex flex-wrap gap-5 py-5">
+						<div class="flex flex-wrap justify-center gap-5 py-5">
 							<!--div class for the name portion (the name components should occupy the same line)-->
 							<div
 								class="flex h-auto w-full flex-col gap-3 sm:flex-row md:gap-7"
@@ -269,7 +269,9 @@
 							<div
 								class="flex h-auto w-full flex-col gap-7 sm:flex-row"
 							>
-								<div class="relative flex w-1/2 flex-col">
+								<div
+									class="relative flex w-50 flex-col sm:w-1/2"
+								>
 									<label class="">Medical Insurance:</label>
 
 									<Listbox
@@ -310,7 +312,9 @@
 									</Listbox>
 								</div>
 
-								<div class="relative flex w-1/2 flex-col">
+								<div
+									class="relative flex w-70 flex-col sm:w-1/2"
+								>
 									<label class=""
 										>Preferred Services/Therapies:</label
 									>
@@ -366,7 +370,7 @@
 								<label class="">
 									<input
 										v-on:change="handleFileUpload"
-										class="btn h-full w-2/5 cursor-pointer p-2"
+										class="btn h-full w-40 cursor-pointer p-2 sm:w-2/5"
 										ref="fileInputRef"
 										type="file"
 										name="file"
@@ -375,7 +379,7 @@
 									/>
 								</label>
 								<div
-									class="bg-smoky w-3/5"
+									class="bg-smoky w-90 sm:w-3/5"
 									v-if="data.medicalRecordFiles.length > 0"
 								>
 									<div
