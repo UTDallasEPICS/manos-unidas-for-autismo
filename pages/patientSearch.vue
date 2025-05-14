@@ -70,7 +70,6 @@ interface User {
 }
 
 const goToProfile = async (id: number) => {
-	console.log(access);
 	let name = "bad";
 	if (access.value[AccessPermission.PARENT]) {
 		name = "childProfile-id";

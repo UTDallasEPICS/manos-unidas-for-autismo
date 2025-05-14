@@ -1,7 +1,7 @@
 import { defineNuxtRouteMiddleware } from "nuxt/app";
 import { pageAccessMap } from "~/permissions";
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
 	const userId = useCookie("userId");
 	const accessCookie = useCookie("AccessPermission");
 	const permissions = accessCookie.value;
@@ -22,7 +22,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 			return navigateTo("/");
 		} else {
 			console.log("Unknown path, returning to: " + from.path);
-			return navigateTo(from.path);
+			return abortNavigation();
 		}
 	}
 	// do not have permission to access
@@ -39,16 +39,33 @@ export default defineNuxtRouteMiddleware((to, from) => {
 			return navigateTo("/");
 		} else {
 			console.log("Unauthorized path, returning to: " + from.path);
-			return navigateTo(from.path);
+			return abortNavigation();
 		}
 	}
+	// enfore patient can only view their own profile
 	if (to.name === "myProfile-id" && to.params.id !== userId.value) {
 		if (!from.path || to.path == from.path) {
 			console.log("Unauthorized path, navigating to index");
 			return navigateTo("/");
 		} else {
 			console.log("Unauthorized path, returning to: " + from.path);
-			return navigateTo(from.path);
+			return abortNavigation();
+		}
+	}
+	// enforce parent can only view their own children's profiles
+	if (to.name === "childProfile-id") {
+		// fetch children
+		const childIds = await $fetch(
+			`/api/parent/childrenIds?pId=${userId.value}`
+		);
+		if (!childIds.includes(to.params.id)) {
+			if (!from.path || to.path == from.path) {
+				console.log("Unauthorized path, navigating to index");
+				return navigateTo("/");
+			} else {
+				console.log("Unauthorized path, returning to: " + from.path);
+				return abortNavigation();
+			}
 		}
 	}
 	console.log("Navigation authorized");
