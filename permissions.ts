@@ -22,16 +22,17 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	dashboard: AccessPermission.USER,
 	scheduleView: AccessPermission.USER,
 	// Patient Pages
+	"myProfile-id": AccessPermission.PATIENT,
 	// Parent Pages
-	childProfiles: AccessPermission.PARENT,
+	childSearch: AccessPermission.PARENT,
+	"childProfile-id": AccessPermission.PARENT,
 	// Therapist Pages
+	patientSearch: AccessPermission.THERAPIST,
 	"patientProfile-id": AccessPermission.THERAPIST,
 	// User Support Pages
 	reviewContactForms: AccessPermission.USER_SUPPORT,
 	// Admin Pages
 	admin: AccessPermission.ADMIN,
-	// User Search Page
-	patientSearch: AccessPermission.THERAPIST,
 };
 
 const apiAccessMap: {

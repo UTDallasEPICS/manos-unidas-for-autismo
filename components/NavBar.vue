@@ -21,7 +21,7 @@
 				<NuxtLink
 					v-for="(link, idx) in userLinks"
 					:key="idx"
-					:to="link.path"
+					:to="link.to"
 					class="hover:underline"
 				>
 					{{ link.label }}
@@ -68,7 +68,7 @@
 					<NuxtLink
 						v-for="(link, idx) in userLinks"
 						:key="idx"
-						:to="link.path"
+						:to="link.to"
 						class="py-2 text-end text-lg hover:underline"
 						@click="toggleMenu"
 					>
@@ -105,25 +105,28 @@ const userLinks = computed(() => {
 	}
 	// add relevant links
 	if (permissions.value[AccessPermission.USER]) {
-		legalRoutes.push({ path: "/ScheduleView", label: "Schedule" });
+		legalRoutes.push({ to: { name: "scheduleView" }, label: "Schedule" });
 	}
 	if (permissions.value[AccessPermission.PATIENT]) {
-		legalRoutes.push({ path: "/MyProfile", label: "Profile" });
+		legalRoutes.push({
+			to: { name: "myProfile-id", params: { id: login.value } },
+			label: "Profile",
+		});
 	}
 	if (permissions.value[AccessPermission.PARENT]) {
-		legalRoutes.push({ path: "/ChildProfiles", label: "Children" });
+		legalRoutes.push({ to: { name: "childSearch" }, label: "Children" });
 	}
 	if (permissions.value[AccessPermission.THERAPIST]) {
-		legalRoutes.push({ path: "/patientSearch", label: "Patients" });
+		legalRoutes.push({ to: { name: "patientSearch" }, label: "Patients" });
 	}
 	if (permissions.value[AccessPermission.USER_SUPPORT]) {
 		legalRoutes.push({
-			path: "/ReviewContactForms",
+			to: { name: "reviewContactForms" },
 			label: "Review Forms",
 		});
 	}
 	if (permissions.value[AccessPermission.ADMIN]) {
-		legalRoutes.push({ path: "/Admin", label: "Admin" });
+		legalRoutes.push({ to: { name: "admin" }, label: "Admin" });
 	}
 	return legalRoutes;
 });
