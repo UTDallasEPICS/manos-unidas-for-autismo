@@ -107,7 +107,7 @@
 					<button
 						type="button"
 						class="rounded bg-gray-300 px-4 py-2"
-						@click="$router.push('/scheduleView')"
+						@click="close()"
 					>
 						Cancel
 					</button>
@@ -143,6 +143,11 @@ interface SessionType {
 const props = defineProps<{
 	session: Session;
 }>();
+
+const emit = defineEmits(["closeEdit"]);
+function close() {
+	emit("closeEdit");
+}
 
 const therapists = ref<Therapist[]>([]);
 const sessionTypes = ref<SessionType[]>([]);

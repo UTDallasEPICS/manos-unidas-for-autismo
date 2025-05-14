@@ -89,13 +89,18 @@
 							!permissions.nonEmployee &&
 							permissions.editAppointments
 						"
+						@click="showEditAppointment()"
 					>
 						Edit Appointment
 					</button>
 				</div>
 			</div>
 
-			<editAppointment :session="props.session" />
+			<editAppointment
+				v-if="showEdit"
+				:session="props.session"
+				@close-edit="showEditAppointment()"
+			/>
 		</div>
 	</div>
 </template>
@@ -196,4 +201,10 @@ const patientNames = computed(() => {
 
 	return result;
 });
+
+const showEdit = ref(false);
+
+function showEditAppointment() {
+	showEdit.value = !showEdit.value;
+}
 </script>
