@@ -67,7 +67,10 @@ interface User {
 }
 
 const goToProfile = async (id: number) => {
-	await navigateTo(`/PatientProfile/${id}`);
+	await navigateTo({
+		name: "patientProfile-id",
+		params: { id: id },
+	});
 };
 
 const searchQuery = ref("");

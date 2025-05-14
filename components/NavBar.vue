@@ -141,6 +141,7 @@ async function logout() {
 
 	// not having await seems to cause an issue with the order of page components
 	//  putting the footer above the page content
+	console.log("User logged out");
 	await navigateTo("/");
 }
 </script>
