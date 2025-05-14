@@ -298,7 +298,7 @@ const parents = [
 		nonEmployee: {
 			dob: new Date("2/2/2002"),
 			gender: "MALE",
-			streetName: "test",
+			streetName: "Test",
 			streetNum: 1,
 			postCode: 216646,
 		},

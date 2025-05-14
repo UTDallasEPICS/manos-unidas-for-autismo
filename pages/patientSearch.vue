@@ -55,8 +55,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useFetch, navigateTo } from "#imports";
+import { useFetch, useCookie, navigateTo } from "#imports";
 import { Search } from "lucide-vue-next";
+import { AccessPermission } from "~/permissions";
+
+const access = useCookie("AccessPermission");
 
 interface User {
 	id: number;
@@ -67,8 +70,16 @@ interface User {
 }
 
 const goToProfile = async (id: number) => {
+	console.log(access);
+	let name = "bad";
+	if (access.value[AccessPermission.PARENT]) {
+		name = "childProfile-id";
+	}
+	if (access.value[AccessPermission.THERAPIST]) {
+		name = "patientProfile-id";
+	}
 	await navigateTo({
-		name: "patientProfile-id",
+		name: name,
 		params: { id: id },
 	});
 };
