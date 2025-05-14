@@ -59,6 +59,7 @@ import { useFetch, useCookie, navigateTo } from "#imports";
 import { Search } from "lucide-vue-next";
 import { AccessPermission } from "~/permissions";
 
+const userId = useCookie("userId");
 const access = useCookie("AccessPermission");
 
 interface User {
@@ -86,13 +87,25 @@ const goToProfile = async (id: number) => {
 const searchQuery = ref("");
 
 // Fetch patients from API
-const { data: usersData, error } = await useFetch<User[]>("/api/users", {
-	default: () => [],
-});
+const { data: usersData, error } = await getUsers();
+
+async function getUsers() {
+	if (access.value[AccessPermission.THERAPIST]) {
+		return useFetch<User[]>("/api/search/all");
+	}
+	if (access.value[AccessPermission.PARENT]) {
+		return useFetch<User[]>("/api/search/children", {
+			query: { pId: userId },
+		});
+	}
+	return {
+		data: { value: [] },
+		error: "User not authorized to view patients",
+	};
+}
 
 // Filter patients based on search query
 const filteredUsers = computed(() => {
-	if (!Array.isArray(usersData.value)) return [];
 	return usersData.value.filter((u) =>
 		u.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 	);
