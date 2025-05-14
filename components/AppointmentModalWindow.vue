@@ -12,7 +12,9 @@
 		></div>
 
 		<!-- Window -->
-		<div class="text-md relative z-52 m-7 flex flex-col bg-white p-4">
+		<div
+			class="text-md relative z-52 m-7 flex max-h-full flex-col overflow-y-auto bg-white p-4 text-black"
+		>
 			<div
 				class="flex cursor-pointer justify-end pr-2 text-right"
 				@click="closeWindow"
@@ -87,16 +89,13 @@
 							!permissions.nonEmployee &&
 							permissions.editAppointments
 						"
-						@click="
-							navigateTo(
-								`/editAppointment?id=${props.session.id}`
-							)
-						"
 					>
 						Edit Appointment
 					</button>
 				</div>
 			</div>
+
+			<editAppointment :session="props.session" />
 		</div>
 	</div>
 </template>
@@ -105,7 +104,6 @@
 import { computed, ref, useCookie } from "#imports";
 import type { Session } from "@prisma/client";
 import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
-import { navigateTo } from "#imports";
 import { AccessPermission } from "~/permissions";
 
 const props = defineProps<{
