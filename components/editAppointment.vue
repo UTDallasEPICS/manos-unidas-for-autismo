@@ -1,8 +1,6 @@
 <template>
-	<div class="flex min-h-screen flex-col">
+	<div class="flex flex-col">
 		<div class="grow">
-			<h1 class="text-2xl font-bold">Edit Appointment</h1>
-
 			<div
 				v-if="error"
 				class="mb-4 rounded border bg-red-100 p-4 text-red-500"
@@ -10,7 +8,7 @@
 				<p>{{ error }}</p>
 				<button
 					@click="$router.go(0)"
-					class="mt-3 rounded bg-blue-600 px-3 py-1 text-white"
+					class="bg-blay mt-3 cursor-pointer px-2"
 				>
 					Try Again
 				</button>
@@ -21,7 +19,7 @@
 					<label class="block font-medium">Therapist:</label>
 					<select
 						v-model="form.therapist"
-						class="w-full rounded border px-3 py-2"
+						class="input w-full"
 						required
 					>
 						<option disabled value="">Select therapist</option>
@@ -40,7 +38,7 @@
 					<label class="block font-medium">Session Type:</label>
 					<select
 						v-model="form.sessionType"
-						class="w-full rounded border px-3 py-2"
+						class="input w-full"
 						required
 					>
 						<option disabled value="">Select session type</option>
@@ -60,13 +58,13 @@
 						<input
 							v-model="form.date"
 							type="date"
-							class="w-1/2 rounded border px-3 py-2"
+							class="input w-1/2"
 							required
 						/>
 						<input
 							v-model="form.time"
 							type="time"
-							class="w-1/2 rounded border px-3 py-2"
+							class="input w-1/2"
 							required
 						/>
 					</div>
@@ -78,7 +76,7 @@
 						v-model.number="form.duration"
 						type="number"
 						min="1"
-						class="w-full rounded border px-3 py-2"
+						class="input w-full"
 						required
 					/>
 				</div>
@@ -89,7 +87,7 @@
 						v-model.number="form.max"
 						type="number"
 						min="1"
-						class="w-full rounded border px-3 py-2"
+						class="input w-full"
 						required
 					/>
 				</div>
@@ -98,23 +96,20 @@
 					<label class="block font-medium">Comments:</label>
 					<textarea
 						v-model="form.comments"
-						class="w-full rounded border px-3 py-2"
+						class="input w-full"
 						placeholder="Additional details..."
 					></textarea>
 				</div>
 
-				<div class="flex space-x-2">
+				<div class="flex justify-center space-x-2">
 					<button
 						type="button"
-						class="rounded bg-gray-300 px-4 py-2"
+						class="bg-blay cursor-pointer px-2"
 						@click="close()"
 					>
 						Cancel
 					</button>
-					<button
-						type="submit"
-						class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					>
+					<button type="submit" class="btn cursor-pointer">
 						Save Changes
 					</button>
 				</div>

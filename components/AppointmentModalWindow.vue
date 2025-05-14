@@ -96,11 +96,12 @@
 				</div>
 			</div>
 
-			<editAppointment
-				v-if="showEdit"
-				:session="props.session"
-				@close-edit="showEditAppointment()"
-			/>
+			<div class="mt-5 mb-10 flex justify-center" v-if="showEdit">
+				<editAppointment
+					:session="props.session"
+					@close-edit="showEditAppointment()"
+				/>
+			</div>
 		</div>
 	</div>
 </template>
