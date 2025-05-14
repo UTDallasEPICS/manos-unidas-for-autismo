@@ -12,17 +12,17 @@ export default defineNuxtConfig({
 		"pages:extend"(pages) {
 			pages.push({
 				name: "myProfile-id",
-				path: "/patientProfile/:id",
+				path: "/myProfile/:id",
 				file: "~/pages/patientProfile/[id].vue",
 			});
 			pages.push({
 				name: "childProfile-id",
-				path: "/patientProfile/:id",
+				path: "/childProfile/:id",
 				file: "~/pages/patientProfile/[id].vue",
 			});
 			pages.push({
 				name: "childSearch",
-				path: "/patientSearch",
+				path: "/myChildren",
 				file: "~/pages/patientSearch.vue",
 			});
 		},

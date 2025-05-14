@@ -1,6 +1,6 @@
 <template>
 	<div class="flex h-full items-center justify-center gap-16">
-		<h>Placeholder Dashboard</h>
+		<h1>Placeholder Dashboard</h1>
 	</div>
 </template>
 

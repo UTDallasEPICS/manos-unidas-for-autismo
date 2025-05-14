@@ -111,7 +111,3 @@ const filteredUsers = computed(() => {
 	);
 });
 </script>
-
-<style scoped>
-/* nothing to see here */
-</style>
