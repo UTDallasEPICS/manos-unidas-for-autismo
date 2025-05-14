@@ -30,7 +30,7 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	patientSearch: AccessPermission.THERAPIST,
 	"patientProfile-id": AccessPermission.THERAPIST,
 	// User Support Pages
-	reviewContactForms: AccessPermission.USER_SUPPORT,
+	viewContactForms: AccessPermission.USER_SUPPORT,
 	// Admin Pages
 	admin: AccessPermission.ADMIN,
 };

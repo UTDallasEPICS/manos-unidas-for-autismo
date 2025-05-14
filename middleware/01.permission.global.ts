@@ -2,6 +2,7 @@ import { defineNuxtRouteMiddleware } from "nuxt/app";
 import { pageAccessMap } from "~/permissions";
 
 export default defineNuxtRouteMiddleware((to, from) => {
+	const userId = useCookie("userId");
 	const accessCookie = useCookie("AccessPermission");
 	const permissions = accessCookie.value;
 
@@ -33,9 +34,15 @@ export default defineNuxtRouteMiddleware((to, from) => {
 			permissions[requiredAccessPermission]
 		)
 	) {
-		if (!from.path) {
+		if (!from.path || to.path == from.path) {
+			console.log("Unauthorized path, navigating to index");
+			return navigateTo("/");
+		} else {
+			console.log("Unauthorized path, returning to: " + from.path);
 			return navigateTo(from.path);
 		}
+	}
+	if (to.name === "myProfile-id" && to.params.id !== userId.value) {
 		if (!from.path || to.path == from.path) {
 			console.log("Unauthorized path, navigating to index");
 			return navigateTo("/");

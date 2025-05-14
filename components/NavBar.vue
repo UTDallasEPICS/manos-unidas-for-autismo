@@ -121,7 +121,7 @@ const userLinks = computed(() => {
 	}
 	if (access.value[AccessPermission.USER_SUPPORT]) {
 		legalRoutes.push({
-			to: { name: "reviewContactForms" },
+			to: { name: "viewContactForms" },
 			label: "Review Forms",
 		});
 	}
