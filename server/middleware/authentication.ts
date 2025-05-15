@@ -41,12 +41,15 @@ export default defineEventHandler(async (event) => {
 			event.context.permissions[AccessPermission.USER] = true;
 			if (user.type === UserType.THERAPIST) {
 				event.context.permissions[AccessPermission.THERAPIST] = true;
+				event.context.permissions[AccessPermission.STAFF] = true;
 			}
 			if (user.type === UserType.USER_SERVICE) {
 				event.context.permissions[AccessPermission.USER_SERVICE] = true;
+				event.context.permissions[AccessPermission.STAFF] = true;
 			}
 			if (user.type === UserType.ADMIN) {
 				event.context.permissions[AccessPermission.ADMIN] = true;
+				event.context.permissions[AccessPermission.STAFF] = true;
 			}
 			if (user.NonEmployee?.Children.length) {
 				event.context.permissions[AccessPermission.PARENT] = true;
