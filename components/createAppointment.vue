@@ -194,14 +194,14 @@ interface SessionType {
 
 const { data: therapistsData = ref([] as Therapist[]) } = await useFetch<
 	Therapist[]
->("/api/users?role=THERAPIST", { default: () => [] });
+>("/api/users/therapists", { default: () => [] });
 
 const { data: typesData = ref([] as SessionType[]) } = await useFetch<
 	SessionType[]
 >("/api/session/sessionType", { default: () => [] });
 
 const therapistOptions = computed(() =>
-	(therapistsData.value || []).map((t) => ({
+	therapistsData.value.map((t) => ({
 		id: t.id,
 		name: `${t.fName} ${t.lName}`,
 	}))
@@ -256,7 +256,7 @@ async function submitForm() {
 		closeModal();
 	} catch (err) {
 		console.error("Could not save session:", err);
-		alert("Failed to create appointment. Check console for details.");
+		alert("Failed to create appointment.");
 	}
 }
 
