@@ -195,7 +195,7 @@ interface SessionType {
 
 const { data: therapistsData = ref([] as Therapist[]) } = await useFetch<
 	Therapist[]
->("/api/users/therapists", { default: () => [] });
+>("/api/therapists", { default: () => [] });
 
 const { data: typesData = ref([] as SessionType[]) } = await useFetch<
 	SessionType[]
