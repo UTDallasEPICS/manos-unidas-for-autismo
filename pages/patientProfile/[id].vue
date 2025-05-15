@@ -415,15 +415,12 @@
 					<div class="flex justify-end space-x-2">
 						<button
 							type="button"
-							class="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
+							class="bg-blay px-2 hover:cursor-pointer"
 							@click="closeProgressReportModal"
 						>
 							Cancel
 						</button>
-						<button
-							type="submit"
-							class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-						>
+						<button type="submit" class="btn hover:cursor-pointer">
 							Save
 						</button>
 					</div>
