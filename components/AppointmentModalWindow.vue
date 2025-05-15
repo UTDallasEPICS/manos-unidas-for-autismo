@@ -49,12 +49,19 @@
 					</span>
 				</button>
 				<div v-if="showPatients" class="px-5">
-					<li v-for="patient in patientNames" :key="patient">
-						{{ patient }}
+					<li
+						v-for="patient in props.session.Patients"
+						:key="patient"
+					>
+						{{
+							patient.Patient.User.User.fName +
+							" " +
+							patient.Patient.User.User.lName
+						}}
 						<!-- replace with link to patient profile later -->
 						<span
 							class="cursor-pointer px-3 text-xs text-blue-400"
-							@click="goToPatient(patient.id)"
+							@click="goToPatient(patient.Patient.User.User.id)"
 						>
 							View Profile &gt;
 						</span>
@@ -107,7 +114,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, useCookie } from "#imports";
+import { computed, ref, useCookie, navigateTo } from "#imports";
 import type { Session } from "@prisma/client";
 import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
 import { AccessPermission } from "~/permissions";
@@ -188,24 +195,13 @@ function getSessionEndTime(d: Date, sessionLength: number): Date {
 	return endTime;
 }
 
-const patientNames = computed(() => {
-	const result = [];
-
-	for (let i = 0; i < props.session.Patients.length; i++) {
-		let patient = props.session.Patients[i];
-		result.push(
-			patient.Patient.User.User.fName +
-				" " +
-				patient.Patient.User.User.lName
-		);
-	}
-
-	return result;
-});
-
 const showEdit = ref(false);
 
 function showEditAppointment() {
 	showEdit.value = !showEdit.value;
+}
+
+async function goToPatient(id: string) {
+	await navigateTo(`/patientProfile/${id}`);
 }
 </script>
