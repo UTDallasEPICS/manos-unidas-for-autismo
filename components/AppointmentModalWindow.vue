@@ -2,17 +2,19 @@
     When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information.
  -->
 <template>
+	<!-- Background -->
 	<div
-		class="font-sc-encode fixed top-0 right-0 z-50 h-full w-full items-center text-left"
-	>
-		<!-- Background -->
-		<div
-			class="fixed z-51 h-full w-full bg-black/70"
-			@click="closeWindow"
-		></div>
+		class="fixed top-0 right-0 z-50 h-full w-full bg-black/70"
+		@click="closeWindow"
+	></div>
 
+	<div
+		class="font-sc-encode fixed top-0 right-0 z-51 h-full w-full items-center text-left"
+	>
 		<!-- Window -->
-		<div class="text-md relative z-52 m-7 flex flex-col bg-white p-4">
+		<div
+			class="text-md relative z-52 m-7 flex max-h-7/8 flex-col overflow-y-auto bg-white p-4 text-black"
+		>
 			<div
 				class="flex cursor-pointer justify-end pr-2 text-right"
 				@click="closeWindow"
@@ -87,15 +89,18 @@
 							!permissions.nonEmployee &&
 							permissions.editAppointments
 						"
-						@click="
-							navigateTo(
-								`/editAppointment?id=${props.session.id}`
-							)
-						"
+						@click="showEditAppointment()"
 					>
 						Edit Appointment
 					</button>
 				</div>
+			</div>
+
+			<div class="mt-5 mb-10 flex justify-center" v-if="showEdit">
+				<editAppointment
+					:session="props.session"
+					@close-edit="showEditAppointment()"
+				/>
 			</div>
 		</div>
 	</div>
@@ -105,7 +110,6 @@
 import { computed, ref, useCookie } from "#imports";
 import type { Session } from "@prisma/client";
 import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
-import { navigateTo } from "#imports";
 import { AccessPermission } from "~/permissions";
 
 const props = defineProps<{
@@ -198,4 +202,10 @@ const patientNames = computed(() => {
 
 	return result;
 });
+
+const showEdit = ref(false);
+
+function showEditAppointment() {
+	showEdit.value = !showEdit.value;
+}
 </script>
