@@ -1,91 +1,85 @@
 <template>
-	<div class="p-4">
-		<!-- DEV‐ONLY role selector -->
-		<div class="mb-4">
-			<label class="mr-2 font-medium">Simulate role:</label>
-			<select v-model="user.role" class="rounded border px-2 py-1">
-				<option disabled value="">— select role —</option>
-				<option value="patient">Patient</option>
-				<option value="parent">Parent</option>
-				<option value="therapist">Therapist</option>
-			</select>
-		</div>
+	<div class="h-full p-4">
 		<!-- Dashboard Header -->
-		<h1 class="mb-4 text-2xl font-bold">User Profile</h1>
+		<div class="mb-4 flex flex-row items-center">
+			<h1 class="text-2xl font-bold text-nowrap">User Profile</h1>
+			<!-- Edit Profile Button -->
+			<div class="w-full"></div>
+			<button
+				v-if="access[AccessPermission.PATIENT]"
+				class="btn text-nowrap hover:cursor-pointer"
+				@click="openEditModal"
+			>
+				Edit Profile
+			</button>
+			<button
+				v-if="access[AccessPermission.THERAPIST]"
+				class="btn text-nowrap hover:cursor-pointer"
+				@click="showProgressReportModal = true"
+			>
+				Write Progress Report
+			</button>
+		</div>
 
 		<!-- Patient / Parent Section -->
-		<section
-			v-if="user.role === 'patient' || user.role === 'parent'"
-			class="mb-6 rounded border p-4"
-		>
+		<section class="mb-6 rounded border p-4">
 			<h2 class="mb-2 text-xl font-semibold">Profile Details</h2>
-			<p class="mb-2"><strong>Name:</strong> {{ profile.name }}</p>
+			<p class="mb-2">
+				<strong>Name:</strong> {{ profile.fName }} {{ profile.mInit }}
+				{{ profile.lName }}
+			</p>
 			<p class="mb-2"><strong>Email:</strong> {{ profile.email }}</p>
-			<p class="mb-2"><strong>Phone:</strong> {{ profile.phone }}</p>
-			<p class="mb-2"><strong>Address:</strong> {{ profile.address }}</p>
-			<p class="mb-2">
-				<strong>Medical Records:</strong> {{ profile.medicalRecords }}
-			</p>
-			<p class="mb-2">
-				<strong>Dues Paid:</strong>
-				{{ profile.duesPaid ? "Yes" : "No" }}
-			</p>
-			<p>
-				<strong>Reminder Notifications:</strong>
-				{{ profile.notificationsOptIn ? "Opted In" : "Opted Out" }}
-			</p>
-			<!-- Edit Profile Button -->
-			<div class="mt-4">
-				<button
-					class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					@click="openEditModal"
-				>
-					Edit Profile
-				</button>
+			<p class="mb-2"><strong>Phone</strong> {{ profile.phone }}</p>
+			<div class="mb-2">
+				<strong>Address:</strong>
+				<div class="pl-7">
+					<div>
+						{{ profile?.NonEmployee?.streetNum }}
+						{{ profile?.NonEmployee?.streetName }}
+						{{ profile?.NonEmployee?.buildingNum }}
+					</div>
+					<div>
+						{{ profile?.NonEmployee?.PostCodeCity?.city }},
+						{{ profile?.NonEmployee?.postCode }}
+					</div>
+				</div>
 			</div>
+			<p class="mb-2">
+				<strong>All Sessions Paid?</strong>
+				{{ paid }}
+			</p>
 
 			<!-- Progress Reports (View Only) -->
 			<div class="mt-6">
 				<h2 class="mb-2 text-xl font-semibold">Progress Reports</h2>
-				<div v-if="progressReports.length">
-					<ul class="list-disc pl-6">
-						<li
-							v-for="(report, index) in progressReports"
-							:key="index"
-						>
-							<strong>{{ report.title }}</strong> -
-							{{ report.date }}
-						</li>
-					</ul>
-				</div>
-				<p v-else>No progress reports available.</p>
-			</div>
-		</section>
-
-		<!-- Therapist Section -->
-		<section
-			v-else-if="user.role === 'therapist'"
-			class="mb-6 rounded border p-4"
-		>
-			<h2 class="mb-2 text-xl font-semibold">Session Notes</h2>
-			<div v-if="sessionNotes.length">
 				<ul class="list-disc pl-6">
-					<li v-for="(note, index) in sessionNotes" :key="index">
-						<strong>{{ note.patient }}</strong
-						>: {{ note.note }} <em>({{ note.date }})</em>
+					<li
+						v-for="(report, index) in profile?.NonEmployee?.Patient
+							?.ProgressReports"
+						:key="index"
+					>
+						<strong
+							>{{ new Date(report.date).toDateString() }}:</strong
+						>
+						<ul class="pl-6">
+							<li
+								v-for="(question, index) in report?.Questions"
+								:key="index"
+							>
+								{{ index + 1 }}.
+								<strong>{{ question.question }}:</strong>
+								{{ question.answer }}
+							</li>
+						</ul>
 					</li>
 				</ul>
-			</div>
-			<p v-else>No session notes available.</p>
-
-			<!-- Button to write a Progress Report -->
-			<div class="mt-4">
-				<button
-					class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					@click="showProgressReportModal = true"
+				<p
+					v-if="
+						!profile?.NonEmployee?.Patient?.ProgressReports.length
+					"
 				>
-					Write Progress Report
-				</button>
+					No progress reports available.
+				</p>
 			</div>
 		</section>
 
@@ -304,77 +298,59 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import {
+	computed,
+	ref,
+	useCookie,
+	useFetch,
+	reactive,
+	useRoute,
+} from "#imports";
+import { AccessPermission } from "~/permissions";
 
-/**
- * Dummy user information.
- * In production, this would be fetched by authentication.
- */
-const user = reactive({
-	name: "Alex Smith",
-	role: "patient", // Options: "patient", "parent", "therapist"
+const access = useCookie("AccessPermission");
+
+const route = useRoute();
+const uId = route.params.id;
+
+const profile = ref({});
+
+async function getProfile() {
+	const { data: test } = await useFetch("/api/profile/patient", {
+		query: { id: uId },
+	});
+	profile.value = test.value;
+}
+
+getProfile();
+
+const paid = computed(() => {
+	if (profile.value?.NonEmployee?.Patient?.Appointments) {
+		let inFull = true;
+		for (const session of profile.value.NonEmployee.Patient.Appointments) {
+			if (!session.paid) {
+				inFull = false;
+			}
+		}
+		return inFull;
+	}
+	return false;
 });
 
-/**
- * Dummy profile data for a patient/parent.
- * In production, fetch and sync this data from database.
- */
-const profile = reactive({
-	name: "Alex Smith",
-	email: "alex.smith@example.com",
-	phone: "555-6789",
-	address: "456 Elm Street",
-	medicalRecords: "Patient has a history of seasonal allergies.",
-	duesPaid: true,
-	notificationsOptIn: true,
-});
-
-/**
- * Dummy arrays to hold progress reports (for patients/parents)
- * and session notes (for therapists).
- */
-const progressReports = ref([
-	{ title: "Q1 Report", date: "2025-03-10" },
-	{ title: "Post-Therapy Update", date: "2025-04-05" },
-]);
-const sessionNotes = ref([
-	{
-		patient: "Alex Smith",
-		note: "Improved response rate to stimuli.",
-		date: "2025-04-07",
-	},
-]);
-
-/**
- * Modal control flags.
- */
+// Modal control flags.
 const showEditModal = ref(false);
 const showProgressReportModal = ref(false);
 
-/**
- * Form object for editing the profile.
- */
-const editForm = reactive({
-	name: profile.name,
-	email: profile.email,
-	phone: profile.phone,
-	address: profile.address,
-	medicalRecords: profile.medicalRecords,
-	duesPaid: profile.duesPaid,
-	notificationsOptIn: profile.notificationsOptIn,
-});
+// Form object for editing the profile.
+const editForm = reactive({});
 
-/**
- * Form object for a new progress report (for therapists).
- */
+// Form object for a new progress report (for therapists).
 const progressReportForm = reactive({
 	title: "",
 	details: "",
 });
 
-/**
- * Methods to open/close modals.
- */
+// Methods to open/close modals.
 function openEditModal() {
 	// Pre-populate the edit form with current profile data.
 	Object.assign(editForm, { ...profile });
@@ -391,31 +367,21 @@ function closeProgressReportModal() {
 	Object.assign(progressReportForm, { title: "", details: "" });
 }
 
-/**
- * Update the profile data from the edit form.
- */
+// Update the profile data from the edit form.
 function updateProfile() {
 	Object.assign(profile, { ...editForm });
 	console.log("Profile updated:", profile);
 	closeEditModal();
 }
 
-/**
- * Submit a new progress report (for therapists).
- */
+// Submit a new progress report (for therapists).
 function submitProgressReport() {
 	if (!progressReportForm.title) {
 		alert("Please provide a report title.");
 		return;
 	}
 	// For demonstration, add the report with today's date.
-	progressReports.value.push({
-		title: progressReportForm.title,
-		date: new Date().toISOString().split("T")[0],
-	});
 	console.log("Progress report submitted:", progressReportForm);
 	closeProgressReportModal();
 }
 </script>
-
-<style scoped></style>
