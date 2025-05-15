@@ -28,8 +28,21 @@
 				<strong>Name:</strong> {{ profile.fName }} {{ profile.mInit }}
 				{{ profile.lName }}
 			</p>
+			<p class="mb-2">
+				<strong>Date of Birth:</strong>
+				{{ new Date(profile?.NonEmployee?.dob).toDateString() }}
+			</p>
+			<p class="mb-2">
+				<strong>Gender:</strong> {{ profile?.NonEmployee?.gender }}
+			</p>
 			<p class="mb-2"><strong>Email:</strong> {{ profile.email }}</p>
-			<p class="mb-2"><strong>Phone</strong> {{ profile.phone }}</p>
+			<p class="mb-2"><strong>Phone:</strong> {{ profile.phone }}</p>
+			<p class="mb-2">
+				<strong>What's App:</strong> {{ profile.whatsApp }}
+			</p>
+			<p class="mb-2">
+				<strong>Contact Preference:</strong> {{ profile.contactPref }}
+			</p>
 			<div class="mt-8 mb-2">
 				<strong>Address:</strong>
 				<div class="pl-12">
@@ -98,24 +111,86 @@
 
 			<!-- Modal Content -->
 			<div
-				class="relative z-10 w-full max-w-md rounded bg-white p-6 shadow-md"
+				class="relative z-10 w-full max-w-7/12 rounded bg-white p-6 shadow-md"
 				@click.stop
 			>
 				<h2 class="mb-4 text-xl font-bold">Edit Profile</h2>
 				<form @submit.prevent="updateProfile">
 					<!-- Name -->
+					<div
+						class="mb-4 flex w-full flex-col justify-between gap-4 lg:flex-row 2xl:gap-8"
+					>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="fname">
+								First Name <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="text"
+								id="fname"
+								v-model="profileEdits.fName"
+								required
+								class="w-full rounded border border-gray-300 px-3 py-2"
+								placeholder="Enter your first name"
+							/>
+						</div>
+						<div class="w-full lg:w-lg 2xl:w-xl">
+							<label class="mb-1 block font-medium" for="minit">
+								Middle Initial
+							</label>
+							<input
+								type="text"
+								id="minit"
+								v-model="profileEdits.mInit"
+								class="w-full rounded border border-gray-300 px-3 py-2"
+								placeholder="Enter your initial"
+							/>
+						</div>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="lname">
+								Last Name <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="text"
+								id="lname"
+								v-model="profileEdits.lName"
+								required
+								class="w-full rounded border border-gray-300 px-3 py-2"
+								placeholder="Enter your last name"
+							/>
+						</div>
+					</div>
+
+					<!-- DOB -->
 					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="name">
-							Name <span class="text-red-500">*</span>
+						<label class="mb-1 block font-medium" for="dob">
+							DOB <span class="text-red-500">*</span>
 						</label>
 						<input
-							type="text"
-							id="name"
-							v-model="editForm.name"
+							type="date"
+							id="dob"
+							v-model="dob"
 							required
 							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter your name"
+							placeholder="Enter your email"
 						/>
+					</div>
+
+					<!-- Gender -->
+					<div class="mb-4">
+						<label class="mb-1 block font-medium">
+							Gender <span class="text-red-500">*</span>
+						</label>
+						<select
+							class="w-full"
+							v-model="profileEdits.NonEmployee.gender"
+						>
+							<option
+								v-for="(type, index) in gender"
+								:key="index"
+							>
+								{{ type }}
+							</option>
+						</select>
 					</div>
 
 					<!-- Email -->
@@ -126,7 +201,7 @@
 						<input
 							type="email"
 							id="email"
-							v-model="editForm.email"
+							v-model="profileEdits.email"
 							required
 							class="w-full rounded border border-gray-300 px-3 py-2"
 							placeholder="Enter your email"
@@ -141,11 +216,45 @@
 						<input
 							type="text"
 							id="phone"
-							v-model="editForm.phone"
+							v-model="profileEdits.phone"
 							required
 							class="w-full rounded border border-gray-300 px-3 py-2"
 							placeholder="Enter your phone number"
 						/>
+					</div>
+
+					<!-- What's App -->
+					<div class="mb-4">
+						<label class="mb-1 block font-medium" for="whatsapp">
+							What's App <span class="text-red-500">*</span>
+						</label>
+						<input
+							type="text"
+							id="whatsapp"
+							v-model="profileEdits.whatsApp"
+							required
+							class="w-full rounded border border-gray-300 px-3 py-2"
+							placeholder="Enter your what's app number"
+						/>
+					</div>
+
+					<!-- Contact Preference -->
+					<div class="mb-4">
+						<label class="mb-1 block font-medium">
+							Contact Preference
+							<span class="text-red-500">*</span>
+						</label>
+						<select
+							class="w-full"
+							v-model="profileEdits.contactPref"
+						>
+							<option
+								v-for="(type, index) in contactType"
+								:key="index"
+							>
+								{{ type }}
+							</option>
+						</select>
 					</div>
 
 					<!-- Address -->
@@ -156,7 +265,7 @@
 						<input
 							type="text"
 							id="address"
-							v-model="editForm.address"
+							v-model="profileEdits"
 							class="w-full rounded border border-gray-300 px-3 py-2"
 							placeholder="Enter your address"
 						/>
@@ -266,17 +375,14 @@
 </template>
 
 <script setup lang="ts">
-import {
-	computed,
-	ref,
-	useCookie,
-	useFetch,
-	reactive,
-	useRoute,
-} from "#imports";
+import { computed, ref, useCookie, useFetch, useRoute } from "#imports";
 import { AccessPermission } from "~/permissions";
 import { Plus, X } from "lucide-vue-next";
 import { $fetch } from "ofetch";
+
+const contactType = ["EMAIL", "PHONE", "WHATS_APP"];
+
+const gender = ["MALE", "FEMALE", "OTHER"];
 
 const access = useCookie("AccessPermission");
 
@@ -284,6 +390,7 @@ const route = useRoute();
 const uId = route.params.id;
 
 const profile = ref({});
+const profileEdits = ref({});
 
 async function getProfile() {
 	const { data: test } = await useFetch("/api/profile/patient", {
@@ -311,9 +418,6 @@ const paid = computed(() => {
 const showEditModal = ref(false);
 const showProgressReportModal = ref(false);
 
-// Form object for editing the profile.
-const editForm = reactive({});
-
 // Form object for a new progress report (for therapists).
 const progressReportQuestions = ref([{ question: "", answer: "" }]);
 
@@ -325,10 +429,14 @@ function removeQuestion(i) {
 	progressReportQuestions.value.splice(i, 1);
 }
 
+const dob = ref();
 // Methods to open/close modals.
 function openEditModal() {
 	// Pre-populate the edit form with current profile data.
-	Object.assign(editForm, { ...profile });
+	Object.assign(profileEdits.value, profile.value);
+	if (profileEdits.value?.NonEmployee?.dob) {
+		dob.value = profileEdits.value.NonEmployee.dob.split("T")[0];
+	}
 	showEditModal.value = true;
 }
 
@@ -343,9 +451,31 @@ function closeProgressReportModal() {
 }
 
 // Update the profile data from the edit form.
-function updateProfile() {
-	Object.assign(profile, { ...editForm });
-	console.log("Profile updated:", profile);
+async function updateProfile() {
+	await $fetch("/api/profile/patient", {
+		method: "Put",
+		body: {
+			id: uId,
+			fName: profileEdits.value.fName,
+			mInit: profileEdits.value.mInit || "",
+			lName: profileEdits.value.lName,
+			gender: profileEdits.value.NonEmployee.gender,
+			dob: new Date(dob.value).toISOString(),
+			streetName: profileEdits.value.NonEmployee.streetName,
+			streetNum: profileEdits.value.NonEmployee.streetNum,
+			buildingNum: profileEdits.value.NonEmployee.buildingNum,
+			postcode: profileEdits.value.NonEmployee.postCode,
+			identification:
+				profileEdits.value.NonEmployee.Patient.identification,
+			city: profileEdits.value.NonEmployee.PostCodeCity.city,
+			contactPref: profileEdits.value.contactPref,
+			email: profileEdits.value.email,
+			phone: profileEdits.value.phone,
+			whatsapp: profileEdits.value.whatsApp,
+			isDiagnosed: profileEdits.value.NonEmployee.Patient.diagnosed,
+		},
+	});
+	getProfile();
 	closeEditModal();
 }
 
