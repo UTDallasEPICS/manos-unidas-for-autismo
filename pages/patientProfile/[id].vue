@@ -1,8 +1,10 @@
 <template>
-	<div class="h-full p-4">
+	<div class="font-sc-encode h-full p-4">
 		<!-- Dashboard Header -->
 		<div class="mb-4 flex flex-row items-center">
-			<h1 class="text-2xl font-bold text-nowrap">User Profile</h1>
+			<h1 class="font-cormorant-garamond text-3xl font-bold text-nowrap">
+				User Profile
+			</h1>
 			<!-- Edit Profile Button -->
 			<div class="w-full"></div>
 			<button
@@ -35,30 +37,33 @@
 			<p class="mb-2">
 				<strong>Gender:</strong> {{ profile?.NonEmployee?.gender }}
 			</p>
-			<p class="mb-2"><strong>Email:</strong> {{ profile.email }}</p>
-			<p class="mb-2"><strong>Phone:</strong> {{ profile.phone }}</p>
-			<p class="mb-2">
-				<strong>What's App:</strong> {{ profile.whatsApp }}
-			</p>
-			<p class="mb-2">
-				<strong>Contact Preference:</strong> {{ profile.contactPref }}
-			</p>
-			<div class="mt-8 mb-2">
-				<strong>Address:</strong>
-				<div class="pl-12">
-					<div v-if="profile?.NonEmployee?.buildingNum">
-						{{ profile?.NonEmployee?.streetNum }}
-						{{ profile?.NonEmployee?.streetName }},
-						{{ profile?.NonEmployee?.buildingNum }}
-					</div>
-					<div v-else>
-						{{ profile?.NonEmployee?.streetNum }}
-						{{ profile?.NonEmployee?.streetName }}
-						{{ profile?.NonEmployee?.buildingNum }}
-					</div>
-					<div>
-						{{ profile?.NonEmployee?.PostCodeCity?.city }},
-						{{ profile?.NonEmployee?.postCode }}
+			<div v-if="!access[AccessPermission.THERAPIST]">
+				<p class="mb-2"><strong>Email:</strong> {{ profile.email }}</p>
+				<p class="mb-2"><strong>Phone:</strong> {{ profile.phone }}</p>
+				<p class="mb-2">
+					<strong>What's App:</strong> {{ profile.whatsApp }}
+				</p>
+				<p class="mb-2">
+					<strong>Contact Preference:</strong>
+					{{ profile.contactPref }}
+				</p>
+				<div class="mt-8 mb-2">
+					<strong>Address:</strong>
+					<div class="pl-12">
+						<div v-if="profile?.NonEmployee?.buildingNum">
+							{{ profile?.NonEmployee?.streetNum }}
+							{{ profile?.NonEmployee?.streetName }},
+							{{ profile?.NonEmployee?.buildingNum }}
+						</div>
+						<div v-else>
+							{{ profile?.NonEmployee?.streetNum }}
+							{{ profile?.NonEmployee?.streetName }}
+							{{ profile?.NonEmployee?.buildingNum }}
+						</div>
+						<div>
+							{{ profile?.NonEmployee?.PostCodeCity?.city }},
+							{{ profile?.NonEmployee?.postCode }}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -66,7 +71,7 @@
 				<strong>Diagnosed?</strong>
 				{{ profile?.NonEmployee?.Patient?.diagnosed }}
 			</p>
-			<p class="mb-2">
+			<p v-if="!access[AccessPermission.THERAPIST]" class="mb-2">
 				<strong>All Sessions Paid?</strong>
 				{{ paid }}
 			</p>
@@ -120,7 +125,7 @@
 
 			<!-- Modal Content -->
 			<div
-				class="relative z-10 w-full max-w-7/12 rounded bg-white p-6 shadow-md"
+				class="relative z-10 w-full max-w-7/12 overflow-y-auto bg-white p-6 shadow-md"
 				@click.stop
 			>
 				<h2 class="mb-4 text-xl font-bold">Edit Profile</h2>
@@ -138,7 +143,7 @@
 								id="fname"
 								v-model="profileEdits.fName"
 								required
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 								placeholder="Enter your first name"
 							/>
 						</div>
@@ -150,7 +155,7 @@
 								type="text"
 								id="minit"
 								v-model="profileEdits.mInit"
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 								placeholder="Enter your initial"
 							/>
 						</div>
@@ -163,7 +168,7 @@
 								id="lname"
 								v-model="profileEdits.lName"
 								required
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 								placeholder="Enter your last name"
 							/>
 						</div>
@@ -179,7 +184,7 @@
 							id="dob"
 							v-model="dob"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Enter your email"
 						/>
 					</div>
@@ -189,10 +194,7 @@
 						<label class="mb-1 block font-medium">
 							Gender <span class="text-red-500">*</span>
 						</label>
-						<select
-							class="w-full rounded-sm border border-gray-300 p-2"
-							v-model="genderEdit"
-						>
+						<select class="input w-full" v-model="genderEdit">
 							<option
 								v-for="(type, index) in gender"
 								:key="index"
@@ -212,7 +214,7 @@
 							id="email"
 							v-model="profileEdits.email"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Enter your email"
 						/>
 					</div>
@@ -227,7 +229,7 @@
 							id="phone"
 							v-model="profileEdits.phone"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Enter your phone number"
 						/>
 					</div>
@@ -242,7 +244,7 @@
 							id="whatsapp"
 							v-model="profileEdits.whatsApp"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Enter your what's app number"
 						/>
 					</div>
@@ -254,7 +256,7 @@
 							<span class="text-red-500">*</span>
 						</label>
 						<select
-							class="w-full rounded-sm border border-gray-300 p-2"
+							class="input w-full"
 							v-model="profileEdits.contactPref"
 						>
 							<option
@@ -278,7 +280,7 @@
 								type="text"
 								id="address"
 								v-model="addressEdit"
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 								placeholder="Enter your address"
 							/>
 						</div>
@@ -290,7 +292,7 @@
 								type="number"
 								id="address"
 								v-model="buildNumEdit"
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 								placeholder="Enter your address"
 							/>
 						</div>
@@ -309,7 +311,7 @@
 								id="city"
 								v-model="cityEdit"
 								required
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 								placeholder="Enter your city"
 							/>
 						</div>
@@ -325,7 +327,7 @@
 								id="postcode"
 								v-model="postCodeEdit"
 								required
-								class="w-full rounded border border-gray-300 px-3 py-2"
+								class="input w-full"
 								placeholder="Enter your post code"
 							/>
 						</div>
@@ -335,15 +337,12 @@
 					<div class="flex justify-end space-x-2">
 						<button
 							type="button"
-							class="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
+							class="bg-blay px-2 hover:cursor-pointer"
 							@click="closeEditModal"
 						>
 							Cancel
 						</button>
-						<button
-							type="submit"
-							class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-						>
+						<button type="submit" class="btn hover:cursor-pointer">
 							Save
 						</button>
 					</div>
