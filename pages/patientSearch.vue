@@ -1,8 +1,10 @@
 <template>
-	<div class="flex min-h-screen flex-col p-4">
+	<div class="font-sc-encode flex min-h-screen flex-col p-4">
 		<!-- Header + Search -->
 		<div class="mb-4 flex items-center">
-			<h1 class="text-2xl font-bold">View All Patients</h1>
+			<h1 class="font-cormorant-garamond text-2xl font-bold">
+				View All Patients
+			</h1>
 			<div
 				class="ml-4 flex flex-1 items-center overflow-hidden rounded border border-gray-300"
 			>

@@ -1,5 +1,5 @@
 <template>
-	<div class="flex h-auto justify-center">
+	<div class="font-sc-encode m-5 flex h-auto min-h-full justify-center">
 		<div class="flex flex-col gap-10">
 			<div
 				class="flex w-4/5 flex-col justify-between md:w-200 md:flex-row"
@@ -74,7 +74,7 @@
 						</th>
 					</tr>
 					<tr
-						class="border-collapse border-2 border-b-black"
+						class="font-sc-encode border-collapse border-2 border-b-black text-lg"
 						v-for="(user, index) in processingPatients"
 						:key="index"
 					>

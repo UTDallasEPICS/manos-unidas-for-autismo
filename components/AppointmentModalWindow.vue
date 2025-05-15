@@ -1,4 +1,4 @@
-<!-- 27 Apr 2025
+<!-- 14 May 2025
     When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information.
  -->
 <template>
@@ -49,16 +49,33 @@
 					</span>
 				</button>
 				<div v-if="showPatients" class="px-5">
-					<li v-for="patient in patientNames" :key="patient">
-						{{ patient }}
-						<!-- replace with link to patient profile later -->
-						<span
-							class="cursor-pointer px-3 text-xs text-blue-400"
-							@click="goToPatient(patient.id)"
+					<div
+						v-for="patient in props.session.Patients"
+						:key="patient"
+						class="grid cursor-pointer grid-cols-5 hover:bg-gray-100"
+						@click="goToPatient(patient.Patient.User.User.id)"
+					>
+						<div class="col-span-2">
+							{{
+								patient.Patient.User.User.fName +
+								" " +
+								patient.Patient.User.User.lName
+							}}
+						</div>
+						<div class="col-span-1 text-center">
+							Age: {{ getAge(patient.Patient.User.dob) }}
+						</div>
+						<div class="col-span-1 text-center">
+							Gender:
+							{{ getGender(patient.Patient.User.gender) }}
+						</div>
+						<div
+							class="col-span-1 px-3 text-right text-xs text-blue-400"
 						>
 							View Profile &gt;
-						</span>
-					</li>
+						</div>
+					</div>
+					<div v-if="!props.session.Patients.length">No patients</div>
 				</div>
 				<div
 					v-if="
@@ -107,10 +124,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, useCookie } from "#imports";
+import { computed, ref, useCookie, navigateTo } from "#imports";
 import type { Session } from "@prisma/client";
 import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
 import { AccessPermission } from "~/permissions";
+import { Gender } from "@prisma/client";
 
 const props = defineProps<{
 	session: Session;
@@ -188,24 +206,50 @@ function getSessionEndTime(d: Date, sessionLength: number): Date {
 	return endTime;
 }
 
-const patientNames = computed(() => {
-	const result = [];
-
-	for (let i = 0; i < props.session.Patients.length; i++) {
-		let patient = props.session.Patients[i];
-		result.push(
-			patient.Patient.User.User.fName +
-				" " +
-				patient.Patient.User.User.lName
-		);
-	}
-
-	return result;
-});
-
 const showEdit = ref(false);
 
 function showEditAppointment() {
 	showEdit.value = !showEdit.value;
+}
+
+async function goToPatient(id: string) {
+	let name = "bad";
+	if (access.value[AccessPermission.PARENT]) {
+		name = "childProfile-id";
+	}
+	if (access.value[AccessPermission.STAFF]) {
+		name = "patientProfile-id";
+	}
+	await navigateTo({
+		name: name,
+		params: { id: id },
+	});
+}
+
+function getAge(bday: Date) {
+	const d = new Date(bday);
+	const today = new Date(Date.now());
+	let age = today.getFullYear() - d.getFullYear();
+
+	if (
+		today.getMonth() < d.getMonth() ||
+		(today.getMonth() == d.getMonth() && today.getDate() < d.getDate())
+	) {
+		age--;
+	}
+	return age;
+}
+
+function getGender(g: Gender) {
+	switch (g) {
+		case Gender.MALE:
+			return "Male";
+		case Gender.FEMALE:
+			return "Female";
+		case Gender.Other:
+			return "Other";
+		default:
+			return "-";
+	}
 }
 </script>
