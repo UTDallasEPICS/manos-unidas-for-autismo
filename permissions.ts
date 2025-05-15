@@ -3,8 +3,9 @@ enum AccessPermission {
 	USER = "USER",
 	PATIENT = "PATIENT",
 	PARENT = "PARENT",
+	STAFF = "STAFF",
 	THERAPIST = "THERAPIST",
-	USER_SUPPORT = "USER_SUPPORT",
+	USER_SERVICE = "USER_SERVICE",
 	ADMIN = "ADMIN",
 }
 
@@ -14,27 +15,28 @@ enum AccessPermission {
 		Also, careful when using / and /index. Include both to be safe.
 */
 
-const pageAccessMap: { [route: string]: AccessPermission } = {
+const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	// Public Pages
-	"/": AccessPermission.PUBLIC,
-	"/index": AccessPermission.PUBLIC,
-	"/ContactForm": AccessPermission.PUBLIC,
+	index: AccessPermission.PUBLIC,
+	contactForm: AccessPermission.PUBLIC,
 	// All User Pages
-	"/Dashboard": AccessPermission.USER,
-	"/ScheduleView": AccessPermission.USER,
+	dashboard: AccessPermission.USER,
+	scheduleView: AccessPermission.USER,
 	// Patient Pages
-	"/MyProfile": AccessPermission.PATIENT,
+	"myProfile-id": AccessPermission.PATIENT,
 	// Parent Pages
-	"/ChildProfiles": AccessPermission.PARENT,
+	childSearch: AccessPermission.PARENT,
+	"childProfile-id": AccessPermission.PARENT,
+	// All Staff Pages
+	patientSearch: AccessPermission.STAFF,
+	"patientProfile-id": AccessPermission.STAFF,
+	viewContactForms: AccessPermission.STAFF,
 	// Therapist Pages
-	"/patientProfile": AccessPermission.THERAPIST,
-	// User Support Pages
-	"/ReviewContactForms": AccessPermission.USER_SUPPORT,
+	// User Service Pages
 	// Admin Pages
-	"/Admin": AccessPermission.ADMIN,
-	// User Search Page
-	"/patientSearch": AccessPermission.THERAPIST,
+	admin: AccessPermission.ADMIN,
 };
+
 const apiAccessMap: {
 	[route: string]: { [method: string]: AccessPermission };
 } = {
@@ -48,10 +50,10 @@ const apiAccessMap: {
 		POST: AccessPermission.PUBLIC,
 	},
 	"/api/session/create": {
-		POST: AccessPermission.USER_SUPPORT,
+		POST: AccessPermission.USER_SERVICE,
 	},
 	"/api/session/sessionType": {
-		GET: AccessPermission.USER_SUPPORT || AccessPermission.ADMIN,
+		GET: AccessPermission.USER_SERVICE || AccessPermission.ADMIN,
 	},
 };
 

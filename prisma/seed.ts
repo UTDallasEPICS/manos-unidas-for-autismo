@@ -60,14 +60,14 @@ const admin = [
 		type: "ADMIN",
 	},
 	{
-		fName: "User-Support",
+		fName: "User-Service",
 		mInit: null,
 		lName: "Account",
-		email: "user-support@email.com",
+		email: "user-service@email.com",
 		phone: "269-679-2852",
 		whatsApp: "Brassica septiceps (L.H. Bailey) L.H. Bailey",
 		contactPref: "EMAIL",
-		type: "USER_SUPPORT",
+		type: "USER_SERVICE",
 	},
 	{
 		fName: "Brigit",
@@ -77,7 +77,7 @@ const admin = [
 		phone: "589-539-2321",
 		whatsApp: "Multiclavula R. Petersen",
 		contactPref: "EMAIL",
-		type: "USER_SUPPORT",
+		type: "USER_SERVICE",
 	},
 ];
 const therapists = [
@@ -298,7 +298,7 @@ const parents = [
 		nonEmployee: {
 			dob: new Date("2/2/2002"),
 			gender: "MALE",
-			streetName: "test",
+			streetName: "Test",
 			streetNum: 1,
 			postCode: 216646,
 		},

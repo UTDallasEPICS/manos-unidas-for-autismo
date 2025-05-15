@@ -8,4 +8,23 @@ export default defineNuxtConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
+	hooks: {
+		"pages:extend"(pages) {
+			pages.push({
+				name: "myProfile-id",
+				path: "/myProfile/:id",
+				file: "~/pages/patientProfile/[id].vue",
+			});
+			pages.push({
+				name: "childProfile-id",
+				path: "/childProfile/:id",
+				file: "~/pages/patientProfile/[id].vue",
+			});
+			pages.push({
+				name: "childSearch",
+				path: "/myChildren",
+				file: "~/pages/patientSearch.vue",
+			});
+		},
+	},
 });

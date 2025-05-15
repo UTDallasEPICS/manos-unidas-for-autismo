@@ -55,8 +55,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useFetch, navigateTo } from "#imports";
+import { useFetch, useCookie, navigateTo } from "#imports";
 import { Search } from "lucide-vue-next";
+import { AccessPermission } from "~/permissions";
+
+const userId = useCookie("userId");
+const access = useCookie("AccessPermission");
 
 interface User {
 	id: number;
@@ -67,25 +71,43 @@ interface User {
 }
 
 const goToProfile = async (id: number) => {
-	await navigateTo(`/PatientProfile/${id}`);
+	let name = "bad";
+	if (access.value[AccessPermission.PARENT]) {
+		name = "childProfile-id";
+	}
+	if (access.value[AccessPermission.STAFF]) {
+		name = "patientProfile-id";
+	}
+	await navigateTo({
+		name: name,
+		params: { id: id },
+	});
 };
 
 const searchQuery = ref("");
 
 // Fetch patients from API
-const { data: usersData, error } = await useFetch<User[]>("/api/users", {
-	default: () => [],
-});
+const { data: usersData, error } = await getUsers();
+
+async function getUsers() {
+	if (access.value[AccessPermission.STAFF]) {
+		return useFetch<User[]>("/api/search/all");
+	}
+	if (access.value[AccessPermission.PARENT]) {
+		return useFetch<User[]>("/api/search/children", {
+			query: { pId: userId },
+		});
+	}
+	return {
+		data: { value: [] },
+		error: "User not authorized to view patients",
+	};
+}
 
 // Filter patients based on search query
 const filteredUsers = computed(() => {
-	if (!Array.isArray(usersData.value)) return [];
 	return usersData.value.filter((u) =>
 		u.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 	);
 });
 </script>
-
-<style scoped>
-/* nothing to see here */
-</style>
