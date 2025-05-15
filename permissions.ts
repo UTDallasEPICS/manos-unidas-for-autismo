@@ -3,8 +3,9 @@ enum AccessPermission {
 	USER = "USER",
 	PATIENT = "PATIENT",
 	PARENT = "PARENT",
+	STAFF = "STAFF",
 	THERAPIST = "THERAPIST",
-	USER_SUPPORT = "USER_SUPPORT",
+	USER_SERVICE = "USER_SERVICE",
 	ADMIN = "ADMIN",
 }
 
@@ -26,11 +27,12 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	// Parent Pages
 	childSearch: AccessPermission.PARENT,
 	"childProfile-id": AccessPermission.PARENT,
+	// All Staff Pages
+	patientSearch: AccessPermission.STAFF,
+	"patientProfile-id": AccessPermission.STAFF,
+	viewContactForms: AccessPermission.STAFF,
 	// Therapist Pages
-	patientSearch: AccessPermission.THERAPIST,
-	"patientProfile-id": AccessPermission.THERAPIST,
-	// User Support Pages
-	viewContactForms: AccessPermission.USER_SUPPORT,
+	// User Service Pages
 	// Admin Pages
 	admin: AccessPermission.ADMIN,
 };
@@ -48,10 +50,10 @@ const apiAccessMap: {
 		POST: AccessPermission.PUBLIC,
 	},
 	"/api/session/create": {
-		POST: AccessPermission.USER_SUPPORT,
+		POST: AccessPermission.USER_SERVICE,
 	},
 	"/api/session/sessionType": {
-		GET: AccessPermission.USER_SUPPORT || AccessPermission.ADMIN,
+		GET: AccessPermission.USER_SERVICE || AccessPermission.ADMIN,
 	},
 };
 

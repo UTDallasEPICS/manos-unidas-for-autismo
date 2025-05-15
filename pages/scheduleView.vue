@@ -65,7 +65,7 @@ const permissions = computed(() => {
 	};
 
 	if (access.value) {
-		if (access.value[AccessPermission.USER_SUPPORT]) {
+		if (access.value[AccessPermission.USER_SERVICE]) {
 			actions.filter = true;
 			actions.editAppointments = true;
 		}
