@@ -2,18 +2,18 @@
     When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information.
  -->
 <template>
+	<!-- Background -->
 	<div
-		class="font-sc-encode fixed top-0 right-0 z-50 h-full w-full items-center text-left"
-	>
-		<!-- Background -->
-		<div
-			class="fixed z-51 h-full w-full bg-black/70"
-			@click="closeWindow"
-		></div>
+		class="fixed top-0 right-0 z-50 h-full w-full bg-black/70"
+		@click="closeWindow"
+	></div>
 
+	<div
+		class="font-sc-encode fixed top-0 right-0 z-51 h-full w-full items-center text-left"
+	>
 		<!-- Window -->
 		<div
-			class="text-md relative z-52 m-7 flex max-h-full flex-col overflow-y-auto bg-white p-4 text-black"
+			class="text-md relative z-52 m-7 flex max-h-7/8 flex-col overflow-y-auto bg-white p-4 text-black"
 		>
 			<div
 				class="flex cursor-pointer justify-end pr-2 text-right"
