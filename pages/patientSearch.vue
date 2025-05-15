@@ -75,7 +75,7 @@ const goToProfile = async (id: number) => {
 	if (access.value[AccessPermission.PARENT]) {
 		name = "childProfile-id";
 	}
-	if (access.value[AccessPermission.THERAPIST]) {
+	if (access.value[AccessPermission.STAFF]) {
 		name = "patientProfile-id";
 	}
 	await navigateTo({
@@ -90,7 +90,7 @@ const searchQuery = ref("");
 const { data: usersData, error } = await getUsers();
 
 async function getUsers() {
-	if (access.value[AccessPermission.THERAPIST]) {
+	if (access.value[AccessPermission.STAFF]) {
 		return useFetch<User[]>("/api/search/all");
 	}
 	if (access.value[AccessPermission.PARENT]) {
