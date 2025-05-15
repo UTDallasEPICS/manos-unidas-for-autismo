@@ -58,6 +58,10 @@
 				</div>
 			</div>
 			<p class="mt-8 mb-2">
+				<strong>Diagnosed?</strong>
+				{{ profile?.NonEmployee?.Patient?.diagnosed }}
+			</p>
+			<p class="mb-2">
 				<strong>All Sessions Paid?</strong>
 				{{ paid }}
 			</p>
@@ -265,10 +269,45 @@
 						<input
 							type="text"
 							id="address"
-							v-model="profileEdits"
+							v-model="addressEdit"
 							class="w-full rounded border border-gray-300 px-3 py-2"
 							placeholder="Enter your address"
 						/>
+					</div>
+
+					<!-- City & Postcode -->
+					<div
+						class="mb-4 flex w-full flex-col justify-between gap-4 lg:flex-row 2xl:gap-8"
+					>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="city">
+								City <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="text"
+								id="city"
+								v-model="cityEdit"
+								required
+								class="w-full rounded border border-gray-300 px-3 py-2"
+								placeholder="Enter your city"
+							/>
+						</div>
+						<div class="w-full">
+							<label
+								class="mb-1 block font-medium"
+								for="postcode"
+							>
+								Post Code <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="number"
+								id="postcode"
+								v-model="postCodeEdit"
+								required
+								class="w-full rounded border border-gray-300 px-3 py-2"
+								placeholder="Enter your post code"
+							/>
+						</div>
 					</div>
 
 					<!-- Action Buttons -->
@@ -393,6 +432,9 @@ const profile = ref({});
 const profileEdits = ref({});
 const dob = ref();
 const genderEdit = ref();
+const addressEdit = ref();
+const cityEdit = ref();
+const postCodeEdit = ref();
 
 async function getProfile() {
 	const { data: test } = await useFetch("/api/profile/patient", {
@@ -441,6 +483,19 @@ function openEditModal() {
 	if (profileEdits.value?.NonEmployee?.gender) {
 		genderEdit.value = profileEdits.value.NonEmployee.gender;
 	}
+	if (profileEdits.value?.NonEmployee) {
+		addressEdit.value = "".concat(
+			profileEdits.value.NonEmployee.streetNum,
+			" ",
+			profileEdits.value.NonEmployee.streetName
+		);
+	}
+	if (profileEdits.value.NonEmployee.PostCodeCity.city) {
+		cityEdit.value = profileEdits.value.NonEmployee.PostCodeCity.city;
+	}
+	if (profileEdits.value.NonEmployee.postCode) {
+		postCodeEdit.value = profileEdits.value.NonEmployee.postCode;
+	}
 	showEditModal.value = true;
 }
 
@@ -465,13 +520,17 @@ async function updateProfile() {
 			lName: profileEdits.value.lName,
 			gender: profileEdits.value.NonEmployee.gender,
 			dob: new Date(dob.value).toISOString(),
-			streetName: profileEdits.value.NonEmployee.streetName,
-			streetNum: profileEdits.value.NonEmployee.streetNum,
+			streetName: addressEdit.value.substring(
+				addressEdit.value.indexOf(" ") + 1
+			),
+			streetNum: Number(
+				addressEdit.value.substring(0, addressEdit.value.indexOf(" "))
+			),
 			buildingNum: profileEdits.value.NonEmployee.buildingNum,
-			postcode: profileEdits.value.NonEmployee.postCode,
+			postcode: postCodeEdit.value,
 			identification:
 				profileEdits.value.NonEmployee.Patient.identification,
-			city: profileEdits.value.NonEmployee.PostCodeCity.city,
+			city: cityEdit.value,
 			contactPref: profileEdits.value.contactPref,
 			email: profileEdits.value.email,
 			phone: profileEdits.value.phone,
