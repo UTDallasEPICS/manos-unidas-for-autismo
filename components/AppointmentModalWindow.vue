@@ -49,23 +49,33 @@
 					</span>
 				</button>
 				<div v-if="showPatients" class="px-5">
-					<li
+					<div
 						v-for="patient in props.session.Patients"
 						:key="patient"
+						class="grid cursor-pointer grid-cols-5 hover:bg-gray-100"
+						@click="goToPatient(patient.Patient.User.User.id)"
 					>
-						{{
-							patient.Patient.User.User.fName +
-							" " +
-							patient.Patient.User.User.lName
-						}}
-						<!-- replace with link to patient profile later -->
-						<span
-							class="cursor-pointer px-3 text-xs text-blue-400"
-							@click="goToPatient(patient.Patient.User.User.id)"
+						<div class="col-span-2">
+							{{
+								patient.Patient.User.User.fName +
+								" " +
+								patient.Patient.User.User.lName
+							}}
+						</div>
+						<div class="col-span-1 text-center">
+							Age: {{ getAge(patient.Patient.User.dob) }}
+						</div>
+						<div class="col-span-1 text-center">
+							Gender:
+							{{ getGender(patient.Patient.User.gender) }}
+						</div>
+						<div
+							class="col-span-1 px-3 text-right text-xs text-blue-400"
 						>
 							View Profile &gt;
-						</span>
-					</li>
+						</div>
+					</div>
+					<div v-if="!props.session.Patients.length">No patients</div>
 				</div>
 				<div
 					v-if="
@@ -118,6 +128,7 @@ import { computed, ref, useCookie, navigateTo } from "#imports";
 import type { Session } from "@prisma/client";
 import { X, ChevronDown, ChevronUp } from "lucide-vue-next";
 import { AccessPermission } from "~/permissions";
+import { Gender } from "@prisma/client";
 
 const props = defineProps<{
 	session: Session;
@@ -213,5 +224,32 @@ async function goToPatient(id: string) {
 		name: name,
 		params: { id: id },
 	});
+}
+
+function getAge(bday: Date) {
+	const d = new Date(bday);
+	const today = new Date(Date.now());
+	let age = today.getFullYear() - d.getFullYear();
+
+	if (
+		today.getMonth() < d.getMonth() ||
+		(today.getMonth() == d.getMonth() && today.getDate() < d.getDate())
+	) {
+		age--;
+	}
+	return age;
+}
+
+function getGender(g: Gender) {
+	switch (g) {
+		case Gender.MALE:
+			return "Male";
+		case Gender.FEMALE:
+			return "Female";
+		case Gender.Other:
+			return "Other";
+		default:
+			return "-";
+	}
 }
 </script>
