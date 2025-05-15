@@ -1,4 +1,4 @@
-<!-- 27 Apr 2025
+<!-- 14 May 2025
     When appointment box is clicked, this window should display and show appointment details. As of now it doesn't distinguish between patient or staff and displays all the information.
  -->
 <template>
@@ -202,6 +202,16 @@ function showEditAppointment() {
 }
 
 async function goToPatient(id: string) {
-	await navigateTo(`/patientProfile/${id}`);
+	let name = "bad";
+	if (access.value[AccessPermission.PARENT]) {
+		name = "childProfile-id";
+	}
+	if (access.value[AccessPermission.STAFF]) {
+		name = "patientProfile-id";
+	}
+	await navigateTo({
+		name: name,
+		params: { id: id },
+	});
 }
 </script>
