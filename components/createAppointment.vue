@@ -167,6 +167,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
 import { useFetch } from "#imports";
+import { reloadNuxtApp } from "#app";
 
 // Whether to show the modal
 const showModal = ref(false);
@@ -254,6 +255,7 @@ async function submitForm() {
 
 		// 4) reset and close
 		closeModal();
+		reloadNuxtApp();
 	} catch (err) {
 		console.error("Could not save session:", err);
 		alert("Failed to create appointment.");
