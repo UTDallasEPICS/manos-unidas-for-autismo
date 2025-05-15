@@ -30,9 +30,9 @@
 			</p>
 			<p class="mb-2"><strong>Email:</strong> {{ profile.email }}</p>
 			<p class="mb-2"><strong>Phone</strong> {{ profile.phone }}</p>
-			<div class="mb-2">
+			<div class="mt-8 mb-2">
 				<strong>Address:</strong>
-				<div class="pl-7">
+				<div class="pl-12">
 					<div>
 						{{ profile?.NonEmployee?.streetNum }}
 						{{ profile?.NonEmployee?.streetName }}
@@ -44,13 +44,13 @@
 					</div>
 				</div>
 			</div>
-			<p class="mb-2">
+			<p class="mt-8 mb-2">
 				<strong>All Sessions Paid?</strong>
 				{{ paid }}
 			</p>
 
 			<!-- Progress Reports (View Only) -->
-			<div class="mt-6">
+			<div class="mt-8">
 				<h2 class="mb-2 text-xl font-semibold">Progress Reports</h2>
 				<ul class="list-disc pl-6">
 					<li
