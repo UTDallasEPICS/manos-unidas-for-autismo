@@ -46,7 +46,12 @@
 			<div class="mt-8 mb-2">
 				<strong>Address:</strong>
 				<div class="pl-12">
-					<div>
+					<div v-if="profile?.NonEmployee?.buildingNum">
+						{{ profile?.NonEmployee?.streetNum }}
+						{{ profile?.NonEmployee?.streetName }},
+						{{ profile?.NonEmployee?.buildingNum }}
+					</div>
+					<div v-else>
 						{{ profile?.NonEmployee?.streetNum }}
 						{{ profile?.NonEmployee?.streetName }}
 						{{ profile?.NonEmployee?.buildingNum }}
@@ -262,17 +267,33 @@
 					</div>
 
 					<!-- Address -->
-					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="address">
-							Address
-						</label>
-						<input
-							type="text"
-							id="address"
-							v-model="addressEdit"
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter your address"
-						/>
+					<div
+						class="mb-4 flex w-full flex-col justify-between gap-4 lg:flex-row 2xl:gap-8"
+					>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="address">
+								Address
+							</label>
+							<input
+								type="text"
+								id="address"
+								v-model="addressEdit"
+								class="w-full rounded border border-gray-300 px-3 py-2"
+								placeholder="Enter your address"
+							/>
+						</div>
+						<div class="w-md">
+							<label class="mb-1 block font-medium" for="address">
+								Building Number
+							</label>
+							<input
+								type="number"
+								id="address"
+								v-model="buildNumEdit"
+								class="w-full rounded border border-gray-300 px-3 py-2"
+								placeholder="Enter your address"
+							/>
+						</div>
 					</div>
 
 					<!-- City & Postcode -->
@@ -433,6 +454,7 @@ const profileEdits = ref({});
 const dob = ref();
 const genderEdit = ref();
 const addressEdit = ref();
+const buildNumEdit = ref();
 const cityEdit = ref();
 const postCodeEdit = ref();
 
@@ -526,7 +548,7 @@ async function updateProfile() {
 			streetNum: Number(
 				addressEdit.value.substring(0, addressEdit.value.indexOf(" "))
 			),
-			buildingNum: profileEdits.value.NonEmployee.buildingNum,
+			buildingNum: buildNumEdit.value,
 			postcode: postCodeEdit.value,
 			identification:
 				profileEdits.value.NonEmployee.Patient.identification,
