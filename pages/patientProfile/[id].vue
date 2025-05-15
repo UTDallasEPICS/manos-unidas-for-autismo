@@ -1,91 +1,112 @@
 <template>
-	<div class="p-4">
-		<!-- DEV‐ONLY role selector -->
-		<div class="mb-4">
-			<label class="mr-2 font-medium">Simulate role:</label>
-			<select v-model="user.role" class="rounded border px-2 py-1">
-				<option disabled value="">— select role —</option>
-				<option value="patient">Patient</option>
-				<option value="parent">Parent</option>
-				<option value="therapist">Therapist</option>
-			</select>
-		</div>
+	<div class="font-sc-encode h-full p-4">
 		<!-- Dashboard Header -->
-		<h1 class="mb-4 text-2xl font-bold">User Profile</h1>
+		<div class="mb-4 flex flex-row items-center">
+			<h1 class="font-cormorant-garamond text-3xl font-bold text-nowrap">
+				User Profile
+			</h1>
+			<!-- Edit Profile Button -->
+			<div class="w-full"></div>
+			<button
+				v-if="access[AccessPermission.PATIENT]"
+				class="btn text-nowrap hover:cursor-pointer"
+				@click="openEditModal"
+			>
+				Edit Profile
+			</button>
+			<button
+				v-if="access[AccessPermission.THERAPIST]"
+				class="btn text-nowrap hover:cursor-pointer"
+				@click="showProgressReportModal = true"
+			>
+				Write Progress Report
+			</button>
+		</div>
 
 		<!-- Patient / Parent Section -->
-		<section
-			v-if="user.role === 'patient' || user.role === 'parent'"
-			class="mb-6 rounded border p-4"
-		>
+		<section class="mb-6 rounded border p-4">
 			<h2 class="mb-2 text-xl font-semibold">Profile Details</h2>
-			<p class="mb-2"><strong>Name:</strong> {{ profile.name }}</p>
-			<p class="mb-2"><strong>Email:</strong> {{ profile.email }}</p>
-			<p class="mb-2"><strong>Phone:</strong> {{ profile.phone }}</p>
-			<p class="mb-2"><strong>Address:</strong> {{ profile.address }}</p>
 			<p class="mb-2">
-				<strong>Medical Records:</strong> {{ profile.medicalRecords }}
+				<strong>Name:</strong> {{ profile.fName }} {{ profile.mInit }}
+				{{ profile.lName }}
 			</p>
 			<p class="mb-2">
-				<strong>Dues Paid:</strong>
-				{{ profile.duesPaid ? "Yes" : "No" }}
+				<strong>Date of Birth:</strong>
+				{{ new Date(profile?.NonEmployee?.dob).toDateString() }}
 			</p>
-			<p>
-				<strong>Reminder Notifications:</strong>
-				{{ profile.notificationsOptIn ? "Opted In" : "Opted Out" }}
+			<p class="mb-2">
+				<strong>Gender:</strong> {{ profile?.NonEmployee?.gender }}
 			</p>
-			<!-- Edit Profile Button -->
-			<div class="mt-4">
-				<button
-					class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					@click="openEditModal"
-				>
-					Edit Profile
-				</button>
+			<div v-if="!access[AccessPermission.THERAPIST]">
+				<p class="mb-2"><strong>Email:</strong> {{ profile.email }}</p>
+				<p class="mb-2"><strong>Phone:</strong> {{ profile.phone }}</p>
+				<p class="mb-2">
+					<strong>What's App:</strong> {{ profile.whatsApp }}
+				</p>
+				<p class="mb-2">
+					<strong>Contact Preference:</strong>
+					{{ profile.contactPref }}
+				</p>
+				<div class="mt-8 mb-2">
+					<strong>Address:</strong>
+					<div class="pl-12">
+						<div v-if="profile?.NonEmployee?.buildingNum">
+							{{ profile?.NonEmployee?.streetNum }}
+							{{ profile?.NonEmployee?.streetName }},
+							{{ profile?.NonEmployee?.buildingNum }}
+						</div>
+						<div v-else>
+							{{ profile?.NonEmployee?.streetNum }}
+							{{ profile?.NonEmployee?.streetName }}
+							{{ profile?.NonEmployee?.buildingNum }}
+						</div>
+						<div>
+							{{ profile?.NonEmployee?.PostCodeCity?.city }},
+							{{ profile?.NonEmployee?.postCode }}
+						</div>
+					</div>
+				</div>
 			</div>
+			<p class="mt-8 mb-2">
+				<strong>Diagnosed?</strong>
+				{{ profile?.NonEmployee?.Patient?.diagnosed }}
+			</p>
+			<p v-if="!access[AccessPermission.THERAPIST]" class="mb-2">
+				<strong>All Sessions Paid?</strong>
+				{{ paid }}
+			</p>
 
 			<!-- Progress Reports (View Only) -->
-			<div class="mt-6">
+			<div class="mt-8">
 				<h2 class="mb-2 text-xl font-semibold">Progress Reports</h2>
-				<div v-if="progressReports.length">
-					<ul class="list-disc pl-6">
-						<li
-							v-for="(report, index) in progressReports"
-							:key="index"
-						>
-							<strong>{{ report.title }}</strong> -
-							{{ report.date }}
-						</li>
-					</ul>
-				</div>
-				<p v-else>No progress reports available.</p>
-			</div>
-		</section>
-
-		<!-- Therapist Section -->
-		<section
-			v-else-if="user.role === 'therapist'"
-			class="mb-6 rounded border p-4"
-		>
-			<h2 class="mb-2 text-xl font-semibold">Session Notes</h2>
-			<div v-if="sessionNotes.length">
 				<ul class="list-disc pl-6">
-					<li v-for="(note, index) in sessionNotes" :key="index">
-						<strong>{{ note.patient }}</strong
-						>: {{ note.note }} <em>({{ note.date }})</em>
+					<li
+						v-for="(report, index) in profile?.NonEmployee?.Patient
+							?.ProgressReports"
+						:key="index"
+					>
+						<strong
+							>{{ new Date(report.date).toDateString() }}:</strong
+						>
+						<ul class="pl-6">
+							<li
+								v-for="(question, index) in report?.Questions"
+								:key="index"
+							>
+								{{ index + 1 }}.
+								<strong>{{ question.question }}:</strong>
+								{{ question.answer }}
+							</li>
+						</ul>
 					</li>
 				</ul>
-			</div>
-			<p v-else>No session notes available.</p>
-
-			<!-- Button to write a Progress Report -->
-			<div class="mt-4">
-				<button
-					class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-					@click="showProgressReportModal = true"
+				<p
+					v-if="
+						!profile?.NonEmployee?.Patient?.ProgressReports.length
+					"
 				>
-					Write Progress Report
-				</button>
+					No progress reports available.
+				</p>
 			</div>
 		</section>
 
@@ -104,24 +125,83 @@
 
 			<!-- Modal Content -->
 			<div
-				class="relative z-10 w-full max-w-md rounded bg-white p-6 shadow-md"
+				class="relative z-10 w-full max-w-7/12 overflow-y-auto bg-white p-6 shadow-md"
 				@click.stop
 			>
 				<h2 class="mb-4 text-xl font-bold">Edit Profile</h2>
 				<form @submit.prevent="updateProfile">
 					<!-- Name -->
+					<div
+						class="mb-4 flex w-full flex-col justify-between gap-4 lg:flex-row 2xl:gap-8"
+					>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="fname">
+								First Name <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="text"
+								id="fname"
+								v-model="profileEdits.fName"
+								required
+								class="input w-full"
+								placeholder="Enter your first name"
+							/>
+						</div>
+						<div class="w-full lg:w-lg 2xl:w-xl">
+							<label class="mb-1 block font-medium" for="minit">
+								Middle Initial
+							</label>
+							<input
+								type="text"
+								id="minit"
+								v-model="profileEdits.mInit"
+								class="input w-full"
+								placeholder="Enter your initial"
+							/>
+						</div>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="lname">
+								Last Name <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="text"
+								id="lname"
+								v-model="profileEdits.lName"
+								required
+								class="input w-full"
+								placeholder="Enter your last name"
+							/>
+						</div>
+					</div>
+
+					<!-- DOB -->
 					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="name">
-							Name <span class="text-red-500">*</span>
+						<label class="mb-1 block font-medium" for="dob">
+							DOB <span class="text-red-500">*</span>
 						</label>
 						<input
-							type="text"
-							id="name"
-							v-model="editForm.name"
+							type="date"
+							id="dob"
+							v-model="dob"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter your name"
+							class="input w-full"
+							placeholder="Enter your email"
 						/>
+					</div>
+
+					<!-- Gender -->
+					<div class="mb-4">
+						<label class="mb-1 block font-medium">
+							Gender <span class="text-red-500">*</span>
+						</label>
+						<select class="input w-full" v-model="genderEdit">
+							<option
+								v-for="(type, index) in gender"
+								:key="index"
+							>
+								{{ type }}
+							</option>
+						</select>
 					</div>
 
 					<!-- Email -->
@@ -132,9 +212,9 @@
 						<input
 							type="email"
 							id="email"
-							v-model="editForm.email"
+							v-model="profileEdits.email"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Enter your email"
 						/>
 					</div>
@@ -147,84 +227,122 @@
 						<input
 							type="text"
 							id="phone"
-							v-model="editForm.phone"
+							v-model="profileEdits.phone"
 							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
 							placeholder="Enter your phone number"
 						/>
 					</div>
 
-					<!-- Address -->
+					<!-- What's App -->
 					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="address">
-							Address
+						<label class="mb-1 block font-medium" for="whatsapp">
+							What's App <span class="text-red-500">*</span>
 						</label>
 						<input
 							type="text"
-							id="address"
-							v-model="editForm.address"
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter your address"
+							id="whatsapp"
+							v-model="profileEdits.whatsApp"
+							required
+							class="input w-full"
+							placeholder="Enter your what's app number"
 						/>
 					</div>
 
-					<!-- Medical Records -->
+					<!-- Contact Preference -->
 					<div class="mb-4">
-						<label
-							class="mb-1 block font-medium"
-							for="medicalRecords"
-						>
-							Medical Records
-						</label>
-						<textarea
-							id="medicalRecords"
-							v-model="editForm.medicalRecords"
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter your medical records"
-						></textarea>
-					</div>
-
-					<!-- Dues Paid -->
-					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="duesPaid">
-							Dues Paid
+						<label class="mb-1 block font-medium">
+							Contact Preference
+							<span class="text-red-500">*</span>
 						</label>
 						<select
-							id="duesPaid"
-							v-model="editForm.duesPaid"
-							class="w-full rounded border border-gray-300 px-3 py-2"
+							class="input w-full"
+							v-model="profileEdits.contactPref"
 						>
-							<option :value="true">Yes</option>
-							<option :value="false">No</option>
+							<option
+								v-for="(type, index) in contactType"
+								:key="index"
+							>
+								{{ type }}
+							</option>
 						</select>
 					</div>
 
-					<!-- Reminder Notifications -->
-					<div class="mb-4 flex items-center">
-						<input
-							type="checkbox"
-							id="notificationsOptIn"
-							v-model="editForm.notificationsOptIn"
-							class="mr-2"
-						/>
-						<label for="notificationsOptIn" class="font-medium">
-							Opt-in for reminder notifications
-						</label>
+					<!-- Address -->
+					<div
+						class="mb-4 flex w-full flex-col justify-between gap-4 lg:flex-row 2xl:gap-8"
+					>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="address">
+								Address
+							</label>
+							<input
+								type="text"
+								id="address"
+								v-model="addressEdit"
+								class="input w-full"
+								placeholder="Enter your address"
+							/>
+						</div>
+						<div class="w-md">
+							<label class="mb-1 block font-medium" for="address">
+								Building Number
+							</label>
+							<input
+								type="number"
+								id="address"
+								v-model="buildNumEdit"
+								class="input w-full"
+								placeholder="Enter your address"
+							/>
+						</div>
+					</div>
+
+					<!-- City & Postcode -->
+					<div
+						class="mb-4 flex w-full flex-col justify-between gap-4 lg:flex-row 2xl:gap-8"
+					>
+						<div class="w-full">
+							<label class="mb-1 block font-medium" for="city">
+								City <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="text"
+								id="city"
+								v-model="cityEdit"
+								required
+								class="input w-full"
+								placeholder="Enter your city"
+							/>
+						</div>
+						<div class="w-full">
+							<label
+								class="mb-1 block font-medium"
+								for="postcode"
+							>
+								Post Code <span class="text-red-500">*</span>
+							</label>
+							<input
+								type="number"
+								id="postcode"
+								v-model="postCodeEdit"
+								required
+								class="input w-full"
+								placeholder="Enter your post code"
+							/>
+						</div>
 					</div>
 
 					<!-- Action Buttons -->
 					<div class="flex justify-end space-x-2">
 						<button
 							type="button"
-							class="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
+							class="bg-blay px-2 hover:cursor-pointer"
 							@click="closeEditModal"
 						>
 							Cancel
 						</button>
-						<button
-							type="submit"
-							class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-						>
+						<button type="submit" class="btn hover:cursor-pointer">
 							Save
 						</button>
 					</div>
@@ -247,53 +365,62 @@
 
 			<!-- Modal Content -->
 			<div
-				class="relative z-10 w-full max-w-md rounded bg-white p-6 shadow-md"
+				class="relative z-10 max-h-9/12 w-full max-w-3/12 overflow-auto rounded bg-white p-6 shadow-md"
 				@click.stop
 			>
 				<h2 class="mb-4 text-xl font-bold">Write Progress Report</h2>
 				<form @submit.prevent="submitProgressReport">
-					<!-- Report Title -->
-					<div class="mb-4">
-						<label for="reportTitle" class="mb-1 block font-medium">
-							Report Title <span class="text-red-500">*</span>
-						</label>
-						<input
-							type="text"
-							id="reportTitle"
-							v-model="progressReportForm.title"
-							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter report title"
-						/>
-					</div>
-					<!-- Report Details -->
-					<div class="mb-4">
-						<label
-							for="reportDetails"
-							class="mb-1 block font-medium"
+					<div
+						v-for="(question, index) in progressReportQuestions"
+						:key="index"
+					>
+						<div
+							class="mb-4 flex w-full flex-col justify-between gap-4"
 						>
-							Report Details
-						</label>
-						<textarea
-							id="reportDetails"
-							v-model="progressReportForm.details"
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter report details"
-						></textarea>
+							<div class="flex w-full flex-row">
+								<label class="text-nowrap">
+									Question {{ index + 1 }}
+								</label>
+								<div class="w-full"></div>
+								<button
+									class="cursor-pointer"
+									type="button"
+									@click="removeQuestion(index)"
+								>
+									<X />
+								</button>
+							</div>
+							<input
+								v-model="question.question"
+								placeholder="Question"
+								class="input w-full"
+								required
+							/>
+							<textarea
+								v-model="question.answer"
+								placeholder="Answer"
+								class="input w-full"
+								required
+							/>
+						</div>
 					</div>
+					<button
+						class="bg-smoky mb-4 flex w-full cursor-pointer justify-center"
+						type="button"
+						@click="addQuestion"
+					>
+						<Plus />
+					</button>
 					<!-- Action Buttons -->
 					<div class="flex justify-end space-x-2">
 						<button
 							type="button"
-							class="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
+							class="bg-blay px-2 hover:cursor-pointer"
 							@click="closeProgressReportModal"
 						>
 							Cancel
 						</button>
-						<button
-							type="submit"
-							class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-						>
+						<button type="submit" class="btn hover:cursor-pointer">
 							Save
 						</button>
 					</div>
@@ -304,80 +431,89 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { computed, ref, useCookie, useFetch, useRoute } from "#imports";
+import { AccessPermission } from "~/permissions";
+import { Plus, X } from "lucide-vue-next";
+import { $fetch } from "ofetch";
 
-/**
- * Dummy user information.
- * In production, this would be fetched by authentication.
- */
-const user = reactive({
-	name: "Alex Smith",
-	role: "patient", // Options: "patient", "parent", "therapist"
+const contactType = ["EMAIL", "PHONE", "WHATS_APP"];
+
+const gender = ["MALE", "FEMALE", "OTHER"];
+
+const access = useCookie("AccessPermission");
+
+const route = useRoute();
+const uId = route.params.id;
+
+const profile = ref({});
+const profileEdits = ref({});
+const dob = ref();
+const genderEdit = ref();
+const addressEdit = ref();
+const buildNumEdit = ref();
+const cityEdit = ref();
+const postCodeEdit = ref();
+
+async function getProfile() {
+	const { data: test } = await useFetch("/api/profile/patient", {
+		query: { id: uId },
+	});
+	profile.value = test.value;
+}
+
+getProfile();
+
+const paid = computed(() => {
+	if (profile.value?.NonEmployee?.Patient?.Appointments) {
+		let inFull = true;
+		for (const session of profile.value.NonEmployee.Patient.Appointments) {
+			if (!session.paid) {
+				inFull = false;
+			}
+		}
+		return inFull;
+	}
+	return false;
 });
 
-/**
- * Dummy profile data for a patient/parent.
- * In production, fetch and sync this data from database.
- */
-const profile = reactive({
-	name: "Alex Smith",
-	email: "alex.smith@example.com",
-	phone: "555-6789",
-	address: "456 Elm Street",
-	medicalRecords: "Patient has a history of seasonal allergies.",
-	duesPaid: true,
-	notificationsOptIn: true,
-});
-
-/**
- * Dummy arrays to hold progress reports (for patients/parents)
- * and session notes (for therapists).
- */
-const progressReports = ref([
-	{ title: "Q1 Report", date: "2025-03-10" },
-	{ title: "Post-Therapy Update", date: "2025-04-05" },
-]);
-const sessionNotes = ref([
-	{
-		patient: "Alex Smith",
-		note: "Improved response rate to stimuli.",
-		date: "2025-04-07",
-	},
-]);
-
-/**
- * Modal control flags.
- */
+// Modal control flags.
 const showEditModal = ref(false);
 const showProgressReportModal = ref(false);
 
-/**
- * Form object for editing the profile.
- */
-const editForm = reactive({
-	name: profile.name,
-	email: profile.email,
-	phone: profile.phone,
-	address: profile.address,
-	medicalRecords: profile.medicalRecords,
-	duesPaid: profile.duesPaid,
-	notificationsOptIn: profile.notificationsOptIn,
-});
+// Form object for a new progress report (for therapists).
+const progressReportQuestions = ref([{ question: "", answer: "" }]);
 
-/**
- * Form object for a new progress report (for therapists).
- */
-const progressReportForm = reactive({
-	title: "",
-	details: "",
-});
+function addQuestion() {
+	progressReportQuestions.value.push({ question: "", answer: "" });
+}
 
-/**
- * Methods to open/close modals.
- */
+function removeQuestion(i) {
+	progressReportQuestions.value.splice(i, 1);
+}
+
+// Methods to open/close modals.
 function openEditModal() {
 	// Pre-populate the edit form with current profile data.
-	Object.assign(editForm, { ...profile });
+	Object.assign(profileEdits.value, profile.value);
+	if (profileEdits.value?.NonEmployee?.dob) {
+		dob.value = profileEdits.value.NonEmployee.dob.split("T")[0];
+	}
+	if (profileEdits.value?.NonEmployee?.gender) {
+		genderEdit.value = profileEdits.value.NonEmployee.gender;
+	}
+	if (profileEdits.value?.NonEmployee) {
+		addressEdit.value = "".concat(
+			profileEdits.value.NonEmployee.streetNum,
+			" ",
+			profileEdits.value.NonEmployee.streetName
+		);
+	}
+	if (profileEdits.value.NonEmployee.PostCodeCity.city) {
+		cityEdit.value = profileEdits.value.NonEmployee.PostCodeCity.city;
+	}
+	if (profileEdits.value.NonEmployee.postCode) {
+		postCodeEdit.value = profileEdits.value.NonEmployee.postCode;
+	}
 	showEditModal.value = true;
 }
 
@@ -388,34 +524,55 @@ function closeEditModal() {
 function closeProgressReportModal() {
 	showProgressReportModal.value = false;
 	// Reset progress report form.
-	Object.assign(progressReportForm, { title: "", details: "" });
+	progressReportQuestions.value = [{ question: "", answer: "" }];
 }
 
-/**
- * Update the profile data from the edit form.
- */
-function updateProfile() {
-	Object.assign(profile, { ...editForm });
-	console.log("Profile updated:", profile);
+// Update the profile data from the edit form.
+async function updateProfile() {
+	await $fetch("/api/profile/patient", {
+		method: "Put",
+		body: {
+			id: uId,
+			fName: profileEdits.value.fName,
+			mInit: profileEdits.value.mInit || "",
+			lName: profileEdits.value.lName,
+			gender: profileEdits.value.NonEmployee.gender,
+			dob: new Date(dob.value).toISOString(),
+			streetName: addressEdit.value.substring(
+				addressEdit.value.indexOf(" ") + 1
+			),
+			streetNum: Number(
+				addressEdit.value.substring(0, addressEdit.value.indexOf(" "))
+			),
+			buildingNum: buildNumEdit.value,
+			postcode: postCodeEdit.value,
+			identification:
+				profileEdits.value.NonEmployee.Patient.identification,
+			city: cityEdit.value,
+			contactPref: profileEdits.value.contactPref,
+			email: profileEdits.value.email,
+			phone: profileEdits.value.phone,
+			whatsapp: profileEdits.value.whatsApp,
+			isDiagnosed: profileEdits.value.NonEmployee.Patient.diagnosed,
+		},
+	});
+	getProfile();
 	closeEditModal();
 }
 
-/**
- * Submit a new progress report (for therapists).
- */
-function submitProgressReport() {
-	if (!progressReportForm.title) {
-		alert("Please provide a report title.");
-		return;
-	}
-	// For demonstration, add the report with today's date.
-	progressReports.value.push({
-		title: progressReportForm.title,
-		date: new Date().toISOString().split("T")[0],
+// Submit a new progress report (for therapists).
+async function submitProgressReport() {
+	const date = new Date().toISOString();
+	await $fetch("/api/profile/report", {
+		method: "Post",
+		body: {
+			date: date,
+			pId: uId,
+			questions: progressReportQuestions.value,
+		},
 	});
-	console.log("Progress report submitted:", progressReportForm);
+
+	getProfile();
 	closeProgressReportModal();
 }
 </script>
-
-<style scoped></style>
