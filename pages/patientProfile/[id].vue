@@ -180,7 +180,10 @@
 						<label class="mb-1 block font-medium">
 							Gender <span class="text-red-500">*</span>
 						</label>
-						<select class="w-full" v-model="genderEdit">
+						<select
+							class="w-full rounded-sm border border-gray-300 p-2"
+							v-model="genderEdit"
+						>
 							<option
 								v-for="(type, index) in gender"
 								:key="index"
@@ -242,7 +245,7 @@
 							<span class="text-red-500">*</span>
 						</label>
 						<select
-							class="w-full"
+							class="w-full rounded-sm border border-gray-300 p-2"
 							v-model="profileEdits.contactPref"
 						>
 							<option
