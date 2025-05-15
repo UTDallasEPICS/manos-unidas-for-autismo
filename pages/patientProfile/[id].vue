@@ -162,50 +162,6 @@
 						/>
 					</div>
 
-					<!-- Medical Records -->
-					<div class="mb-4">
-						<label
-							class="mb-1 block font-medium"
-							for="medicalRecords"
-						>
-							Medical Records
-						</label>
-						<textarea
-							id="medicalRecords"
-							v-model="editForm.medicalRecords"
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter your medical records"
-						></textarea>
-					</div>
-
-					<!-- Dues Paid -->
-					<div class="mb-4">
-						<label class="mb-1 block font-medium" for="duesPaid">
-							Dues Paid
-						</label>
-						<select
-							id="duesPaid"
-							v-model="editForm.duesPaid"
-							class="w-full rounded border border-gray-300 px-3 py-2"
-						>
-							<option :value="true">Yes</option>
-							<option :value="false">No</option>
-						</select>
-					</div>
-
-					<!-- Reminder Notifications -->
-					<div class="mb-4 flex items-center">
-						<input
-							type="checkbox"
-							id="notificationsOptIn"
-							v-model="editForm.notificationsOptIn"
-							class="mr-2"
-						/>
-						<label for="notificationsOptIn" class="font-medium">
-							Opt-in for reminder notifications
-						</label>
-					</div>
-
 					<!-- Action Buttons -->
 					<div class="flex justify-end space-x-2">
 						<button
@@ -241,40 +197,52 @@
 
 			<!-- Modal Content -->
 			<div
-				class="relative z-10 w-full max-w-md rounded bg-white p-6 shadow-md"
+				class="relative z-10 max-h-9/12 w-full max-w-3/12 overflow-auto rounded bg-white p-6 shadow-md"
 				@click.stop
 			>
 				<h2 class="mb-4 text-xl font-bold">Write Progress Report</h2>
 				<form @submit.prevent="submitProgressReport">
-					<!-- Report Title -->
-					<div class="mb-4">
-						<label for="reportTitle" class="mb-1 block font-medium">
-							Report Title <span class="text-red-500">*</span>
-						</label>
-						<input
-							type="text"
-							id="reportTitle"
-							v-model="progressReportForm.title"
-							required
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter report title"
-						/>
-					</div>
-					<!-- Report Details -->
-					<div class="mb-4">
-						<label
-							for="reportDetails"
-							class="mb-1 block font-medium"
+					<div
+						v-for="(question, index) in progressReportQuestions"
+						:key="index"
+					>
+						<div
+							class="mb-4 flex w-full flex-col justify-between gap-4"
 						>
-							Report Details
-						</label>
-						<textarea
-							id="reportDetails"
-							v-model="progressReportForm.details"
-							class="w-full rounded border border-gray-300 px-3 py-2"
-							placeholder="Enter report details"
-						></textarea>
+							<div class="flex w-full flex-row">
+								<label class="text-nowrap">
+									Question {{ index + 1 }}
+								</label>
+								<div class="w-full"></div>
+								<button
+									class="cursor-pointer"
+									type="button"
+									@click="removeQuestion(index)"
+								>
+									<X />
+								</button>
+							</div>
+							<input
+								v-model="question.question"
+								placeholder="Question"
+								class="input w-full"
+								required
+							/>
+							<textarea
+								v-model="question.answer"
+								placeholder="Answer"
+								class="input w-full"
+								required
+							/>
+						</div>
 					</div>
+					<button
+						class="bg-smoky mb-4 flex w-full cursor-pointer justify-center"
+						type="button"
+						@click="addQuestion"
+					>
+						<Plus />
+					</button>
 					<!-- Action Buttons -->
 					<div class="flex justify-end space-x-2">
 						<button
@@ -307,6 +275,8 @@ import {
 	useRoute,
 } from "#imports";
 import { AccessPermission } from "~/permissions";
+import { Plus, X } from "lucide-vue-next";
+import { $fetch } from "ofetch";
 
 const access = useCookie("AccessPermission");
 
@@ -345,10 +315,15 @@ const showProgressReportModal = ref(false);
 const editForm = reactive({});
 
 // Form object for a new progress report (for therapists).
-const progressReportForm = reactive({
-	title: "",
-	details: "",
-});
+const progressReportQuestions = ref([{ question: "", answer: "" }]);
+
+function addQuestion() {
+	progressReportQuestions.value.push({ question: "", answer: "" });
+}
+
+function removeQuestion(i) {
+	progressReportQuestions.value.splice(i, 1);
+}
 
 // Methods to open/close modals.
 function openEditModal() {
@@ -364,7 +339,7 @@ function closeEditModal() {
 function closeProgressReportModal() {
 	showProgressReportModal.value = false;
 	// Reset progress report form.
-	Object.assign(progressReportForm, { title: "", details: "" });
+	progressReportQuestions.value = [{ question: "", answer: "" }];
 }
 
 // Update the profile data from the edit form.
@@ -375,13 +350,18 @@ function updateProfile() {
 }
 
 // Submit a new progress report (for therapists).
-function submitProgressReport() {
-	if (!progressReportForm.title) {
-		alert("Please provide a report title.");
-		return;
-	}
-	// For demonstration, add the report with today's date.
-	console.log("Progress report submitted:", progressReportForm);
+async function submitProgressReport() {
+	const date = new Date().toISOString();
+	await $fetch("/api/profile/report", {
+		method: "Post",
+		body: {
+			date: date,
+			pId: uId,
+			questions: progressReportQuestions.value,
+		},
+	});
+
+	getProfile();
 	closeProgressReportModal();
 }
 </script>
