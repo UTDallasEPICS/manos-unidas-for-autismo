@@ -32,14 +32,20 @@
 							>Therapist
 							<span class="text-red-500">*</span></label
 						>
-						<input
-							type="text"
-							id="therapist"
+						<select
 							v-model="form.therapist"
 							required
 							class="input w-full"
-							placeholder="Enter therapist name"
-						/>
+						>
+							<option disabled value="">Pick a therapist</option>
+							<option
+								v-for="t in therapistOptions"
+								:key="t.id"
+								:value="t.id"
+							>
+								{{ t.name }}
+							</option>
+						</select>
 					</div>
 
 					<!-- Session Type (required) -->
@@ -49,17 +55,20 @@
 							<span class="text-red-500">*</span></label
 						>
 						<select
-							id="sessionType"
 							v-model="form.sessionType"
 							required
 							class="input w-full"
 						>
 							<option disabled value="">
-								Select a session type
+								Pick a session type
 							</option>
-							<option>Learning Therapy</option>
-							<option>Behavior Therapy</option>
-							<option>Speech Therapy</option>
+							<option
+								v-for="st in typeOptions"
+								:key="st.id"
+								:value="st.id"
+							>
+								{{ st.name }}
+							</option>
 						</select>
 					</div>
 
@@ -156,7 +165,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
+import { useFetch } from "#imports";
 
 // Whether to show the modal
 const showModal = ref(false);
@@ -172,33 +182,91 @@ const form = reactive({
 	comments: "",
 });
 
+interface Therapist {
+	id: string;
+	fName: string;
+	lName: string;
+}
+interface SessionType {
+	id: string;
+	name: string;
+}
+
+const { data: therapistsData = ref([] as Therapist[]) } = await useFetch<
+	Therapist[]
+>("/api/users?role=THERAPIST", { default: () => [] });
+
+const { data: typesData = ref([] as SessionType[]) } = await useFetch<
+	SessionType[]
+>("/api/session/sessionType", { default: () => [] });
+
+const therapistOptions = computed(() =>
+	(therapistsData.value || []).map((t) => ({
+		id: t.id,
+		name: `${t.fName} ${t.lName}`,
+	}))
+);
+
+const typeOptions = computed(() =>
+	(typesData.value || []).map((st) => ({
+		id: st.id,
+		name: st.name,
+	}))
+);
+
 function enforceMin() {
 	if (form.max < 1 || isNaN(form.max)) form.max = 1;
 	if (form.duration < 1 || isNaN(form.duration)) form.duration = 1;
 }
 
 // Submit form handler
-function submitForm() {
-	// Validate required fields
-	if (!form.therapist || !form.sessionType || !form.time) {
+async function submitForm() {
+	// 1) basic client-side validation
+	if (!form.therapist || !form.sessionType || !form.date || !form.time) {
 		alert("Please fill out all required fields.");
 		return;
 	}
 
-	// Placeholder for database submission logic
-	console.log("Form submitted:", form);
+	// 2) build the create.post.ts payload
+	const dateTime = new Date(`${form.date}T${form.time}`);
 
-	// Close modal after submission
-	closeModal();
+	const payload = {
+		therapistId: form.therapist, // string
+		typeId: form.sessionType, // string
+		time: dateTime, // JS Date
+		duration: form.duration, // number ≥1
+		maxAttendance: form.max, // number ≥1
+		comment: form.comments || undefined,
+	};
+
+	try {
+		// 3) send it off
+		const res = await fetch("/api/session/create", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(payload),
+		});
+
+		if (!res.ok) {
+			const err = await res.json().catch(() => ({}));
+			throw new Error(err.statusMessage || `HTTP ${res.status}`);
+		}
+
+		// 4) reset and close
+		closeModal();
+	} catch (err) {
+		console.error("Could not save session:", err);
+		alert("Failed to create appointment. Check console for details.");
+	}
 }
 
-// Close modal and reset form (optional)
+// Close modal and reset
 function closeModal() {
 	showModal.value = false;
-
 	Object.assign(form, {
 		therapist: "",
 		sessionType: "",
+		date: "",
 		time: "",
 		duration: 60,
 		max: 1,
