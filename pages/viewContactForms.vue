@@ -74,7 +74,7 @@
 						</th>
 					</tr>
 					<tr
-						class="border-collapse border-2 border-b-black"
+						class="font-sc-encode border-collapse border-2 border-b-black text-lg"
 						v-for="(user, index) in processingPatients"
 						:key="index"
 					>
