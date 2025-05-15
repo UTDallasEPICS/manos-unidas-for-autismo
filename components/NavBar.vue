@@ -21,7 +21,7 @@
 				<NuxtLink
 					v-for="(link, idx) in userLinks"
 					:key="idx"
-					:to="link.path"
+					:to="link.to"
 					class="hover:underline"
 				>
 					{{ link.label }}
@@ -29,7 +29,7 @@
 			</div>
 
 			<!-- Logout Button -->
-			<button v-if="login" class="cursor-pointer" @click="logout">
+			<button v-if="userId" class="cursor-pointer" @click="logout">
 				<LogOut />
 			</button>
 		</div>
@@ -68,7 +68,7 @@
 					<NuxtLink
 						v-for="(link, idx) in userLinks"
 						:key="idx"
-						:to="link.path"
+						:to="link.to"
 						class="py-2 text-end text-lg hover:underline"
 						@click="toggleMenu"
 					>
@@ -76,7 +76,7 @@
 					</NuxtLink>
 					<div class="grow"></div>
 					<button
-						v-if="login"
+						v-if="userId"
 						class="py-2 text-end text-lg hover:underline"
 						@click="logout"
 					>
@@ -94,36 +94,39 @@ import { ref, computed, useCookie, navigateTo } from "#imports";
 import { AccessPermission } from "~/permissions";
 
 // Replace this with the actual user role from auth/session
-const login = useCookie("userId");
-const permissions = useCookie("AccessPermission");
+const userId = useCookie("userId");
+const access = useCookie("AccessPermission");
 
 const userLinks = computed(() => {
 	let legalRoutes = [];
-	// protect against undefined permissions throwind error
-	if (!permissions.value) {
+	// protect against undefined access throwind error
+	if (!access.value) {
 		return legalRoutes;
 	}
 	// add relevant links
-	if (permissions.value[AccessPermission.USER]) {
-		legalRoutes.push({ path: "/ScheduleView", label: "Schedule" });
+	if (access.value[AccessPermission.USER]) {
+		legalRoutes.push({ to: { name: "scheduleView" }, label: "Schedule" });
 	}
-	if (permissions.value[AccessPermission.PATIENT]) {
-		legalRoutes.push({ path: "/MyProfile", label: "Profile" });
-	}
-	if (permissions.value[AccessPermission.PARENT]) {
-		legalRoutes.push({ path: "/ChildProfiles", label: "Children" });
-	}
-	if (permissions.value[AccessPermission.THERAPIST]) {
-		legalRoutes.push({ path: "/patientSearch", label: "Patients" });
-	}
-	if (permissions.value[AccessPermission.USER_SUPPORT]) {
+	if (access.value[AccessPermission.PATIENT]) {
 		legalRoutes.push({
-			path: "/ReviewContactForms",
+			to: { name: "myProfile-id", params: { id: userId.value } },
+			label: "Profile",
+		});
+	}
+	if (access.value[AccessPermission.PARENT]) {
+		legalRoutes.push({ to: { name: "childSearch" }, label: "Children" });
+	}
+	if (access.value[AccessPermission.THERAPIST]) {
+		legalRoutes.push({ to: { name: "patientSearch" }, label: "Patients" });
+	}
+	if (access.value[AccessPermission.USER_SUPPORT]) {
+		legalRoutes.push({
+			to: { name: "viewContactForms" },
 			label: "Review Forms",
 		});
 	}
-	if (permissions.value[AccessPermission.ADMIN]) {
-		legalRoutes.push({ path: "/Admin", label: "Admin" });
+	if (access.value[AccessPermission.ADMIN]) {
+		legalRoutes.push({ to: { name: "admin" }, label: "Admin" });
 	}
 	return legalRoutes;
 });
@@ -137,10 +140,11 @@ async function logout() {
 	isMenuOpen.value = false;
 	const userId = useCookie("userId");
 	userId.value = null;
-	permissions.value = null;
+	access.value = null;
 
 	// not having await seems to cause an issue with the order of page components
 	//  putting the footer above the page content
+	console.log("User logged out");
 	await navigateTo("/");
 }
 </script>

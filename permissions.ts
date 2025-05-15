@@ -14,27 +14,27 @@ enum AccessPermission {
 		Also, careful when using / and /index. Include both to be safe.
 */
 
-const pageAccessMap: { [route: string]: AccessPermission } = {
+const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	// Public Pages
-	"/": AccessPermission.PUBLIC,
-	"/index": AccessPermission.PUBLIC,
-	"/ContactForm": AccessPermission.PUBLIC,
+	index: AccessPermission.PUBLIC,
+	contactForm: AccessPermission.PUBLIC,
 	// All User Pages
-	"/Dashboard": AccessPermission.USER,
-	"/ScheduleView": AccessPermission.USER,
+	dashboard: AccessPermission.USER,
+	scheduleView: AccessPermission.USER,
 	// Patient Pages
-	"/MyProfile": AccessPermission.PATIENT,
+	"myProfile-id": AccessPermission.PATIENT,
 	// Parent Pages
-	"/ChildProfiles": AccessPermission.PARENT,
+	childSearch: AccessPermission.PARENT,
+	"childProfile-id": AccessPermission.PARENT,
 	// Therapist Pages
-	"/patientProfile": AccessPermission.THERAPIST,
+	patientSearch: AccessPermission.THERAPIST,
+	"patientProfile-id": AccessPermission.THERAPIST,
 	// User Support Pages
-	"/ReviewContactForms": AccessPermission.USER_SUPPORT,
+	viewContactForms: AccessPermission.USER_SUPPORT,
 	// Admin Pages
-	"/Admin": AccessPermission.ADMIN,
-	// User Search Page
-	"/patientSearch": AccessPermission.THERAPIST,
+	admin: AccessPermission.ADMIN,
 };
+
 const apiAccessMap: {
 	[route: string]: { [method: string]: AccessPermission };
 } = {
