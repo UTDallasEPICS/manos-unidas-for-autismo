@@ -180,10 +180,7 @@
 						<label class="mb-1 block font-medium">
 							Gender <span class="text-red-500">*</span>
 						</label>
-						<select
-							class="w-full"
-							v-model="profileEdits.NonEmployee.gender"
-						>
+						<select class="w-full" v-model="genderEdit">
 							<option
 								v-for="(type, index) in gender"
 								:key="index"
@@ -391,6 +388,8 @@ const uId = route.params.id;
 
 const profile = ref({});
 const profileEdits = ref({});
+const dob = ref();
+const genderEdit = ref();
 
 async function getProfile() {
 	const { data: test } = await useFetch("/api/profile/patient", {
@@ -429,13 +428,15 @@ function removeQuestion(i) {
 	progressReportQuestions.value.splice(i, 1);
 }
 
-const dob = ref();
 // Methods to open/close modals.
 function openEditModal() {
 	// Pre-populate the edit form with current profile data.
 	Object.assign(profileEdits.value, profile.value);
 	if (profileEdits.value?.NonEmployee?.dob) {
 		dob.value = profileEdits.value.NonEmployee.dob.split("T")[0];
+	}
+	if (profileEdits.value?.NonEmployee?.gender) {
+		genderEdit.value = profileEdits.value.NonEmployee.gender;
 	}
 	showEditModal.value = true;
 }
