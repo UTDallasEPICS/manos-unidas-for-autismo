@@ -186,7 +186,7 @@ enum ContactType {
 
 enum UserType {
     ADMIN
-    USER_SUPPORT
+    USER_SERVICE
     THERAPIST //should be unness
 }
 

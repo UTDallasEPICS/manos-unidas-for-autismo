@@ -42,8 +42,8 @@ export default defineEventHandler(async (event) => {
 			if (user.type === UserType.THERAPIST) {
 				event.context.permissions[AccessPermission.THERAPIST] = true;
 			}
-			if (user.type === UserType.USER_SUPPORT) {
-				event.context.permissions[AccessPermission.USER_SUPPORT] = true;
+			if (user.type === UserType.USER_SERVICE) {
+				event.context.permissions[AccessPermission.USER_SERVICE] = true;
 			}
 			if (user.type === UserType.ADMIN) {
 				event.context.permissions[AccessPermission.ADMIN] = true;

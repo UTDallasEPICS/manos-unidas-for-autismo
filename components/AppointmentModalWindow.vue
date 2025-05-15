@@ -132,13 +132,13 @@ const permissions = computed(() => {
 
 	if (access.value) {
 		if (
-			access.value[AccessPermission.USER_SUPPORT] ||
+			access.value[AccessPermission.USER_SERVICE] ||
 			access.value[AccessPermission.ADMIN] ||
 			access.value[AccessPermission.THERAPIST]
 		) {
 			actions.nonEmployee = false;
 		}
-		if (access.value[AccessPermission.USER_SUPPORT]) {
+		if (access.value[AccessPermission.USER_SERVICE]) {
 			actions.editAppointments = true;
 		}
 	}

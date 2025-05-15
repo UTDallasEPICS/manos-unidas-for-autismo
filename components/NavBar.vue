@@ -119,7 +119,7 @@ const userLinks = computed(() => {
 	if (access.value[AccessPermission.THERAPIST]) {
 		legalRoutes.push({ to: { name: "patientSearch" }, label: "Patients" });
 	}
-	if (access.value[AccessPermission.USER_SUPPORT]) {
+	if (access.value[AccessPermission.USER_SERVICE]) {
 		legalRoutes.push({
 			to: { name: "viewContactForms" },
 			label: "Review Forms",

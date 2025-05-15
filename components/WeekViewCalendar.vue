@@ -86,7 +86,7 @@ async function fetchSessions() {
 		if (access.value) {
 			if (
 				access.value[AccessPermission.ADMIN] ||
-				access.value[AccessPermission.USER_SUPPORT]
+				access.value[AccessPermission.USER_SERVICE]
 			) {
 				const { data: sessions } = await useFetch(
 					"/api/session/allSessions",
