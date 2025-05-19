@@ -1,7 +1,7 @@
 <!-- 27 Apr 2025
  schedule view page, clicking the buttons changes the week that's being displayed -->
 <template>
-	<div class="font-sc-encode grow pb-8">
+	<div class="font-sc-encode pb-8">
 		<!-- Filter modal window -->
 		<FilterAppointments
 			:filter="filters"
@@ -11,7 +11,7 @@
 		/>
 
 		<!-- Page -->
-		<div class="mx-10 h-full">
+		<div class="mx-10">
 			<!-- Title part + option buttons -->
 			<div class="my-5 flex justify-between">
 				<div

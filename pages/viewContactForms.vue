@@ -1,5 +1,5 @@
 <template>
-	<div class="font-sc-encode m-5 flex h-auto min-h-full justify-center">
+	<div class="font-sc-encode m-5 flex justify-center">
 		<div class="flex flex-col gap-10">
 			<div
 				class="flex w-4/5 flex-col justify-between md:w-200 md:flex-row"

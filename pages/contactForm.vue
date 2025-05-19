@@ -1,32 +1,6 @@
 <template>
-	<!-- 4/9/25 Sreeja, 
-
-	Items in order:
-	1: nav bar
-	2: the contact form page
-
-	In contact form, there is
-	1. a title
-	2. several div containers for inputs
-
-
-	organization of div containers:
-	1. Name div containers
-	2. Identifying info div containers (Gender, DOB, Nationality)
-	3. ID number div containers (ID, SSN)
-	4. Address div containers (Dominican Republic format)
-	5. Parent name div containers
-	6. Contact info div containers
-	7. div containers for selecting insurance and preferred services
-	8. upload info button 
-	9. Yes/No question div containers
-	10. Additional comments div container
-	11. Submit button
-    
-    -->
-
 	<!--div container for the whole app-->
-	<div class="font-cormorant-garamond h-auto flex-col">
+	<div class="font-cormorant-garamond">
 		<!--div container for the contact form-->
 		<div class="flex h-auto place-content-center">
 			<div class="flex-col flex-wrap font-light md:w-180">
@@ -49,7 +23,12 @@
 								class="flex h-auto w-9/10 flex-col gap-3 sm:flex-row md:w-full md:gap-7"
 							>
 								<div class="flex flex-col">
-									<label class="">Patient First name:</label>
+									<label class=""
+										>Patient First name:<span
+											class="text-red-500"
+											>*</span
+										></label
+									>
 
 									<input
 										type="text"
@@ -70,7 +49,12 @@
 								</div>
 
 								<div class="flex flex-col">
-									<label class="">Patient Last name:</label>
+									<label class=""
+										>Patient Last name:<span
+											class="text-red-500"
+											>*</span
+										></label
+									>
 									<!--takes a string, type/enter box-->
 									<input
 										type="lastName"
@@ -85,7 +69,11 @@
 								class="flex h-auto w-full flex-col gap-7 sm:flex-row"
 							>
 								<div class="relative flex flex-col sm:w-1/5">
-									<label class="">Gender:</label>
+									<label class=""
+										>Gender:<span class="text-red-500"
+											>*</span
+										></label
+									>
 
 									<Listbox
 										v-model="gender"
@@ -124,7 +112,12 @@
 								</div>
 
 								<div class="flex flex-col">
-									<label class="">Date of Birth:</label>
+									<label class=""
+										>Date of Birth:<span
+											class="text-red-500"
+											>*</span
+										></label
+									>
 									<input
 										class="input w-70 sm:w-full"
 										type="date"
@@ -134,7 +127,11 @@
 								</div>
 
 								<div class="flex flex-col">
-									<label class="">Nationality:</label>
+									<label class=""
+										>Nationality:<span class="text-red-500"
+											>*</span
+										></label
+									>
 									<input
 										class="input w-70 sm:w-full"
 										type="nationality"
@@ -148,23 +145,16 @@
 								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
 							>
 								<div class="flex flex-col">
-									<label class="">ID Number:</label>
+									<label class=""
+										>ID Number:<span class="text-red-500"
+											>*</span
+										></label
+									>
 									<input
 										class="input w-70 sm:w-full"
 										type="ID"
 										required
 										v-model="data.ID"
-									/>
-								</div>
-								<div class="flex flex-col">
-									<label class=""
-										>Social Security Number:</label
-									>
-									<input
-										class="input w-70 sm:w-full"
-										type="SSN"
-										required
-										v-model="data.SSN"
 									/>
 								</div>
 							</div>
@@ -173,7 +163,12 @@
 								class="flex h-auto w-4/5 flex-col content-start gap-1 md:w-full"
 							>
 								<div class="flex flex-col">
-									<label class="">Address Line 1:</label>
+									<label class=""
+										>Address Line 1:<span
+											class="text-red-500"
+											>*</span
+										></label
+									>
 									<input
 										class="input w-90 sm:w-full"
 										type="address1"
@@ -193,7 +188,12 @@
 
 								<div class="flex flex-col sm:flex-row sm:gap-5">
 									<div class="flex flex-col">
-										<label class="">Postal Code:</label>
+										<label class=""
+											>Postal Code:<span
+												class="text-red-500"
+												>*</span
+											></label
+										>
 										<input
 											class="input w-70 sm:w-full"
 											type="postalCode"
@@ -202,7 +202,11 @@
 										/>
 									</div>
 									<div class="flex flex-col">
-										<label class="">Locality:</label>
+										<label class=""
+											>Locality:<span class="text-red-500"
+												>*</span
+											></label
+										>
 										<input
 											class="input w-70 sm:w-full"
 											type="locality"
@@ -211,7 +215,11 @@
 										/>
 									</div>
 									<div class="flex flex-col">
-										<label class="">Country:</label>
+										<label class=""
+											>Country:<span class="text-red-500"
+												>*</span
+											></label
+										>
 										<input
 											class="input w-70 sm:w-full"
 											type="country"
@@ -257,7 +265,10 @@
 
 								<div class="flex flex-col">
 									<label class=""
-										>Phone Number/Whatsapp:</label
+										>Phone Number/Whatsapp:<span
+											class="text-red-500"
+											>*</span
+										></label
 									>
 									<input
 										class="input w-70 sm:w-full"
@@ -274,7 +285,12 @@
 								<div
 									class="relative flex w-50 flex-col sm:w-1/2"
 								>
-									<label class="">Medical Insurance:</label>
+									<label class=""
+										>Medical Insurance:<span
+											class="text-red-500"
+											>*</span
+										></label
+									>
 
 									<Listbox
 										v-model="insurance"
@@ -412,6 +428,7 @@
 							<div class="flex flex-col">
 								<label
 									>Have you been a paitent previously with us?
+									<span class="text-red-500">*</span>
 								</label>
 								<div class="flex flex-row gap-5 text-xl">
 									<label>
@@ -437,6 +454,7 @@
 								<label class=""
 									>Have you been formally daignosed?</label
 								>
+								<span class="text-red-500">*</span>
 								<div class="flex flex-row gap-5 text-xl">
 									<label>
 										<input
@@ -462,6 +480,7 @@
 									>Do you want to perform a Diagnostic
 									Evaluation on the patient?</label
 								>
+								<span class="text-red-500">*</span>
 								<div class="flex flex-row gap-5 text-xl">
 									<label>
 										<input
@@ -558,7 +577,6 @@ const data = reactive<{
 	parentFirstName: string;
 	parentLastName: string;
 	ID: string;
-	SSN: string;
 	record: string;
 	address1: string;
 	address2: string;
@@ -583,7 +601,6 @@ const data = reactive<{
 	parentFirstName: "",
 	parentLastName: "",
 	ID: "",
-	SSN: "",
 	record: "",
 	address1: "",
 	address2: "",
@@ -657,8 +674,12 @@ async function handleSubmit() {
 		}
 
 		clearForm();
-	} catch {
-		throw new Error("Could not submit form");
+	} catch (e) {
+		// TODO make better than bandaid
+		console.log(formData.email);
+		console.log(e.statusMessage + ":");
+		console.log(e.data);
+		alert("Form sumbit encounered an error, check console");
 	}
 }
 
@@ -672,7 +693,6 @@ function clearForm() {
 	data.parentFirstName = "";
 	data.parentLastName = "";
 	data.ID = "";
-	data.SSN = "";
 	data.record = "";
 	data.address1 = "";
 	data.address2 = "";

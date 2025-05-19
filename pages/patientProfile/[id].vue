@@ -1,5 +1,5 @@
 <template>
-	<div class="font-sc-encode h-auto min-h-full grow p-4">
+	<div class="font-sc-encode p-4">
 		<!-- Dashboard Header -->
 		<div class="mb-4 flex flex-row items-center">
 			<h1 class="font-cormorant-garamond text-3xl font-bold text-nowrap">
@@ -489,6 +489,9 @@ function addQuestion() {
 
 function removeQuestion(i) {
 	progressReportQuestions.value.splice(i, 1);
+	if (progressReportQuestions.value.length < 1) {
+		progressReportQuestions.value.push({ question: "", answer: "" });
+	}
 }
 
 // Methods to open/close modals.

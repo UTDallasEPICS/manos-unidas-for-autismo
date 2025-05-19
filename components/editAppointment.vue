@@ -160,9 +160,11 @@ const form = reactive({
 
 onMounted(async () => {
 	try {
-		const therapistResult = await $fetch<Therapist[]>("/api/therapists");
+		const therapistResult = await $fetch<Therapist[]>(
+			"/api/session/therapists"
+		);
 		const sessionTypeResult =
-			await $fetch<SessionType[]>("/api/sessionTypes");
+			await $fetch<SessionType[]>("/api/session/types");
 
 		console.log("Therapists:", therapistResult);
 		console.log("SessionTypes:", sessionTypeResult);
@@ -195,21 +197,15 @@ async function submitForm() {
 
 	console.log("Submitted session data:", sessionData);
 
-	const { error: putError } = await useFetch(
-		`/api/session/${props.session.id}`,
-		{
-			method: "PUT",
-			body: sessionData,
-		}
-	);
+	const { error: putError } = await useFetch(`/api/session/info`, {
+		method: "PUT",
+		body: sessionData,
+	});
 
 	if (putError.value) {
 		alert("Failed to save changes.");
 		console.error("PUT error:", putError.value);
-	} else {
-		alert("Changes saved successfully.");
 	}
-
 	location.reload();
 }
 
