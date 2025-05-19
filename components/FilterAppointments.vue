@@ -111,7 +111,7 @@ const filteredTypes = ref<string[]>([]);
 // gets the available session types from the database
 async function fetchSessionTypes(): Promise<SessionType[]> {
 	try {
-		const types = await useFetch("./api/session/sessionType", {
+		const types = await useFetch("./api/session/types", {
 			method: "GET",
 		});
 

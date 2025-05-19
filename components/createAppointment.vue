@@ -195,11 +195,11 @@ interface SessionType {
 
 const { data: therapistsData = ref([] as Therapist[]) } = await useFetch<
 	Therapist[]
->("/api/therapists", { default: () => [] });
+>("/api/session/therapists", { default: () => [] });
 
 const { data: typesData = ref([] as SessionType[]) } = await useFetch<
 	SessionType[]
->("/api/session/sessionType", { default: () => [] });
+>("/api/session/types", { default: () => [] });
 
 const therapistOptions = computed(() =>
 	therapistsData.value.map((t) => ({
