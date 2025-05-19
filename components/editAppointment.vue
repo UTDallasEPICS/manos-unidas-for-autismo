@@ -205,10 +205,7 @@ async function submitForm() {
 	if (putError.value) {
 		alert("Failed to save changes.");
 		console.error("PUT error:", putError.value);
-	} else {
-		alert("Changes saved successfully.");
 	}
-
 	location.reload();
 }
 
