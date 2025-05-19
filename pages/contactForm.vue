@@ -674,8 +674,12 @@ async function handleSubmit() {
 		}
 
 		clearForm();
-	} catch {
-		throw new Error("Could not submit form");
+	} catch (e) {
+		// TODO make better than bandaid
+		console.log(formData.email);
+		console.log(e.statusMessage + ":");
+		console.log(e.data);
+		alert("Form sumbit encounered an error, check console");
 	}
 }
 
