@@ -1,5 +1,5 @@
 <template>
-	<div class="font-sc-encode flex min-h-screen flex-col p-4">
+	<div class="font-sc-encode p-4">
 		<!-- Header + Search -->
 		<div class="mb-4 flex items-center">
 			<h1 class="font-cormorant-garamond text-2xl font-bold">

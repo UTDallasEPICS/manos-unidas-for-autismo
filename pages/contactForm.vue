@@ -26,7 +26,7 @@
     -->
 
 	<!--div container for the whole app-->
-	<div class="font-cormorant-garamond h-auto flex-col">
+	<div class="font-cormorant-garamond">
 		<!--div container for the contact form-->
 		<div class="flex h-auto place-content-center">
 			<div class="flex-col flex-wrap font-light md:w-180">

@@ -1,7 +1,7 @@
 <template>
-	<div class="h-screen">
+	<div class="flex h-screen w-screen flex-col">
 		<NavBar />
-		<NuxtPage />
+		<NuxtPage class="grow" />
 		<Footer />
 	</div>
 </template>
