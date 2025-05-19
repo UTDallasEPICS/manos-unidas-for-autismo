@@ -489,6 +489,9 @@ function addQuestion() {
 
 function removeQuestion(i) {
 	progressReportQuestions.value.splice(i, 1);
+	if (progressReportQuestions.value.length < 1) {
+		progressReportQuestions.value.push({ question: "", answer: "" });
+	}
 }
 
 // Methods to open/close modals.
