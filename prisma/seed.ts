@@ -167,6 +167,16 @@ const admin = [
 		contactPref: "EMAIL",
 		type: "IT_SERVICE",
 	},
+	{
+		fName: "Alex",
+		mInit: null,
+		lName: "Miller",
+		email: "alex.miller@npts.tech",
+		phone: "000-000-0007",
+		whatsApp: null,
+		contactPref: "EMAIL",
+		type: "ADMIN",
+	},
 ];
 const therapists = [
 	// therapists
