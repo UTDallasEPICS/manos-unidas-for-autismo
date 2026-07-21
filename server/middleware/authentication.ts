@@ -20,22 +20,6 @@ export default defineEventHandler(async (event) => {
 	const session = await auth.api.getSession({
 		headers: event.headers,
 	});
-	/*const cookies = parseCookies(event);
-	if (cookies && cookies.userId) {
-		const userId: string = cookies.userId;
-		const user = await prisma.user.findUnique({
-			where: {
-				id: userId,
-			},
-			include: {
-				NonEmployee: {
-					include: {
-						Children: true,
-						Patient: true,
-					},
-				},
-			},
-		});*/
 
 	if (session?.user) {
 		const user = await prisma.user.findUnique({
@@ -66,6 +50,7 @@ export default defineEventHandler(async (event) => {
 			if (user.type === UserType.ADMIN) {
 				event.context.permissions[AccessPermission.ADMIN] = true;
 				event.context.permissions[AccessPermission.STAFF] = true;
+				event.context.permissions[AccessPermission.USER_SERVICE] = true;
 			}
 			if (user.NonEmployee?.Children.length) {
 				event.context.permissions[AccessPermission.PARENT] = true;

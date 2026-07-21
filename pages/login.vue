@@ -73,7 +73,6 @@
 </template>
 
 <script lang="ts" setup>
-import { $fetch } from "ofetch";
 import { ref } from "#imports";
 import { authClient } from "~/utils/auth-client";
 import { useDashboardNavigation } from "~/composables/auth/useDashboardNavigation";
@@ -83,21 +82,6 @@ const otp = ref("");
 const step = ref<"email" | "otp">("email");
 const loading = ref(false);
 const error = ref("");
-
-/*async function handleSubmit() {
-	await $fetch("/api/login", {
-		method: "GET",
-		query: { email: email.value },
-	});
-
-	// Fetch fresh permissions after login
-	await $fetch("/api/updatePermissions", {
-		method: "GET",
-	});
-
-	const { dashboardNavigation } = useDashboardNavigation();
-	dashboardNavigation();
-}*/
 
 async function handleSendOtp() {
 	error.value = "";
@@ -132,9 +116,8 @@ async function handleVerifyOtp() {
 		}
 
 		// Fetch fresh permissions after login
-		await $fetch("/api/updatePermissions", {
-			method: "GET",
-		});
+		const { fetchMe } = useAuthState();
+		await fetchMe();
 
 		const { dashboardNavigation } = useDashboardNavigation();
 		dashboardNavigation();

@@ -57,14 +57,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useFetch, useCookie, navigateTo } from "#imports";
+import { useFetch, navigateTo } from "#imports";
 import { Search } from "lucide-vue-next";
 import { AccessPermission } from "~/types/permissions";
 
 // typed cookie: map of permission enum -> boolean, or null when not present
-const access = useCookie<Record<AccessPermission, boolean> | null>(
-	"AccessPermission"
-);
+const { access } = useAuthState();
 
 interface User {
 	id: string;

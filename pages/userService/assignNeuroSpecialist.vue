@@ -71,12 +71,10 @@
 import { computed, ref } from "vue";
 import AssignModal from "./assignModal.vue";
 import RefreshButton from "./refreshButton.vue";
-import { useFetch, useCookie } from "#imports";
+import { useFetch } from "#imports";
 import { AccessPermission } from "~/types/permissions";
 
-const access = useCookie<Record<AccessPermission, boolean> | null>(
-	"AccessPermission"
-);
+const { access } = useAuthState();
 
 interface ReferralRequest {
 	id: string;
@@ -98,8 +96,9 @@ async function getReferralRequests() {
 		return useFetch<ReferralRequest[]>("/api/session/referrals");
 	}
 	return {
-		data: { value: [] },
+		data: { value: [] as ReferralRequest[] },
 		error: "User not authorized to view referral requests",
+		refresh: async () => {},
 	};
 }
 

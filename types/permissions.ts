@@ -69,12 +69,15 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 const apiAccessMap: {
 	[route: string]: { [method: string]: AccessPermission };
 } = {
-	"/api/login": {
+	"/api/me": {
+		GET: AccessPermission.PUBLIC,
+	},
+	/*"/api/login": {
 		POST: AccessPermission.PUBLIC,
 	},
 	"/api/updatePermissions": {
 		GET: AccessPermission.PUBLIC,
-	},
+	},*/
 	"/api/contactForm/form": {
 		POST: AccessPermission.PUBLIC,
 	},

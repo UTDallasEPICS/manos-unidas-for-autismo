@@ -1,15 +1,20 @@
 import { useLocalePath } from "#imports";
 
 export function useLogout() {
-	const { userId, access } = useAuthState();
+	const { clearMe } = useAuthState();
 	const localePath = useLocalePath();
 
 	async function logout() {
-		userId.value = null;
-		access.value = null;
+		// Sign out of better-auth session
+		try {
+			await authClient.signOut();
+		} catch (err) {
+			console.error("Sign out error:", err);
+		}
 
-		// not having await seems to cause an issue with the order of page components
-		//  putting the footer above the page content
+		// Clear cached permissions state
+		clearMe();
+
 		await navigateTo(localePath("index"));
 	}
 
