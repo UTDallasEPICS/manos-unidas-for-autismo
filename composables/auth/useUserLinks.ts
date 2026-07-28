@@ -51,7 +51,12 @@ export function useUserLinks() {
 				to: "patient-viewContactForms",
 				label: "Review Forms",
 			});
+			legalRoutes.push({
+				to: "userService-assignNeuroSpecialist",
+				label: "Assign Specialist",
+			});
 		}
+
 		if (val[AP.ADMIN]) {
 			legalRoutes.push({
 				to: "admin-employeeSearch",
