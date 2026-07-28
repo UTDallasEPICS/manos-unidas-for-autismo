@@ -83,6 +83,7 @@
 							<input
 								type="date"
 								v-model="form.date"
+								:min="minDate"
 								required
 								class="input w-full"
 							/>
@@ -202,6 +203,12 @@ const therapistOptions = computed(() =>
 	}))
 );
 
+const minDate = computed(() => {
+	const today = new Date();
+	//return today.toISOString().split("T")[0]; // "YYYY-MM-DD"
+	return today.toLocaleDateString("en-CA"); // "YYYY-MM-DD" in local time
+});
+
 const hasSessionTypes = computed(() => {
 	return typeOptions.value && typeOptions.value.length > 0;
 });
@@ -225,6 +232,11 @@ async function submitForm() {
 	}
 
 	const dateTime = new Date(`${form.date}T${form.time}`);
+
+	if (dateTime < new Date()) {
+		alert("Cannot create appointments in the past.");
+		return;
+	}
 
 	const payload = {
 		therapistId: form.therapist,
