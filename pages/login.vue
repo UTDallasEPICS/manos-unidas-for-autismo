@@ -115,9 +115,9 @@ async function handleVerifyOtp() {
 			return;
 		}
 
-		// Fetch fresh permissions after login
-		const { fetchMe } = useAuthState();
-		await fetchMe();
+		// Load the session (with permissions) into state before we route.
+		const { refresh } = useAuthState();
+		await refresh();
 
 		const { dashboardNavigation } = useDashboardNavigation();
 		dashboardNavigation();

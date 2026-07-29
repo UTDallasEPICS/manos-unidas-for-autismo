@@ -1,19 +1,19 @@
 import { useLocalePath } from "#imports";
+import { authClient } from "~/utils/auth-client";
 
 export function useLogout() {
-	const { clearMe } = useAuthState();
 	const localePath = useLocalePath();
+	const { clear } = useAuthState();
 
 	async function logout() {
-		// Sign out of better-auth session
 		try {
 			await authClient.signOut();
 		} catch (err) {
 			console.error("Sign out error:", err);
 		}
 
-		// Clear cached permissions state
-		clearMe();
+		// Drop the cached session state so UI updates immediately.
+		clear();
 
 		await navigateTo(localePath("index"));
 	}

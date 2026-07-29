@@ -4,7 +4,7 @@ import type {
 	WorkshopType,
 } from "@prisma/client";
 
-export default defineEventHandler(async (event) => {
+export default defineAuthedHandler({ access: "PUBLIC" }, async (event) => {
 	const body = await readBody(event);
 	console.log("BODY:", body);
 	console.log(Object.keys(body));

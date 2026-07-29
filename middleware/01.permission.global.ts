@@ -1,43 +1,28 @@
 import { defineNuxtRouteMiddleware, navigateTo } from "nuxt/app";
 import { pageAccessMap, AccessPermission } from "~/types/permissions";
 
-export default defineNuxtRouteMiddleware(async (to) => {
-	const { access, userId, fetchMe } = useAuthState();
+// UX-only routing guard. Real authorization is enforced server-side (the
+// authentication middleware + defineAuthedHandler on every endpoint). This just
+// improves the client experience: send anonymous users to /login, and bounce
+// logged-in users who lack a page's permission back to their dashboard.
+export default defineNuxtRouteMiddleware((to) => {
+	const { userId, access } = useAuthState();
 
-	// Fetch permissions
-	await fetchMe();
+	const required = pageAccessMap[to.name as string];
 
-	const permissions = access.value;
-	const requiredAccessPermission = pageAccessMap[to.name as string];
-
-	// Allow PUBLIC routes without authentication
-	if (requiredAccessPermission === AccessPermission.PUBLIC) {
-		console.log("Public route, navigation authorized");
+	// Public routes, or routes not in the map: let the page handle it.
+	if (!required || required === AccessPermission.PUBLIC) {
 		return;
 	}
 
-	// Unknown route — allow and let the page handle it
-	if (!requiredAccessPermission) {
-		console.log("Unknown route, navigation authorized");
-		return;
-	}
-
-	// Not logged in
+	// Not logged in → login.
 	if (!userId.value) {
-		console.log("Not logged in, redirecting to login");
 		return navigateTo("/login");
 	}
 
-	// Check permission
-	if (
-		permissions &&
-		typeof permissions === "object" &&
-		permissions[requiredAccessPermission as AccessPermission]
-	) {
-		console.log("Navigation authorized");
-		return;
+	// Logged in but missing the page's required permission → their dashboard.
+	if (!(access.value && access.value[required])) {
+		const { dashboardNavigation } = useDashboardNavigation();
+		return dashboardNavigation();
 	}
-
-	console.log("Navigation unauthorized, redirecting to login");
-	return navigateTo("/login");
 });

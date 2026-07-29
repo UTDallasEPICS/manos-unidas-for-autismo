@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { prisma } from "~/server/utils/prisma";
+import { AccessPermission } from "~/types/permissions";
 
 type AppointmentRequestUpdateDelegate = {
 	update: (args: {
@@ -61,23 +62,26 @@ async function assignEvaluator(
 	});
 }
 
-export default defineEventHandler(async (event) => {
-	const { appointmentRequestId, evaluatorId } = await validateBody(
-		event,
-		assignEvaluatorSchema
-	);
+export default defineAuthedHandler(
+	{ access: AccessPermission.USER_SERVICE },
+	async (event) => {
+		const { appointmentRequestId, evaluatorId } = await validateBody(
+			event,
+			assignEvaluatorSchema
+		);
 
-	const evaluatorExists = await resolveEvaluatorExists(evaluatorId);
-	if (!evaluatorExists) {
-		throw createError({
-			statusCode: 404,
-			statusMessage: "Evaluator not found.",
-		});
-	}
+		const evaluatorExists = await resolveEvaluatorExists(evaluatorId);
+		if (!evaluatorExists) {
+			throw createError({
+				statusCode: 404,
+				statusMessage: "Evaluator not found.",
+			});
+		}
 
-	try {
-		return await assignEvaluator(appointmentRequestId, evaluatorId);
-	} catch (e) {
-		handlePrismaError(e);
+		try {
+			return await assignEvaluator(appointmentRequestId, evaluatorId);
+		} catch (e) {
+			handlePrismaError(e);
+		}
 	}
-});
+);

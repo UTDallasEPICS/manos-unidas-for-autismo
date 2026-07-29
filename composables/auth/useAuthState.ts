@@ -1,55 +1,44 @@
-import type { AccessVal } from "~/types/permissions";
+import type { AccessVal, SessionUser } from "~/types/permissions";
 
-interface MeResponse {
-	user: {
-		id: string;
-		fName: string;
-		lName: string;
-		email: string;
-		type: string | null;
-	} | null;
-	permissions: AccessVal;
-}
+type AuthState = { user: SessionUser | null; permissions: AccessVal } | null;
 
+/**
+ * Reactive auth state, sourced from the Better Auth session (which carries our
+ * custom `permissions` via the customSession plugin). Backed by Nuxt `useState`
+ * so it is SSR-serialised and hydrated once; the `plugins/auth-session` plugin
+ * seeds it during SSR with the request cookies.
+ *
+ * NOTE: these values drive UX only (nav links, conditional buttons). Real
+ * authorization is enforced server-side. Never trust these for security.
+ */
 export function useAuthState() {
-	const _meState = useState<MeResponse | null>("meState", () => null);
-	const _meLoading = useState<boolean>("meLoading", () => false);
-	const _meFetched = useState<boolean>("meFetched", () => false);
+	const authState = useState<AuthState>("auth-state", () => null);
 
-	const userId = computed(() => _meState.value?.user?.id ?? null);
-	const access = computed(() => _meState.value?.permissions ?? null);
-	const user = computed(() => _meState.value?.user ?? null);
+	const user = computed<SessionUser | null>(
+		() => authState.value?.user ?? null
+	);
+	const userId = computed<string | null>(() => user.value?.id ?? null);
+	const access = computed<AccessVal | null>(
+		() => authState.value?.permissions ?? null
+	);
 
-	async function fetchMe() {
-		if (_meFetched.value || _meLoading.value) return;
-		_meLoading.value = true;
+	async function refresh() {
 		try {
-			const headers = useRequestHeaders(["cookie"]);
-			const data = await $fetch<MeResponse>("/api/me", {
-				headers,
-			});
-			_meState.value = data;
-			if (data.user) {
-				_meFetched.value = true;
-			}
+			const data = await $fetch<{
+				user?: SessionUser | null;
+				permissions?: AccessVal;
+			} | null>("/api/auth/get-session");
+			authState.value = data?.user
+				? { user: data.user, permissions: data.permissions ?? {} }
+				: null;
 		} catch {
-			_meState.value = null;
-		} finally {
-			_meLoading.value = false;
+			authState.value = null;
 		}
 	}
 
-	function clearMe() {
-		_meState.value = null;
-		_meFetched.value = false;
+	function clear() {
+		authState.value = null;
 	}
 
-	return {
-		userId,
-		access,
-		user,
-		fetchMe,
-		clearMe,
-		isLoading: computed(() => _meLoading.value),
-	};
+	return { user, userId, access, refresh, clear };
 }

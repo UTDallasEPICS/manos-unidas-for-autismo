@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { emailOTP } from "better-auth/plugins";
+import { emailOTP, customSession } from "better-auth/plugins";
 import { sendEmail } from "./email";
+import { computePermissions } from "./permissions";
 
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
@@ -49,6 +50,28 @@ export const auth = betterAuth({
 					throw err;
 				}
 			},
+		}),
+		// Attach our permission set + a whitelisted user to every session, so
+		// roles travel with getSession()/useSession() on both server and client.
+		// This is what makes a separate /api/me endpoint unnecessary.
+		customSession(async ({ user, session }) => {
+			const dbUser = await prisma.user.findUnique({
+				where: { id: user.id },
+				include: {
+					NonEmployee: { include: { Children: true, Patient: true } },
+				},
+			});
+			return {
+				permissions: computePermissions(dbUser),
+				user: {
+					id: user.id,
+					fName: dbUser?.fName ?? "",
+					lName: dbUser?.lName ?? "",
+					email: user.email,
+					type: dbUser?.type ?? null,
+				},
+				session,
+			};
 		}),
 	],
 });
