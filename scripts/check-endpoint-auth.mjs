@@ -23,7 +23,9 @@ function walk(dir) {
 
 const offenders = walk(ROOT).filter((file) => {
 	if (EXEMPT.some((e) => file.endsWith(e))) return false;
-	return !readFileSync(file, "utf8").includes("defineAuthedHandler");
+	// Require the call syntax `defineAuthedHandler(` so a mere mention of the
+	// name (e.g. in a comment) can't satisfy the check.
+	return !readFileSync(file, "utf8").includes("defineAuthedHandler(");
 });
 
 if (offenders.length) {
