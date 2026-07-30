@@ -66,12 +66,10 @@
 import { computed, ref } from "vue";
 import AssignModal from "./assignModal.vue";
 import RefreshButton from "./refreshButton.vue";
-import { useFetch, useCookie } from "#imports";
+import { useFetch } from "#imports";
 import { AccessPermission } from "~/types/permissions";
 
-const access = useCookie<Record<AccessPermission, boolean> | null>(
-	"AccessPermission"
-);
+const { access } = useAuthState();
 
 interface Appointment {
 	id: string;
@@ -93,8 +91,9 @@ async function getAppointments() {
 		return useFetch<Appointment[]>("/api/session/appointments");
 	}
 	return {
-		data: { value: [] },
+		data: { value: [] as Appointment[] },
 		error: "User not authorized to view appointment requests",
+		refresh: async () => {},
 	};
 }
 

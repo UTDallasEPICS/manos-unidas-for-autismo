@@ -9,7 +9,7 @@
 		>
 			<!-- Header -->
 			<div class="mb-6 flex items-center justify-between">
-				<h2 class="font-cormorant-garamond text-3xl">
+				<h2 class="font-cormorant-garamond text-3xl text-gray-500">
 					Full Request — #{{ request.id }}
 				</h2>
 				<button
@@ -34,7 +34,9 @@
 
 			<!-- Contact Person -->
 			<section class="mb-6">
-				<h3 class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl">
+				<h3
+					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
+				>
 					{{
 						request.isAdult
 							? "Patient / Contact Person"
@@ -44,7 +46,7 @@
 				<div class="grid grid-cols-2 gap-4">
 					<div>
 						<p class="text-sm text-gray-500">Full Name</p>
-						<p>
+						<p class="text-gray-500">
 							{{ request.firstName }}
 							{{ request.middleName ?? "" }}
 							{{ request.lastName }}
@@ -52,57 +54,63 @@
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">ID Card (Cédula)</p>
-						<p>{{ request.idNumber }}</p>
+						<p class="text-gray-500">{{ request.idNumber }}</p>
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">Email</p>
-						<p>{{ request.email }}</p>
+						<p class="text-gray-500">{{ request.email }}</p>
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">Phone</p>
-						<p>
+						<p class="text-gray-500">
 							{{ request.phone.map((p) => p.number).join(", ") }}
 						</p>
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">WhatsApp</p>
-						<p>{{ request.whatsapp }}</p>
+						<p class="text-gray-500">{{ request.whatsapp }}</p>
 					</div>
 				</div>
 			</section>
 
 			<!-- Address -->
 			<section class="mb-6">
-				<h3 class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl">
+				<h3
+					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
+				>
 					Address
 				</h3>
 				<div class="grid grid-cols-2 gap-4">
 					<div>
 						<p class="text-sm text-gray-500">Street</p>
-						<p>{{ request.streetName }} {{ request.streetNum }}</p>
+						<p class="text-gray-500">
+							{{ request.streetName }} {{ request.streetNum }}
+						</p>
 					</div>
 					<div v-if="request.buildingNum">
 						<p class="text-sm text-gray-500">
 							Building / Apartment
 						</p>
-						<p>{{ request.buildingNum }}</p>
+						<p class="text-gray-500">{{ request.buildingNum }}</p>
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">Postal Code</p>
-						<p>{{ request.postCode }}</p>
+						<p class="text-gray-500">{{ request.postCode }}</p>
 					</div>
 				</div>
 			</section>
 
 			<!-- Patient Info (only shown if parent is filling out) -->
 			<section v-if="!request.isAdult" class="mb-6">
-				<h3 class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl">
+				<h3
+					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
+				>
 					Patient Information
 				</h3>
 				<div class="grid grid-cols-2 gap-4">
 					<div>
 						<p class="text-sm text-gray-500">Patient Name</p>
-						<p>
+						<p class="text-gray-500">
 							{{ request.patientFirstName }}
 							{{ request.patientMiddleName ?? "" }}
 							{{ request.patientLastName }}
@@ -110,45 +118,55 @@
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">Age</p>
-						<p>{{ request.patientAge }}</p>
+						<p class="text-gray-500">{{ request.patientAge }}</p>
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">Diagnosed</p>
-						<p>{{ request.diagnosed ? "Yes" : "No" }}</p>
+						<p class="text-gray-500">
+							{{ request.diagnosed ? "Yes" : "No" }}
+						</p>
 					</div>
 				</div>
 			</section>
 
 			<!-- Patient Info for adult -->
 			<section v-else class="mb-6">
-				<h3 class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl">
+				<h3
+					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
+				>
 					Patient Details
 				</h3>
 				<div class="grid grid-cols-2 gap-4">
 					<div>
 						<p class="text-sm text-gray-500">Age</p>
-						<p>{{ request.patientAge }}</p>
+						<p class="text-gray-500">{{ request.patientAge }}</p>
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">Diagnosed</p>
-						<p>{{ request.diagnosed ? "Yes" : "No" }}</p>
+						<p class="text-gray-500">
+							{{ request.diagnosed ? "Yes" : "No" }}
+						</p>
 					</div>
 				</div>
 			</section>
 
 			<!-- History -->
 			<section class="mb-6">
-				<h3 class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl">
+				<h3
+					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
+				>
 					History
 				</h3>
 				<div class="grid grid-cols-2 gap-4">
 					<div>
 						<p class="text-sm text-gray-500">Previous Patient</p>
-						<p>{{ request.returnPatient ? "Yes" : "No" }}</p>
+						<p class="text-gray-500">
+							{{ request.returnPatient ? "Yes" : "No" }}
+						</p>
 					</div>
 					<div v-if="request.previousVisitDate">
 						<p class="text-sm text-gray-500">Previous Visit</p>
-						<p>
+						<p class="text-gray-500">
 							{{
 								new Date(
 									request.previousVisitDate
@@ -160,24 +178,30 @@
 						<p class="text-sm text-gray-500">
 							Wants Diagnostic Evaluation
 						</p>
-						<p>{{ request.wantsEval ? "Yes" : "No" }}</p>
+						<p class="text-gray-500">
+							{{ request.wantsEval ? "Yes" : "No" }}
+						</p>
 					</div>
 					<div>
 						<p class="text-sm text-gray-500">Has Referral</p>
-						<p>{{ request.hasReferral ? "Yes" : "No" }}</p>
+						<p class="text-gray-500">
+							{{ request.hasReferral ? "Yes" : "No" }}
+						</p>
 					</div>
 				</div>
 			</section>
 
 			<!-- Services -->
 			<section class="mb-6">
-				<h3 class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl">
+				<h3
+					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
+				>
 					Services Requested
 				</h3>
 
 				<div v-if="request.therapies.length" class="mb-4">
 					<p class="mb-1 text-sm text-gray-500">Therapies</p>
-					<ul class="ml-5 list-disc">
+					<ul class="ml-5 list-disc text-gray-500">
 						<li v-for="t in request.therapies" :key="t.name">
 							{{ therapyLabel(t.name) }}
 						</li>
@@ -188,7 +212,7 @@
 					<p class="mb-1 text-sm text-gray-500">
 						Complementary Services
 					</p>
-					<ul class="ml-5 list-disc">
+					<ul class="ml-5 list-disc text-gray-500">
 						<li
 							v-for="s in request.complementaryServices"
 							:key="s.name"
@@ -202,7 +226,7 @@
 					<p class="mb-1 text-sm text-gray-500">
 						Workshops / Classes
 					</p>
-					<ul class="ml-5 list-disc">
+					<ul class="ml-5 list-disc text-gray-500">
 						<li v-for="w in request.workshops" :key="w.name">
 							{{ workshopLabel(w.name) }}
 						</li>

@@ -16,7 +16,7 @@ const validateSchema = patientBaseSchema
 	})
 	.strict();
 
-export default defineEventHandler(async (event) => {
+export default defineAuthedHandler({ access: "PUBLIC" }, async (event) => {
 	const data = await validateBody(event, validateSchema);
 
 	try {

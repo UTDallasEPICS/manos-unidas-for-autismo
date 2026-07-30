@@ -11,7 +11,7 @@
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"checker": "eslint && prettier . --check",
+		"checker": "node scripts/check-endpoint-auth.mjs && eslint && prettier . --check",
 		"prepare": "husky"
 	},
 	"prisma": {

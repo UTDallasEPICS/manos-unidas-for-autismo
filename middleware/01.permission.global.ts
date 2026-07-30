@@ -1,97 +1,28 @@
-import { defineNuxtRouteMiddleware } from "nuxt/app";
-import { pageAccessMap, AccessPermission } from "~/types/permissions"; // <-- Import AccessPermission
+import { defineNuxtRouteMiddleware, navigateTo } from "nuxt/app";
+import { pageAccessMap, AccessPermission } from "~/types/permissions";
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
-	const userId = useCookie("userId");
-	const accessCookie = useCookie("AccessPermission");
-	const permissions = accessCookie.value;
-	const { dashboardNavigation } = useDashboardNavigation();
+// UX-only routing guard. Real authorization is enforced server-side (the
+// authentication middleware + defineAuthedHandler on every endpoint). This just
+// improves the client experience: send anonymous users to /login, and bounce
+// logged-in users who lack a page's permission back to their dashboard.
+export default defineNuxtRouteMiddleware((to) => {
+	const { userId, access } = useAuthState();
 
-	console.log(
-		"Attempting to navigating\nfrom: " +
-			from.path +
-			", to: " +
-			to.path +
-			"\nRoute name: '" +
-			to.name +
-			"'"
-	);
+	const required = pageAccessMap[to.name as string];
 
-	// TODO, handle when navigating back to index page while logged in
-	if (to.path == "/") {
-		if (userId.value) {
-			console.log("Logged in user at index, redirecting to dashboard");
-			return dashboardNavigation();
-		}
-		console.log("Navigation authorized");
+	// Public routes, or routes not in the map: let the page handle it.
+	if (!required || required === AccessPermission.PUBLIC) {
 		return;
 	}
 
-	// page does not exist in pageAccessMap
-	if (!pageAccessMap[to.name]) {
-		console.log("Route not found in pageAccessMap. to.name:", to.name);
-		console.log("pageAccessMap keys:", Object.keys(pageAccessMap));
-		if (!from.path || to.path == from.path) {
-			console.log("Unknown path, navigating to home");
-			return dashboardNavigation();
-		} else {
-			console.log("Unknown path, returning to: " + from.path);
-			return abortNavigation();
-		}
+	// Not logged in → login.
+	if (!userId.value) {
+		return navigateTo("/login");
 	}
 
-	// Get required permission for this route
-	const requiredAccessPermission: string = pageAccessMap[to.name];
-
-	// Allow PUBLIC routes without authentication
-	if (requiredAccessPermission === AccessPermission.PUBLIC) {
-		console.log("Public route, navigation authorized");
-		return;
+	// Logged in but missing the page's required permission → their dashboard.
+	if (!(access.value && access.value[required])) {
+		const { dashboardNavigation } = useDashboardNavigation();
+		return dashboardNavigation();
 	}
-
-	// For non-public routes, check if user has permission
-	if (
-		!(
-			permissions &&
-			typeof permissions === "object" &&
-			permissions[requiredAccessPermission]
-		)
-	) {
-		if (!from.path || to.path == from.path) {
-			console.log("Unauthorized path, navigating to home");
-			return dashboardNavigation();
-		} else {
-			console.log("Unauthorized path, returning to: " + from.path);
-			return abortNavigation();
-		}
-	}
-
-	// enforce patient can only view their own profile
-	if (to.name === "myProfile-id" && to.params.id !== userId.value) {
-		if (!from.path || to.path == from.path) {
-			console.log("Unauthorized path, navigating to home");
-			return dashboardNavigation();
-		} else {
-			console.log("Unauthorized path, returning to: " + from.path);
-			return abortNavigation();
-		}
-	}
-
-	// enforce parent can only view their own children's profiles
-	if (to.name === "childProfile-id") {
-		// fetch children
-		const childIds = await $fetch(
-			`/api/parent/childrenIds?pId=${userId.value}`
-		);
-		if (!childIds.includes(to.params.id)) {
-			if (!from.path || to.path == from.path) {
-				console.log("Unauthorized path, navigating to home");
-				return dashboardNavigation();
-			} else {
-				console.log("Unauthorized path, returning to: " + from.path);
-				return abortNavigation();
-			}
-		}
-	}
-	console.log("Navigation authorized");
 });

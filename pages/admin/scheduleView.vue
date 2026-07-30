@@ -53,7 +53,7 @@ schedule view page, clicking the buttons changes the week that's being displayed
 </template>
 
 <script setup lang="ts">
-import { ref, computed, useCookie, definePageMeta } from "#imports";
+import { ref, computed, definePageMeta } from "#imports";
 import { AccessPermission } from "~/types/permissions";
 import CreateAppointment from "~/components/schedule/CreateAppointment.vue";
 import FilterAppointments from "~/components/schedule/FilterAppointments.vue";
@@ -63,7 +63,7 @@ definePageMeta({
 	path: "/scheduleView",
 });
 
-const access = useCookie<Record<string, boolean> | null>("AccessPermission");
+const { access } = useAuthState();
 
 const permissions = computed(() => {
 	const actions = {

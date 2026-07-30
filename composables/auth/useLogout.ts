@@ -1,15 +1,20 @@
 import { useLocalePath } from "#imports";
+import { authClient } from "~/utils/auth-client";
 
 export function useLogout() {
-	const { userId, access } = useAuthState();
 	const localePath = useLocalePath();
+	const { clear } = useAuthState();
 
 	async function logout() {
-		userId.value = null;
-		access.value = null;
+		try {
+			await authClient.signOut();
+		} catch (err) {
+			console.error("Sign out error:", err);
+		}
 
-		// not having await seems to cause an issue with the order of page components
-		//  putting the footer above the page content
+		// Drop the cached session state so UI updates immediately.
+		clear();
+
 		await navigateTo(localePath("index"));
 	}
 

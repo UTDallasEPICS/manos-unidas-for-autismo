@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AccessPermission } from "~/types/permissions";
 
 const sessionSchema = z.object({
 	typeId: z.string(),
@@ -11,24 +12,27 @@ const sessionSchema = z.object({
 	duration: z.number().gte(1),
 });
 
-export default defineEventHandler(async (event) => {
-	const { typeId, time, comment, maxAttendance, therapistId, duration } =
-		await validateBody(event, sessionSchema);
+export default defineAuthedHandler(
+	{ access: AccessPermission.USER_SERVICE },
+	async (event) => {
+		const { typeId, time, comment, maxAttendance, therapistId, duration } =
+			await validateBody(event, sessionSchema);
 
-	try {
-		const newSession = await prisma.session.create({
-			data: {
-				typeId,
-				therapistId,
-				time,
-				comment,
-				maxAttendance,
-				duration,
-			},
-		});
+		try {
+			const newSession = await prisma.session.create({
+				data: {
+					typeId,
+					therapistId,
+					time,
+					comment,
+					maxAttendance,
+					duration,
+				},
+			});
 
-		return newSession;
-	} catch (e) {
-		handlePrismaError(e);
+			return newSession;
+		} catch (e) {
+			handlePrismaError(e);
+		}
 	}
-});
+);

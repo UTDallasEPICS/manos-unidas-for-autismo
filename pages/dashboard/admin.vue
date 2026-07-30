@@ -19,7 +19,7 @@ const adminButtons = [
 		label: "View New Contact Forms",
 	},
 	{
-		path: "/employeeSearch",
+		path: "/admin/employeeSearch",
 		icon: Users,
 		label: "View Employees",
 	},

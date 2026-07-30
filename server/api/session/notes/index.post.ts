@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AccessPermission } from "~/types/permissions";
 
 const therapyNoteSchema = z.object({
 	patientId: z.string(),
@@ -14,73 +15,83 @@ const therapyNoteSchema = z.object({
 	...therapyNoteOptionalFields,
 });
 
-export default defineEventHandler(async (event) => {
-	const data = await validateBody(event, therapyNoteSchema);
-	// at least one objective required
-	if (!data.objectives || data.objectives.length === 0) {
-		event.node.res.statusCode = 400;
+export default defineAuthedHandler(
+	{
+		access: AccessPermission.THERAPIST,
+		ownership: async (event) => {
+			const data = await validateBody(event, therapyNoteSchema);
+			return isAssignedTherapist(event, data.patientId);
+		},
+	},
+	async (event) => {
+		const data = await validateBody(event, therapyNoteSchema);
+		// at least one objective required
+		if (!data.objectives || data.objectives.length === 0) {
+			event.node.res.statusCode = 400;
+			return {
+				success: false,
+				error: "At least one objective or custom goal is required.",
+			};
+		}
+
+		// 1) Create TherapyNote
+		const note = await prisma.therapyNote.create({
+			data: {
+				patientId: data.patientId,
+				therapyType: data.therapyType,
+				submitterId: data.submitterID ?? data.submitterId ?? null,
+
+				otherTherapies: data.otherTherapies ?? null,
+
+				objectivesDate: parseDateOrNull(data.objectivesDate),
+
+				reinforcersUsed: data.reinforcersUsed ?? null,
+				reinforcersDate: parseDateOrNull(data.reinforcersDate),
+
+				familyRecommendations: data.familyRecommendations ?? null,
+				familyRecommendationsDate: parseDateOrNull(
+					data.familyRecommendationsDate
+				),
+
+				groupRecommendationParents:
+					data.groupRecommendationParents ?? null,
+
+				goalsAchieved: data.goalsAchieved,
+				goalsAchievedDate: parseDateOrNull(data.goalsAchievedDate),
+
+				progressNotes: data.progressNotes,
+				progressNotesDate: parseDateOrNull(data.progressNotesDate),
+
+				nextSessionObjectives: data.nextSessionObjectives,
+				nextSessionObjectivesDate: parseDateOrNull(
+					data.nextSessionObjectivesDate
+				),
+
+				incidents: data.incidents ?? null,
+				incidentsDate: parseDateOrNull(data.incidentsDate),
+
+				generalObservations: data.generalObservations,
+				generalObservationsDate: parseDateOrNull(
+					data.generalObservationsDate
+				),
+			},
+		});
+
+		// 2) Create multiple objectives
+		if (data.objectives && data.objectives.length > 0) {
+			await prisma.therapyNoteObjective.createMany({
+				data: data.objectives.map((obj) => ({
+					therapyNoteId: note.id,
+					goalKey: obj.goalKey ?? null,
+					goalLabel: obj.goalLabel,
+					details: obj.details ?? null,
+				})),
+			});
+		}
+
 		return {
-			success: false,
-			error: "At least one objective or custom goal is required.",
+			success: true,
+			data: note,
 		};
 	}
-
-	// 1) Create TherapyNote
-	const note = await prisma.therapyNote.create({
-		data: {
-			patientId: data.patientId,
-			therapyType: data.therapyType,
-			submitterId: data.submitterID ?? data.submitterId ?? null,
-
-			otherTherapies: data.otherTherapies ?? null,
-
-			objectivesDate: parseDateOrNull(data.objectivesDate),
-
-			reinforcersUsed: data.reinforcersUsed ?? null,
-			reinforcersDate: parseDateOrNull(data.reinforcersDate),
-
-			familyRecommendations: data.familyRecommendations ?? null,
-			familyRecommendationsDate: parseDateOrNull(
-				data.familyRecommendationsDate
-			),
-
-			groupRecommendationParents: data.groupRecommendationParents ?? null,
-
-			goalsAchieved: data.goalsAchieved,
-			goalsAchievedDate: parseDateOrNull(data.goalsAchievedDate),
-
-			progressNotes: data.progressNotes,
-			progressNotesDate: parseDateOrNull(data.progressNotesDate),
-
-			nextSessionObjectives: data.nextSessionObjectives,
-			nextSessionObjectivesDate: parseDateOrNull(
-				data.nextSessionObjectivesDate
-			),
-
-			incidents: data.incidents ?? null,
-			incidentsDate: parseDateOrNull(data.incidentsDate),
-
-			generalObservations: data.generalObservations,
-			generalObservationsDate: parseDateOrNull(
-				data.generalObservationsDate
-			),
-		},
-	});
-
-	// 2) Create multiple objectives
-	if (data.objectives && data.objectives.length > 0) {
-		await prisma.therapyNoteObjective.createMany({
-			data: data.objectives.map((obj) => ({
-				therapyNoteId: note.id,
-				goalKey: obj.goalKey ?? null,
-				goalLabel: obj.goalLabel,
-				details: obj.details ?? null,
-			})),
-		});
-	}
-
-	return {
-		success: true,
-		data: note,
-	};
-});
+);

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AccessPermission } from "~/types/permissions";
 
 // Schema for updating a session (appointment)
 const updateSessionSchema = z.object({
@@ -11,34 +12,37 @@ const updateSessionSchema = z.object({
 	duration: z.number().gte(1).optional(),
 });
 
-export default defineEventHandler(async (event) => {
-	const { id, ...updateData } = await validateBody(
-		event,
-		updateSessionSchema
-	);
+export default defineAuthedHandler(
+	{ access: AccessPermission.USER_SERVICE },
+	async (event) => {
+		const { id, ...updateData } = await validateBody(
+			event,
+			updateSessionSchema
+		);
 
-	try {
-		const updatedSession = await prisma.session.update({
-			where: { id },
-			data: updateData,
-		});
+		try {
+			const updatedSession = await prisma.session.update({
+				where: { id },
+				data: updateData,
+			});
 
-		return updatedSession;
-	} catch (error: unknown) {
-		if (error && typeof error === "object" && "code" in error) {
-			const prismaError = error as { code: string };
+			return updatedSession;
+		} catch (error: unknown) {
+			if (error && typeof error === "object" && "code" in error) {
+				const prismaError = error as { code: string };
 
-			if (prismaError.code === "P2025") {
-				throw createError({
-					statusCode: 404,
-					statusMessage: "Appointment not found.",
-				});
+				if (prismaError.code === "P2025") {
+					throw createError({
+						statusCode: 404,
+						statusMessage: "Appointment not found.",
+					});
+				}
 			}
-		}
 
-		throw createError({
-			statusCode: 500,
-			statusMessage: "Unexpected error updating session.",
-		});
+			throw createError({
+				statusCode: 500,
+				statusMessage: "Unexpected error updating session.",
+			});
+		}
 	}
-});
+);
