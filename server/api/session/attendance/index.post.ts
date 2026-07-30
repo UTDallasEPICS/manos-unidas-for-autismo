@@ -8,7 +8,14 @@ const addPatientSchema = z.object({
 });
 
 export default defineAuthedHandler(
-	{ access: [AccessPermission.THERAPIST, AccessPermission.USER_SERVICE] },
+	{
+		access: [AccessPermission.THERAPIST, AccessPermission.USER_SERVICE],
+		// A therapist may only modify the roster/billing of their OWN session.
+		ownership: async (event) => {
+			const { sessionId } = await validateBody(event, addPatientSchema);
+			return canManageSession(event, sessionId);
+		},
+	},
 	async (event) => {
 		const { sessionId, patientId, paid } = await validateBody(
 			event,

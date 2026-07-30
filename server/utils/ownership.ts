@@ -99,3 +99,25 @@ export async function canViewPatient(
 	if (await isAssignedTherapist(event, patientUserId)) return true;
 	return false;
 }
+
+/**
+ * True when the current user may manage a session's roster / attendance /
+ * billing: clinical coordination staff (USER_SERVICE / ADMIN), or the therapist
+ * who OWNS the session. Uses the session's `therapistId` rather than
+ * isAssignedTherapist — attendance writes add patients who may not yet share a
+ * session, so a shared-session check would be circular.
+ */
+export async function canManageSession(
+	event: H3Event,
+	sessionId: string
+): Promise<boolean> {
+	const p = event.context.permissions;
+	if (p[AccessPermission.USER_SERVICE] || p[AccessPermission.ADMIN])
+		return true;
+
+	const session = await prisma.session.findUnique({
+		where: { id: sessionId },
+		select: { therapistId: true },
+	});
+	return !!session && session.therapistId === event.context.user?.id;
+}

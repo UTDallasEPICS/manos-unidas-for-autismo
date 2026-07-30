@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { AccessPermission } from "~/types/permissions";
 
 const schema = z.object({
 	userId: z.string(),
@@ -10,7 +9,9 @@ const validateSchema = schema.strict();
 
 export default defineAuthedHandler(
 	{
-		access: AccessPermission.THERAPIST,
+		// 'AUTH' so clinical staff pass the role gate and are then allowed by the
+		// ownership branch below; a therapist reaches only their own schedule.
+		access: "AUTH",
 		// Sessions carry nested patient PHI, so gate on clinical staff
 		// (USER_SERVICE|EVALUATOR|ADMIN, NOT IT_SERVICE) or the therapist viewing
 		// their own schedule.

@@ -7,7 +7,17 @@ const removePatientSchema = z.object({
 });
 
 export default defineAuthedHandler(
-	{ access: [AccessPermission.THERAPIST, AccessPermission.USER_SERVICE] },
+	{
+		access: [AccessPermission.THERAPIST, AccessPermission.USER_SERVICE],
+		// A therapist may only modify the roster of their OWN session.
+		ownership: async (event) => {
+			const { sessionId } = await validateBody(
+				event,
+				removePatientSchema
+			);
+			return canManageSession(event, sessionId);
+		},
+	},
 	async (event) => {
 		const { sessionId, patientId } = await validateBody(
 			event,

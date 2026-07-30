@@ -59,10 +59,6 @@ export default defineNuxtConfig({
 					path: "/dashboard",
 					file: "~/pages/dashboard/dashboard.vue",
 				},
-				"auth-login": {
-					path: "/login",
-					file: "~/pages/auth/login.vue",
-				},
 				"patient-patientSearch": {
 					path: "/patientSearch",
 					file: "~/pages/patient/patientSearch.vue",

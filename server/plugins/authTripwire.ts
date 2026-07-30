@@ -5,8 +5,14 @@
  * defineAuthedHandler, which sets `event.context.authorized = true` on allow.
  * This plugin runs after the route handler has produced a value but before it
  * is sent (Nitro `beforeResponse`); if a matched /api route reached this point
- * WITHOUT authorized === true, it was never wrapped — so we DENY. Forgetting to
- * wrap an endpoint therefore fails CLOSED, never open.
+ * WITHOUT authorized === true, it was never wrapped — so we DENY the response.
+ *
+ * SCOPE: this runs AFTER the handler, so it is defense-in-depth, not a perfect
+ * backstop — a forgotten wrapper on a mutating endpoint would have already
+ * written to the DB before the 403 is substituted, and a handler that writes the
+ * response itself (sendStream/res.end) can slip past it. The PRIMARY guarantee is
+ * the `checker` CI step (scripts/check-endpoint-auth.mjs), which fails the build
+ * if any server/api endpoint is missing defineAuthedHandler.
  *
  * Passthroughs:
  *   - non-/api paths (SSR pages, static assets) — never touch them.
