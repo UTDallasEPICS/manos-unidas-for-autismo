@@ -22,20 +22,14 @@ export default defineAuthedHandler(
 	async (event) => {
 		const { pId } = await validateQuery(event, validateSchema);
 
-		const parent = await prisma.user.findUnique({
-			where: {
-				id: pId,
-			},
+		const guardianships = await prisma.patientGuardian.findMany({
+			where: { guardianId: pId },
 			include: {
-				NonEmployee: {
+				Patient: {
 					include: {
-						Children: {
+						User: {
 							include: {
-								User: {
-									include: {
-										User: true,
-									},
-								},
+								User: true,
 							},
 						},
 					},
@@ -43,17 +37,8 @@ export default defineAuthedHandler(
 			},
 		});
 
-		if (!parent?.NonEmployee?.Children) {
-			throw createError({
-				statusCode: 500,
-				statusMessage: `Failed to find children for user: ${parent?.id}`,
-			});
-		}
-
-		const patientUsers = parent.NonEmployee.Children;
-
-		return patientUsers.map((p) => {
-			const ne = p.User!;
+		return guardianships.map((g) => {
+			const ne = g.Patient.User!;
 			const u = ne.User!;
 			return {
 				id: u.id,

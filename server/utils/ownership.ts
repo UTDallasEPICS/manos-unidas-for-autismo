@@ -34,9 +34,10 @@ export function isSelf(event: H3Event, userId: string): boolean {
 }
 
 /**
- * True when the current user is a parent of the given child. `childUserId`
- * equals the child's Patient.id (Children are Patient[] via relation 'parent',
- * and Patient.id === child User.id).
+ * True when the current user is a guardian of the given child. `childUserId`
+ * equals the child's Patient.id, and the current user is the guardian
+ * (guardianId === guardian User.id === NonEmployee.id) via a PatientGuardian
+ * link.
  */
 export async function isParentOf(
 	event: H3Event,
@@ -45,17 +46,12 @@ export async function isParentOf(
 	const user = event.context.user;
 	if (!user) return false;
 
-	const result = await prisma.nonEmployee.findUnique({
-		where: { id: user.id },
-		select: {
-			Children: {
-				where: { id: childUserId },
-				select: { id: true },
-			},
-		},
+	const link = await prisma.patientGuardian.findFirst({
+		where: { guardianId: user.id, patientId: childUserId },
+		select: { patientId: true },
 	});
 
-	return !!result?.Children.length;
+	return !!link;
 }
 
 /**

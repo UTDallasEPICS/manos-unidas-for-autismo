@@ -3,7 +3,14 @@ import { UserType } from "@prisma/client";
 import { AccessPermission, type AccessVal } from "~/types/permissions";
 
 export type UserWithRelations = Prisma.UserGetPayload<{
-	include: { NonEmployee: { include: { Children: true; Patient: true } } };
+	include: {
+		NonEmployee: {
+			include: {
+				GuardianLinks: { select: { patientId: true } };
+				Patient: true;
+			};
+		};
+	};
 }>;
 
 /**
@@ -50,9 +57,10 @@ export function computePermissions(
 			break;
 	}
 
-	// Relationship-derived roles: a NonEmployee may be a patient and/or a parent.
+	// Relationship-derived roles: a NonEmployee may be a patient and/or a
+	// guardian (a guardian of one or more patients via PatientGuardian).
 	if (user.NonEmployee?.Patient) perms[AccessPermission.PATIENT] = true;
-	if (user.NonEmployee?.Children?.length)
+	if (user.NonEmployee?.GuardianLinks?.length)
 		perms[AccessPermission.PARENT] = true;
 
 	return perms;
