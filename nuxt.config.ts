@@ -104,6 +104,13 @@ export default defineNuxtConfig({
 				path: "/myProfile/:id",
 				file: "~/pages/patient/patientProfile/[id].vue",
 			});
+			// Staff-facing view of any patient's profile (STAFF-gated in
+			// pageAccessMap). Same page file; the route param id is a User id.
+			pages.push({
+				name: "patientProfile-id",
+				path: "/patientProfile/:id",
+				file: "~/pages/patient/patientProfile/[id].vue",
+			});
 			//pages.push({
 			//name: "childProfile-id",
 			//path: "/childProfile/:id",
