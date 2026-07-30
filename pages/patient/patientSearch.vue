@@ -85,6 +85,8 @@ interface PatientDetail {
 	contactPref?: string;
 	diagnosed?: boolean;
 	sponsorId?: string | null;
+	status?: string;
+	insurance?: string | null;
 }
 
 const searchQuery = ref("");
@@ -117,6 +119,8 @@ async function openModal(row: PatientRow) {
 					identification: string;
 					diagnosed: boolean;
 					sponsorId: string | null;
+					status: string | null;
+					insurance: string | null;
 				} | null;
 			} | null;
 		} | null>("/api/profile/patient", { query: { id: row.id } });
@@ -134,6 +138,8 @@ async function openModal(row: PatientRow) {
 			contactPref: u?.contactPref ?? undefined,
 			diagnosed: pat?.diagnosed,
 			sponsorId: pat?.sponsorId,
+			status: pat?.status ?? undefined,
+			insurance: pat?.insurance ?? undefined,
 		};
 		is_clicked.value = true;
 	} catch (err) {

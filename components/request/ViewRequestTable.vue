@@ -38,12 +38,20 @@
 					{{ new Date(request.createdAt).toLocaleDateString() }}
 				</td>
 				<td class="border-collapse border-2 border-b-black px-2">
-					<button
-						class="rounded-md bg-blue-950 px-3 py-1 text-sm text-white hover:bg-blue-800"
-						@click="$emit('view', request)"
-					>
-						View Full Request
-					</button>
+					<div class="flex gap-2">
+						<button
+							class="rounded-md bg-blue-950 px-3 py-1 text-sm text-white hover:bg-blue-800"
+							@click="$emit('view', request)"
+						>
+							View Full Request
+						</button>
+						<button
+							class="rounded-md bg-green-700 px-3 py-1 text-sm text-white hover:bg-green-600"
+							@click="completeIntake(request.id)"
+						>
+							Complete Intake
+						</button>
+					</div>
 				</td>
 			</tr>
 		</tbody>
@@ -107,4 +115,10 @@ defineProps<{
 defineEmits<{
 	view: [request: Request];
 }>();
+
+const router = useRouter();
+
+function completeIntake(requestId: number) {
+	router.push(`/intake/${requestId}`);
+}
 </script>

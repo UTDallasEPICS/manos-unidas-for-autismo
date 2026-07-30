@@ -75,12 +75,30 @@
 				</div>
 
 				<!-- Clinical Summary -->
+				<div v-if="patient?.status" class="flex flex-col gap-1">
+					<span class="text-xs font-medium text-gray-500"
+						>Status</span
+					>
+					<span class="text-sm text-gray-800">
+						{{ patient.status }}
+					</span>
+				</div>
+
 				<div class="flex flex-col gap-1">
 					<span class="text-xs font-medium text-gray-500"
 						>Diagnosed</span
 					>
 					<span class="text-sm text-gray-800">
 						{{ patient?.diagnosed ? "Yes" : "No" }}
+					</span>
+				</div>
+
+				<div v-if="patient?.insurance" class="flex flex-col gap-1">
+					<span class="text-xs font-medium text-gray-500"
+						>Insurance (ARS)</span
+					>
+					<span class="text-sm text-gray-800">
+						{{ patient.insurance }}
 					</span>
 				</div>
 
@@ -178,6 +196,8 @@ defineProps<{
 
 		diagnosed?: boolean;
 		sponsorId?: string | null;
+		status?: string;
+		insurance?: string | null;
 	};
 
 	therapist?: {

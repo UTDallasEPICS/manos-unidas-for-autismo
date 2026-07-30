@@ -58,7 +58,12 @@ export const auth = betterAuth({
 			const dbUser = await prisma.user.findUnique({
 				where: { id: user.id },
 				include: {
-					NonEmployee: { include: { Children: true, Patient: true } },
+					NonEmployee: {
+						include: {
+							GuardianLinks: { select: { patientId: true } },
+							Patient: true,
+						},
+					},
 				},
 			});
 			return {

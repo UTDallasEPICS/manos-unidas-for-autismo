@@ -39,6 +39,8 @@ model NonEmployee {
   identification  String?
   dob             DateTime?
   gender          Gender?
+  nationality     String?
+  nss             String?
   streetName      String
   streetNum       Int
   buildingNum     Int?
@@ -46,7 +48,7 @@ model NonEmployee {
   PostCodeCity    PostCodeCity? @relation(fields: [postCode], references: [postCode])
   User            User         @relation(fields: [id], references: [id], onDelete: Cascade)
   Patient         Patient?
-  Children        Patient[]    @relation("parent")
+  GuardianLinks   PatientGuardian[] @relation("GuardianLinks")
 }
 
 model PostCodeCity {
@@ -67,10 +69,72 @@ model Patient {
   User              NonEmployee      @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ProgressReports   Report[]
   Appointments      SessionPatient[]
-  Parents           NonEmployee[]    @relation(name: "parent")
+  Guardians         PatientGuardian[]
   TherapyNotes      TherapyNote[]
   AppointmentRequests AppointmentRequest[]
   TherapistReferrals TherapistReferral[]
+
+  initialInterviewDate DateTime?
+  programEvalDate      DateTime?
+  therapyStartDate     DateTime?
+  insurance            InsuranceCompany?
+  status               PatientStatus     @default(ACTIVE)
+  Diagnoses            Diagnosis[]
+  Sponsorships         Sponsorship[]
+  Support              PatientSupport[]
+}
+
+enum PatientStatus {
+  ACTIVE
+  WITHDRAWN
+  DROPPED_OUT
+}
+
+enum SupportType {
+  TRANSPORTATION
+  FOOD
+  DOMESTIC_HELP
+  OTHER
+}
+
+/// A guardian IS a User + NonEmployee (login-capable, deduped by email); this
+/// explicit join carries the per-relationship metadata and supports siblings
+/// (one guardian -> many patients) and multiple guardians per patient.
+model PatientGuardian {
+  patientId       String
+  guardianId      String
+  relationship    String
+  primaryGuardian Boolean     @default(false)
+  Patient         Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  Guardian        NonEmployee @relation("GuardianLinks", fields: [guardianId], references: [id], onDelete: Cascade)
+
+  @@id([patientId, guardianId])
+}
+
+model Diagnosis {
+  id        String    @id @default(uuid())
+  name      String
+  date      DateTime?
+  patientId String
+  Patient   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model Sponsorship {
+  id          String    @id @default(uuid())
+  sponsorName String
+  amount      Float?
+  startDate   DateTime
+  endDate     DateTime?
+  newDate     DateTime?
+  patientId   String
+  Patient     Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model PatientSupport {
+  id        String      @id @default(uuid())
+  type      SupportType
+  patientId String
+  Patient   Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
 
 model Specialization {
@@ -336,6 +400,16 @@ model Request {
   therapies                 RequestTherapy[]
   complementaryServices     RequestComplementaryService[]
   workshops                 RequestWorkshop[]
+  IntakeDraft               IntakeDraft?
+}
+
+model IntakeDraft {
+  id        String   @id @default(uuid())
+  requestId Int      @unique
+  data      String   // JSON blob of the in-progress intake form
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
 }
 
 model RequestPhone {
