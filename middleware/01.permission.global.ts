@@ -8,6 +8,13 @@ import { pageAccessMap, AccessPermission } from "~/types/permissions";
 export default defineNuxtRouteMiddleware((to) => {
 	const { userId, access } = useAuthState();
 
+	// Logged-in users landing on the public root go straight to their dashboard
+	// (issue #210). Runs SSR-side off the seeded session, so there's no flash.
+	if (to.name === "index" && userId.value) {
+		const { dashboardNavigation } = useDashboardNavigation();
+		return dashboardNavigation();
+	}
+
 	const required = pageAccessMap[to.name as string];
 
 	// Public routes, or routes not in the map: let the page handle it.
