@@ -783,6 +783,8 @@ async function handleSubmit() {
 		hasBeenPatient: data.prevPatient === "true",
 		wantsEval: data.evaluation === "true",
 		comment: data.comments,
+		parentFirstName: data.parentFirstName || undefined,
+		parentLastName: data.parentLastName || undefined,
 	};
 
 	try {
