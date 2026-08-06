@@ -31,10 +31,7 @@ export default defineAuthedHandler({ access: "PUBLIC" }, async (event) => {
 				update: {},
 				create: { postCode: data.postcode, city: data.city },
 			});
-
-			// A minor doesn't log in and the real contact belongs to the
-			// parent, so give the patient's own User a synthetic email/phone
-			// instead of the submitted ones (same pattern as intake/submit.post.ts).
+			
 			const patientEmail = isAdult
 				? data.email || ""
 				: `patient-${randomUUID()}@intake.local`;
