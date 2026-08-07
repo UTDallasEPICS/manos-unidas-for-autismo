@@ -39,12 +39,12 @@
 				</td>
 				<td class="border-collapse border-2 border-b-black px-2">
 					<div class="flex gap-2">
-						<button
+						<NuxtLink
+							:to="`/request/${request.id}`"
 							class="rounded-md bg-blue-950 px-3 py-1 text-sm text-white hover:bg-blue-800"
-							@click="$emit('view', request)"
 						>
 							View Full Request
-						</button>
+						</NuxtLink>
 						<button
 							class="rounded-md bg-green-700 px-3 py-1 text-sm text-white hover:bg-green-600"
 							@click="completeIntake(request.id)"
@@ -110,10 +110,6 @@ interface Request {
 defineProps<{
 	columns: { key: string; label: string }[];
 	requests: Request[];
-}>();
-
-defineEmits<{
-	view: [request: Request];
 }>();
 
 const router = useRouter();

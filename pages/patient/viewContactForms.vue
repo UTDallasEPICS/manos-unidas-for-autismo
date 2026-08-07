@@ -18,16 +18,9 @@
 				<RequestViewRequestTable
 					:columns="columns"
 					:requests="processingRequests"
-					@view="openModal"
 				/>
 			</div>
 		</div>
-
-		<!-- Modal -->
-		<RequestViewRequestModal
-			:request="selectedRequest"
-			@close="closeModal"
-		/>
 	</div>
 </template>
 
@@ -76,7 +69,6 @@ const columns = [
 const sortOptions = ["Last Name", "Date Submitted"];
 const sortBy = ref("");
 const processingRequests = ref<Request[]>([]);
-const selectedRequest = ref<Request | null>(null);
 
 async function getRequests() {
 	try {
@@ -101,14 +93,6 @@ function sort(category: string) {
 				new Date(a.createdAt).getTime()
 		);
 	}
-}
-
-function openModal(request: Request) {
-	selectedRequest.value = request;
-}
-
-function closeModal() {
-	selectedRequest.value = null;
 }
 
 watch(sortBy, (newSortBy) => {

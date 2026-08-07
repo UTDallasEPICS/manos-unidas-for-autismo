@@ -54,6 +54,7 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	"userService-assignNeuroSpecialist": AccessPermission.USER_SERVICE,
 	"patient-viewContactForms": AccessPermission.USER_SERVICE,
 	"intake-id": AccessPermission.USER_SERVICE,
+	"request-id": AccessPermission.USER_SERVICE,
 	// IT Service Pages
 	"dashboard-iTServiceDashboard": AccessPermission.IT_SERVICE,
 	// Admin Pages
