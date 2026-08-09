@@ -1,23 +1,30 @@
 <template>
-	<div
-		v-if="request"
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-		@click.self="$emit('close')"
-	>
-		<div
-			class="font-sc-encode relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-8 shadow-xl"
-		>
+	<div class="font-sc-encode mx-auto max-w-3xl p-8">
+		<div class="mb-6 flex items-center justify-between">
+			<NuxtLink
+				to="/viewContactForms"
+				class="text-sm text-gray-500 hover:text-black"
+			>
+				&larr; Back to Contact Forms
+			</NuxtLink>
+			<button
+				v-if="request"
+				class="rounded-md bg-green-700 px-3 py-1 text-sm text-white hover:bg-green-600"
+				@click="completeIntake"
+			>
+				Complete Intake
+			</button>
+		</div>
+
+		<p v-if="loading" class="text-gray-500">Loading request…</p>
+		<p v-else-if="notFound" class="text-gray-500">Request not found.</p>
+
+		<div v-else-if="request">
 			<!-- Header -->
-			<div class="mb-6 flex items-center justify-between">
-				<h2 class="font-cormorant-garamond text-3xl text-gray-500">
-					Full Request — #{{ request.id }}
-				</h2>
-				<button
-					class="text-2xl text-gray-500 hover:text-black"
-					@click="$emit('close')"
-				>
-					✕
-				</button>
+			<div class="mb-6">
+				<h1 class="font-cormorant-garamond text-3xl text-gray-500">
+					Full Request &mdash; #{{ request.id }}
+				</h1>
 			</div>
 
 			<!-- Metadata -->
@@ -249,6 +256,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { $fetch } from "ofetch";
+
 interface RequestPhone {
 	id: number;
 	number: string;
@@ -285,13 +295,27 @@ interface Request {
 	workshops: { name: string }[];
 }
 
-defineProps<{
-	request: Request | null;
-}>();
+const route = useRoute();
+const router = useRouter();
+const requestId = route.params.id as string;
 
-defineEmits<{
-	close: [];
-}>();
+const request = ref<Request | null>(null);
+const loading = ref(true);
+const notFound = ref(false);
+
+onMounted(async () => {
+	try {
+		request.value = await $fetch<Request>(`/api/request/${requestId}`);
+	} catch {
+		notFound.value = true;
+	} finally {
+		loading.value = false;
+	}
+});
+
+function completeIntake() {
+	router.push(`/intake/${requestId}`);
+}
 
 const therapyLabels: Record<string, string> = {
 	DIAGNOSTIC_ASSESSMENT: "Diagnostic Assessment (Evaluación Diagnóstica)",
