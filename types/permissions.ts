@@ -74,6 +74,8 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 
 	requestForm: AccessPermission.PUBLIC,
 	"dashboard-evaluatorDashboard": AccessPermission.EVALUATOR,
+	"evaluator-createReferral": AccessPermission.EVALUATOR,
+	"evaluator-myReferrals": AccessPermission.EVALUATOR,
 };
 
 export { AccessPermission, pageAccessMap };

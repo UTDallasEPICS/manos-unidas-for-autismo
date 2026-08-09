@@ -36,7 +36,6 @@ const therapistReferralSchema = z.object({
 	patientId: z.string().min(1),
 	therapyRecommendation: z.string().min(1),
 	therapistType: z.string().min(1),
-	evaluatorId: z.string().min(1),
 });
 
 async function createReferralWithPatient(
@@ -61,7 +60,6 @@ export default defineAuthedHandler(
 			"patientId",
 			"therapyRecommendation",
 			"therapistType",
-			"evaluatorId",
 		]);
 		if (missing.length > 0) {
 			throw createError({
@@ -81,16 +79,10 @@ export default defineAuthedHandler(
 			});
 		}
 
-		const userExists = await prisma.user.findUnique({
-			where: { id: data.evaluatorId },
-			select: { id: true },
-		});
-		if (!userExists) {
-			throw createError({
-				statusCode: 404,
-				statusMessage: "Evaluator not found.",
-			});
-		}
+		// The submitting evaluator is always the authenticated user, never a
+		// client-supplied id — otherwise any evaluator could attribute a
+		// referral to someone else.
+		const evaluatorId = event.context.user!.id;
 
 		const therapistReferral = getTherapistReferralCreateDelegate();
 
@@ -100,7 +92,7 @@ export default defineAuthedHandler(
 				{
 					therapyRecommendation: data.therapyRecommendation,
 					therapistType: data.therapistType,
-					evaluatorId: data.evaluatorId,
+					evaluatorId,
 					therapistId: null,
 				},
 				data.patientId
