@@ -43,18 +43,20 @@ export default defineAuthedHandler(
 		const p = event.context.permissions;
 		const user = event.context.user!;
 
-		// A plain THERAPIST may only see their own referrals; USER_SERVICE /
-		// EVALUATOR / ADMIN see all.
+		// A plain THERAPIST may only see referrals assigned to them, and a plain
+		// EVALUATOR may only see referrals they submitted; USER_SERVICE / ADMIN
+		// see all.
 		const isTherapistOnly =
 			!!p[AccessPermission.THERAPIST] &&
-			!(
-				p[AccessPermission.USER_SERVICE] ||
-				p[AccessPermission.EVALUATOR] ||
-				p[AccessPermission.ADMIN]
-			);
+			!(p[AccessPermission.USER_SERVICE] || p[AccessPermission.ADMIN]);
+		const isEvaluatorOnly =
+			!!p[AccessPermission.EVALUATOR] &&
+			!(p[AccessPermission.USER_SERVICE] || p[AccessPermission.ADMIN]);
 
-		return await therapistReferral.findMany(
-			isTherapistOnly ? { where: { therapistId: user.id } } : undefined
-		);
+		let where: Record<string, unknown> | undefined;
+		if (isTherapistOnly) where = { therapistId: user.id };
+		else if (isEvaluatorOnly) where = { evaluatorId: user.id };
+
+		return await therapistReferral.findMany(where ? { where } : undefined);
 	}
 );
