@@ -36,11 +36,12 @@
 				<div
 					v-for="session in thisWeekSessions[dayIndex - 1]"
 					:key="session.id"
-					class="absolute right-0 left-0 mx-1 rounded border-2 border-blue-950/50 bg-blue-100 px-2 py-1 text-left text-xs shadow-sm"
+					class="absolute right-0 left-0 mx-1 cursor-pointer rounded border-2 border-blue-950/50 bg-blue-100 px-2 py-1 text-left text-xs shadow-sm"
 					:style="{
 						top: getSessionTop(session),
 						height: getSessionHeight(session),
 					}"
+					@click="selectSession(session)"
 				>
 					<div class="truncate font-bold">
 						{{ session.Type?.name }}
@@ -142,21 +143,23 @@
 				</div>
 			</div>
 		</div>
+
+		<SessionDetailModal
+			v-if="selectedSession"
+			:session="selectedSession"
+			@close="selectedSession = null"
+			@changed="onSessionChanged"
+		/>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, useFetch, watch } from "#imports";
 import { AccessPermission } from "~/types/permissions";
+import SessionDetailModal from "~/components/schedule/SessionDetailModal.vue";
+import type { SessionWithAttendance } from "~/components/schedule/sessionTypes";
 
-type SessionDetails = {
-	id: string;
-	time: string | Date;
-	duration: number;
-	typeId: string;
-	Type: { name: string } | null;
-	Therapist: { fName: string | null; lName: string | null } | null;
-};
+type SessionDetails = SessionWithAttendance & { typeId: string };
 
 type ReferralItem = {
 	id: string;
@@ -343,6 +346,24 @@ function formatReferralTime(isoTime: string): string {
 		hour: "2-digit",
 		minute: "2-digit",
 	});
+}
+
+const selectedSession = ref<SessionDetails | null>(null);
+
+function selectSession(session: SessionDetails) {
+	selectedSession.value = session;
+}
+
+// Re-fetches the week's sessions after an add/remove so the calendar's
+// attendance counts and the open modal's patient list both stay in sync with
+// the server (the API is the source of truth for capacity/duplicate checks).
+async function onSessionChanged() {
+	await refreshSessions();
+	if (selectedSession.value) {
+		selectedSession.value =
+			sessions.value.find((s) => s.id === selectedSession.value?.id) ??
+			null;
+	}
 }
 
 const startHr = computed(() => {
