@@ -1,52 +1,55 @@
-@import url("https://fonts.googleapis.com/css2?family=Karla:wght@340&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Encode+Sans+SC:wght@100..900&display=swap");
 @import "tailwindcss";
 @import "@nuxt/ui";
 
 @theme {
-	--color-midnight: #06234f;
+	/* Brand — FMUA "midnight" navy. 900 is the exact brand color #06234f.
+	   Exposed as a full ramp so NuxtUI can alias `primary` to it (app.config.ts). */
+	--color-midnight-50: #f0f5fb;
+	--color-midnight-100: #dde8f4;
+	--color-midnight-200: #c2d4ec;
+	--color-midnight-300: #97b6dd;
+	--color-midnight-400: #6690c7;
+	--color-midnight-500: #4171b0;
+	--color-midnight-600: #305a93;
+	--color-midnight-700: #294c7d;
+	--color-midnight-800: #163a63;
+	--color-midnight-900: #06234f;
+	--color-midnight-950: #04162f;
+
+	/* Legacy accent tokens still referenced across un-migrated pages.
+	   Removed in Phase 4 once those pages move to NuxtUI semantic colors. */
 	--color-smoky: #d9d9d9;
-	--color-pearl: #ffffff;
-	--color-blay: #b4bbc9; /*get it? blue gray?? haha*/
-	/*extra therapy colors */
-	--color-lilac: #e3cbf8;
-	--color-peach: #ffe1b8;
-	--color-salmon: #eeb586;
-	--color-lime: #ddf492;
-	--color-sky: #b8d3fb;
-	--color-buttercup: #f6e274;
-	--color-rose: #ea7b7b;
-	--color-blue-green: #85e0c2;
+	--color-blay: #b4bbc9;
 
-	--font-karla: "Karla", sans-serif;
-	--font-sc-encode: "Encode Sans SC", sans-serif;
+	/* Typography — Inter everywhere, self-hosted via @nuxt/fonts (no external CDN).
+	   Legacy `font-karla` / `font-sc-encode` classes are aliased to Inter so
+	   existing markup renders consistently until it is migrated in Phase 4. */
+	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+	--font-karla: "Inter", sans-serif;
+	--font-sc-encode: "Inter", sans-serif;
 }
 
-/* Buttons */
-.btn {
-	font-family: "Encode Sans SC", sans-serif;
-	text-align: center;
-	background: #06234f;
-	border: 0;
-	padding: 8px 8px;
-	-webkit-text-fill-color: white;
-}
-
-/* Text Inputs */
-.input {
-	background-color: #d9d9d9;
-	padding-left: 2rem;
-	padding-right: 2rem;
-	fill: #d9d9d9;
-	padding: 0px 8px 0px 8px;
-}
-
-/* Erases calender icon on date input field */
-.no-calendar::-webkit-calendar-picker-indicator,
+/* Erases the native date-picker indicator on inputs that opt out. */
 .no-calendar::-webkit-calendar-picker-indicator {
 	-webkit-appearance: none;
 	display: none;
 }
 .no-calendar[type="date"] {
 	-moz-appearance: textfield;
+}
+
+/* -------------------------------------------------------------------------
+   Legacy .btn / .input helpers — kept ONLY so un-migrated pages don't break.
+   Do NOT use these in new code; use <UButton> / <UInput>. Removed in Phase 4.
+   ------------------------------------------------------------------------- */
+.btn {
+	text-align: center;
+	background: var(--color-midnight-900);
+	border: 0;
+	padding: 8px 8px;
+	-webkit-text-fill-color: white;
+}
+.input {
+	background-color: var(--color-smoky);
+	padding: 0px 8px 0px 8px;
 }
