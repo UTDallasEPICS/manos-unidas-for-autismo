@@ -1,33 +1,32 @@
 <template>
-	<DashboardButtonGrid :buttons="patientButtons" />
+	<DashboardTiles :tiles="tiles" />
 </template>
 
 <script lang="ts" setup>
-import { Calendar, Clipboard, History, User } from "lucide-vue-next";
-
+const { t } = useI18n();
 useDashboardGuard("PATIENT");
 const { userId } = useAuthState();
 
-const patientButtons = [
+const tiles = computed(() => [
 	{
-		path: "/scheduleView",
-		icon: Calendar,
-		label: "SCHEDULE",
+		to: "/scheduleView",
+		icon: "i-lucide-calendar-days",
+		label: t("dash.schedule"),
 	},
 	{
-		path: { name: "myProfile-id", params: { id: userId.value } },
-		icon: User,
-		label: "VIEW PROFILE",
+		to: { name: "myProfile-id", params: { id: userId.value } },
+		icon: "i-lucide-user",
+		label: t("dash.profile"),
 	},
 	{
-		path: { name: "requestForm" },
-		icon: Clipboard,
-		label: "REQUEST SERVICES",
+		to: { name: "requestForm" },
+		icon: "i-lucide-clipboard",
+		label: t("dash.requestServices"),
 	},
 	{
-		path: "/patient/appointments",
-		icon: History,
-		label: "MY APPOINTMENTS",
+		to: "/patient/appointments",
+		icon: "i-lucide-history",
+		label: t("dash.appointments"),
 	},
-];
+]);
 </script>

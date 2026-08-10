@@ -1,37 +1,36 @@
 <template>
-	<DashboardButtonGrid :buttons="userServiceButtons" />
+	<DashboardTiles :tiles="tiles" />
 </template>
 
 <script lang="ts" setup>
-import { Calendar, Users, FileText, Plus, ClipboardCheck } from "lucide-vue-next";
-
+const { t } = useI18n();
 useDashboardGuard("USER_SERVICE");
 
-const userServiceButtons = [
+const tiles = computed(() => [
 	{
-		path: "/scheduleView",
-		icon: Calendar,
-		label: "SCHEDULE",
+		to: "/scheduleView",
+		icon: "i-lucide-calendar-days",
+		label: t("dash.schedule"),
 	},
 	{
-		path: "/patientSearch",
-		icon: Users,
-		label: "VIEW PATIENTS",
+		to: "/patientSearch",
+		icon: "i-lucide-users-round",
+		label: t("dash.viewPatients"),
 	},
 	{
-		path: "/viewContactForms",
-		icon: FileText,
-		label: "VIEW NEW CONTACT FORMS",
+		to: "/viewContactForms",
+		icon: "i-lucide-file-text",
+		label: t("dash.contactForms"),
 	},
 	{
-		path: "/viewAppointmentRequests",
-		icon: Plus,
-		label: "VIEW APPOINTMENT REQUESTS",
+		to: "/viewAppointmentRequests",
+		icon: "i-lucide-calendar-plus",
+		label: t("dash.appointmentRequests"),
 	},
 	{
-		path: "/assignNeuroSpecialist",
-		icon: ClipboardCheck,
-		label: "ASSIGN NEURODEVELOPMENT SPECIALIST",
+		to: "/assignNeuroSpecialist",
+		icon: "i-lucide-clipboard-check",
+		label: t("dash.assignSpecialist"),
 	},
-];
+]);
 </script>

@@ -88,5 +88,21 @@
 		"noUpcoming": "No upcoming appointments.",
 		"noPast": "No past appointments.",
 		"session": "Session"
+	},
+	"dash": {
+		"schedule": "Schedule",
+		"viewPatients": "View Patients",
+		"contactForms": "Contact Forms",
+		"employees": "Employees",
+		"createAccount": "Create Account",
+		"appointmentRequests": "Appointment Requests",
+		"assignSpecialist": "Assign Specialist",
+		"createReferral": "Create Referral",
+		"myReferrals": "My Referrals",
+		"children": "My Children",
+		"profile": "My Profile",
+		"requestServices": "Request Services",
+		"appointments": "My Appointments",
+		"welcome": "Welcome to Connected Care"
 	}
 }
