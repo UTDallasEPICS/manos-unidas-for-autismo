@@ -1,7 +1,7 @@
 <!-- Landing = login. Logged-out visitors see this (middleware routes anonymous
      users here); logged-in users are redirected to their dashboard (#210). Also
      points new patients at the public service-request form. The old home.png
-     hero returns as a scrimmed background behind the login card. -->
+     hero returns as a fixed, scrimmed full-screen background behind the card. -->
 <script setup lang="ts">
 import { authClient } from "~/utils/auth-client";
 import { useDashboardNavigation } from "~/composables/auth/useDashboardNavigation";
@@ -58,26 +58,29 @@ async function verify() {
 </script>
 
 <template>
-	<!-- Full-bleed background (counteracts the auth layout padding) + scrim. -->
-	<div
-		class="relative isolate -mx-4 -my-8 flex min-h-[80vh] items-center justify-center px-4 py-8 sm:-mx-6 sm:px-6"
-	>
+	<div>
+		<!-- Fixed full-viewport background image + scrim (sits behind the solid
+		     header and the login content). -->
 		<div
-			class="absolute inset-0 -z-10 bg-[url('/home.png')] bg-cover bg-center"
+			class="fixed inset-0 z-0 bg-[url('/home.png')] bg-cover bg-center"
 		/>
-		<div class="bg-default/90 absolute inset-0 -z-10" />
+		<div class="bg-default/90 fixed inset-0 z-0" />
 
-		<div class="flex w-full max-w-md flex-col gap-6">
+		<div
+			class="relative z-10 mx-auto flex min-h-[80vh] w-full max-w-md flex-col justify-center gap-6 py-8"
+		>
 			<div class="text-center">
 				<img
 					src="/fmua-logo.png"
 					alt="FMUA"
-					class="mx-auto mb-4 size-28"
+					class="mx-auto mb-4 size-40"
 				/>
-				<h1 class="text-highlighted text-xl font-semibold">
+				<h1 class="text-highlighted text-2xl font-semibold">
 					{{ t("login.title") }}
 				</h1>
-				<p class="text-muted mt-1 text-sm">{{ t("login.subtitle") }}</p>
+				<p class="text-default mt-1 text-sm">
+					{{ t("login.subtitle") }}
+				</p>
 			</div>
 
 			<UCard>
