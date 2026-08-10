@@ -55,6 +55,10 @@ export default defineNuxtConfig({
 					path: "/userServiceDashboard",
 					file: "~/pages/dashboard/userServiceDashboard.vue",
 				},
+				"dashboard-iTServiceDashboard": {
+					path: "/iTServiceDashboard",
+					file: "~/pages/dashboard/iTServiceDashboard.vue",
+				},
 				"dashboard-dashboard": {
 					path: "/dashboard",
 					file: "~/pages/dashboard/dashboard.vue",

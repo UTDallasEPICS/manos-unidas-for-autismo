@@ -69,8 +69,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import AssignModal from "./assignModal.vue";
-import RefreshButton from "./refreshButton.vue";
+import AssignModal from "~/components/userService/AssignModal.vue";
+import RefreshButton from "~/components/userService/RefreshButton.vue";
 import { useFetch } from "#imports";
 import { AccessPermission } from "~/types/permissions";
 

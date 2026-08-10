@@ -18,7 +18,7 @@ const tiles = computed(() => [
 		label: t("dash.contactForms"),
 	},
 	{
-		to: "/employeeSearch",
+		to: "/admin/employeeSearch",
 		icon: "i-lucide-users",
 		label: t("dash.employees"),
 	},
