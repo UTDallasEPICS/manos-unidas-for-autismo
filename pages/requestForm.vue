@@ -665,6 +665,8 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 
+definePageMeta({ layout: "auth" });
+
 // Adult/child toggle
 const isAdult = ref<boolean | null>(null);
 
