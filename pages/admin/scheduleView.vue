@@ -28,7 +28,7 @@ schedule view page, clicking the buttons changes the week that's being displayed
 						class="btn cursor-pointer"
 						@click="showFilterWindow = true"
 					>
-						Filter
+						{{ $t("Filter") }}
 					</button>
 				</div>
 			</div>
