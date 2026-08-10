@@ -77,5 +77,14 @@
 	},
 	"children": {
 		"empty": "Aún no hay hijos vinculados a su cuenta."
+	},
+	"appointments": {
+		"title": "Mis citas",
+		"request": "Solicitar cita",
+		"upcoming": "Próximas citas",
+		"past": "Citas pasadas",
+		"noUpcoming": "No hay próximas citas.",
+		"noPast": "No hay citas pasadas.",
+		"session": "Sesión"
 	}
 }
