@@ -88,5 +88,21 @@
 		"noUpcoming": "No hay próximas citas.",
 		"noPast": "No hay citas pasadas.",
 		"session": "Sesión"
+	},
+	"dash": {
+		"schedule": "Calendario",
+		"viewPatients": "Ver pacientes",
+		"contactForms": "Formularios de contacto",
+		"employees": "Empleados",
+		"createAccount": "Crear cuenta",
+		"appointmentRequests": "Solicitudes de cita",
+		"assignSpecialist": "Asignar especialista",
+		"createReferral": "Crear remisión",
+		"myReferrals": "Mis remisiones",
+		"children": "Mis hijos",
+		"profile": "Mi perfil",
+		"requestServices": "Solicitar servicios",
+		"appointments": "Mis citas",
+		"welcome": "Bienvenido a Connected Care"
 	}
 }

@@ -1,41 +1,36 @@
 <template>
-	<DashboardButtonGrid :buttons="evaluatorButtons" />
+	<DashboardTiles :tiles="tiles" />
 </template>
+
 <script lang="ts" setup>
-import {
-	Calendar,
-	ClipboardPlus,
-	FileText,
-	ListChecks,
-	Users,
-} from "lucide-vue-next";
+const { t } = useI18n();
 useDashboardGuard("EVALUATOR");
 
-const evaluatorButtons = [
+const tiles = computed(() => [
 	{
-		path: "/scheduleView",
-		icon: Calendar,
-		label: "VIEW SCHEDULE",
+		to: "/scheduleView",
+		icon: "i-lucide-calendar-days",
+		label: t("dash.schedule"),
 	},
 	{
-		path: { name: "patient-patientSearch" },
-		icon: Users,
-		label: "VIEW PATIENTS",
+		to: { name: "patient-patientSearch" },
+		icon: "i-lucide-users-round",
+		label: t("dash.viewPatients"),
 	},
 	{
-		path: "/viewContactForms",
-		icon: FileText,
-		label: "VIEW NEW CONTACT FORMS",
+		to: "/viewContactForms",
+		icon: "i-lucide-file-text",
+		label: t("dash.contactForms"),
 	},
 	{
-		path: { name: "evaluator-createReferral" },
-		icon: ClipboardPlus,
-		label: "CREATE REFERRAL",
+		to: { name: "evaluator-createReferral" },
+		icon: "i-lucide-clipboard-plus",
+		label: t("dash.createReferral"),
 	},
 	{
-		path: { name: "evaluator-myReferrals" },
-		icon: ListChecks,
-		label: "MY REFERRALS",
+		to: { name: "evaluator-myReferrals" },
+		icon: "i-lucide-list-checks",
+		label: t("dash.myReferrals"),
 	},
-];
+]);
 </script>
