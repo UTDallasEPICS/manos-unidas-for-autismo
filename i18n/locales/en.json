@@ -218,5 +218,29 @@
 		"svc_SCHOOL_VISIT": "School Visit",
 		"svc_THEATRE_COMMUNICATION": "Theatre and Communication Classes",
 		"svc_TALKS_AND_WORKSHOPS": "Talks and Workshops"
+	},
+	"referrals": {
+		"myTitle": "My Referrals",
+		"create": "Create Referral",
+		"patient": "Patient",
+		"therapistType": "Therapist type",
+		"recommendation": "Recommendation",
+		"submitted": "Submitted",
+		"status": "Status",
+		"assignedTo": "Assigned: {name}",
+		"pending": "Pending",
+		"empty": "You haven't submitted any referrals yet.",
+		"loadError": "Failed to load your referrals.",
+		"createTitle": "Create Referral",
+		"backToList": "My Referrals",
+		"selectPatient": "Patient",
+		"searchPatient": "Search by patient name…",
+		"therapistTypeLabel": "Therapist type",
+		"therapistTypePlaceholder": "e.g. Occupational, Language, Interventional…",
+		"recommendationLabel": "Therapy recommendation",
+		"recommendationPlaceholder": "Summarize the assessment and what you're recommending…",
+		"submit": "Submit referral",
+		"submitSuccess": "Referral submitted for {name}.",
+		"submitError": "Failed to submit referral."
 	}
 }

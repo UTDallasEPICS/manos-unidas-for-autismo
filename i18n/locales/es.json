@@ -218,5 +218,29 @@
 		"svc_SCHOOL_VISIT": "Visita Escolar",
 		"svc_THEATRE_COMMUNICATION": "Clases de Teatro y Comunicación",
 		"svc_TALKS_AND_WORKSHOPS": "Solicitud de Charla y Talleres"
+	},
+	"referrals": {
+		"myTitle": "Mis remisiones",
+		"create": "Crear remisión",
+		"patient": "Paciente",
+		"therapistType": "Tipo de terapeuta",
+		"recommendation": "Recomendación",
+		"submitted": "Enviado",
+		"status": "Estado",
+		"assignedTo": "Asignado: {name}",
+		"pending": "Pendiente",
+		"empty": "Aún no ha enviado remisiones.",
+		"loadError": "No se pudieron cargar sus remisiones.",
+		"createTitle": "Crear remisión",
+		"backToList": "Mis remisiones",
+		"selectPatient": "Paciente",
+		"searchPatient": "Buscar por nombre del paciente…",
+		"therapistTypeLabel": "Tipo de terapeuta",
+		"therapistTypePlaceholder": "p. ej. Ocupacional, Lenguaje, Intervención…",
+		"recommendationLabel": "Recomendación de terapia",
+		"recommendationPlaceholder": "Resuma la evaluación y lo que recomienda…",
+		"submit": "Enviar remisión",
+		"submitSuccess": "Remisión enviada para {name}.",
+		"submitError": "No se pudo enviar la remisión."
 	}
 }

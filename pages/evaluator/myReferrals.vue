@@ -1,138 +1,137 @@
-<template>
-	<div class="font-sc-encode p-4">
-		<div class="mb-4 flex flex-row items-center">
-			<h1 class="font-cormorant-garamond text-3xl font-bold text-nowrap">
-				My Referrals
-			</h1>
-			<div class="w-full"></div>
-			<NuxtLink
-				:to="{ name: 'evaluator-createReferral' }"
-				class="btn text-nowrap"
-			>
-				Create Referral
-			</NuxtLink>
-		</div>
-
-		<table class="w-full table-auto border-collapse">
-			<thead class="bg-gray-100">
-				<tr>
-					<th class="px-4 py-2 text-left">Patient</th>
-					<th class="px-4 py-2 text-left">Therapist Type</th>
-					<th class="px-4 py-2 text-left">Recommendation</th>
-					<th class="px-4 py-2 text-left">Submitted</th>
-					<th class="px-4 py-2 text-left">Status</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					v-for="referral in referrals"
-					:key="referral.id"
-					class="border-t"
-				>
-					<td class="px-4 py-2">
-						{{ patientName(referral.patientId) }}
-					</td>
-					<td class="px-4 py-2">
-						{{ referral.therapistType || "—" }}
-					</td>
-					<td class="px-4 py-2">
-						{{ referral.therapyRecommendation || "—" }}
-					</td>
-					<td class="px-4 py-2">
-						{{ formatDate(referral.submittedAt) }}
-					</td>
-					<td class="px-4 py-2">
-						<span
-							v-if="referral.therapistId"
-							class="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-800"
-						>
-							Assigned: {{ therapistName(referral.therapistId) }}
-						</span>
-						<span
-							v-else
-							class="rounded bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800"
-						>
-							Pending
-						</span>
-					</td>
-				</tr>
-				<tr v-if="!referrals.length">
-					<td colspan="5" class="px-4 py-2 text-center text-gray-400">
-						You haven't submitted any referrals yet.
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<div v-if="error" class="mt-4 text-sm text-red-600">
-			Failed to load your referrals.
-		</div>
-	</div>
-</template>
-
+<!-- Evaluator: list of my submitted referrals. -->
 <script setup lang="ts">
-import { computed } from "vue";
-import { useFetch } from "#imports";
+import type { TableColumn } from "@nuxt/ui";
+
+const { t } = useI18n();
+const localePath = useLocalePath();
 
 interface ReferralRow {
 	id: string;
 	patientId: string;
 	therapistId: string | null;
-	evaluatorId: string;
 	therapyRecommendation: string;
 	therapistType: string;
 	submittedAt: string;
 }
-
 interface PatientRow {
 	id: string;
 	name: string;
 }
-
 interface TherapistRow {
 	id: string;
 	fName: string;
 	lName: string;
 }
 
-const { data: referralData, error } = await useFetch<ReferralRow[]>(
-	"/api/session/referrals",
-	{ default: () => [] }
-);
-
+const {
+	data: referralData,
+	status,
+	error,
+} = await useFetch<ReferralRow[]>("/api/session/referrals", {
+	default: () => [],
+});
 const { data: patientData } = await useFetch<PatientRow[]>("/api/search/all", {
 	default: () => [],
 });
-
 const { data: therapistData } = await useFetch<TherapistRow[]>(
 	"/api/session/therapists",
 	{ default: () => [] }
 );
 
-const referrals = computed(() => referralData.value ?? []);
+const patientById = computed(
+	() => new Map((patientData.value ?? []).map((p) => [p.id, p.name]))
+);
+const therapistById = computed(
+	() =>
+		new Map(
+			(therapistData.value ?? []).map((th) => [
+				th.id,
+				`${th.fName} ${th.lName}`.trim(),
+			])
+		)
+);
 
-const patientNameById = computed(() => {
-	const map = new Map<string, string>();
-	for (const p of patientData.value ?? []) map.set(p.id, p.name);
-	return map;
-});
+type Row = {
+	patient: string;
+	therapistType: string;
+	recommendation: string;
+	submitted: string;
+	assigned: string | null;
+};
 
-const therapistNameById = computed(() => {
-	const map = new Map<string, string>();
-	for (const t of therapistData.value ?? [])
-		map.set(t.id, `${t.fName} ${t.lName}`.trim());
-	return map;
-});
+const rows = computed<Row[]>(() =>
+	(referralData.value ?? []).map((r) => ({
+		patient: patientById.value.get(r.patientId) ?? r.patientId,
+		therapistType: r.therapistType || "—",
+		recommendation: r.therapyRecommendation || "—",
+		submitted: r.submittedAt
+			? new Date(r.submittedAt).toLocaleDateString()
+			: "—",
+		assigned: r.therapistId
+			? (therapistById.value.get(r.therapistId) ?? r.therapistId)
+			: null,
+	}))
+);
 
-function patientName(id: string): string {
-	return patientNameById.value.get(id) ?? id;
-}
-
-function therapistName(id: string): string {
-	return therapistNameById.value.get(id) ?? id;
-}
-
-function formatDate(value: string): string {
-	return value ? new Date(value).toLocaleString() : "—";
-}
+const columns = computed<TableColumn<Row>[]>(() => [
+	{ accessorKey: "patient", header: t("referrals.patient") },
+	{ accessorKey: "therapistType", header: t("referrals.therapistType") },
+	{ accessorKey: "recommendation", header: t("referrals.recommendation") },
+	{ accessorKey: "submitted", header: t("referrals.submitted") },
+	{ accessorKey: "assigned", header: t("referrals.status") },
+]);
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-5xl">
+		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+			<h1 class="text-highlighted text-xl font-semibold">
+				{{ t("referrals.myTitle") }}
+			</h1>
+			<UButton
+				:to="localePath({ name: 'evaluator-createReferral' })"
+				icon="i-lucide-clipboard-plus"
+				:label="t('referrals.create')"
+			/>
+		</div>
+
+		<UAlert
+			v-if="error"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('referrals.loadError')"
+		/>
+		<div
+			v-else-if="!rows.length && status !== 'pending'"
+			class="border-default text-muted rounded-lg border border-dashed py-12 text-center"
+		>
+			{{ t("referrals.empty") }}
+		</div>
+		<UTable
+			v-else
+			:data="rows"
+			:columns="columns"
+			:loading="status === 'pending'"
+		>
+			<template #assigned-cell="{ row }">
+				<UBadge
+					v-if="row.original.assigned"
+					color="success"
+					variant="subtle"
+					:label="
+						t('referrals.assignedTo', {
+							name: row.original.assigned,
+						})
+					"
+				/>
+				<UBadge
+					v-else
+					color="warning"
+					variant="subtle"
+					:label="t('referrals.pending')"
+				/>
+			</template>
+		</UTable>
+	</div>
+</template>
