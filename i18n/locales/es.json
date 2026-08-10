@@ -296,5 +296,21 @@
 		"complementary": "Servicios complementarios",
 		"workshops": "Talleres / clases",
 		"noServices": "No se seleccionaron servicios."
+	},
+	"login": {
+		"title": "Iniciar sesión",
+		"subtitle": "Ingrese su correo y le enviaremos un código de acceso.",
+		"email": "Correo electrónico",
+		"sendCode": "Enviar código",
+		"sendError": "No se pudo enviar el código. Inténtelo de nuevo.",
+		"code": "Código de 6 dígitos",
+		"codeSentTo": "Ingrese el código enviado a {email}",
+		"verify": "Iniciar sesión",
+		"invalidCode": "Código inválido o expirado.",
+		"resend": "Reenviar código",
+		"differentEmail": "Usar otro correo",
+		"newPatientTitle": "¿Paciente nuevo?",
+		"newPatientBody": "Solicite servicios y nuestro equipo le contactará.",
+		"requestServices": "Solicitar servicios"
 	}
 }
