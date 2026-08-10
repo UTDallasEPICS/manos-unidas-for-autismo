@@ -126,6 +126,7 @@
 							id="max"
 							v-model.number="form.max"
 							min="1"
+							max="50"
 							@blur="enforceMin()"
 							class="input w-full"
 						/>
