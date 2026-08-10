@@ -78,7 +78,7 @@ async function verify() {
 			</div>
 
 			<UCard>
-				<div class="mb-5">
+				<div class="mb-5 text-center">
 					<h1 class="text-highlighted text-xl font-semibold">
 						{{ t("login.title") }}
 					</h1>
