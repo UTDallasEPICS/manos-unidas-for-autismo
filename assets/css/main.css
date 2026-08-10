@@ -1,7 +1,13 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@theme {
+/* `static` is REQUIRED: Tailwind v4's default `@theme` tree-shakes out any
+   custom property not referenced by a generated utility. NuxtUI aliases
+   `primary` → the midnight ramp via var(--color-midnight-*), but that indirect
+   reference isn't seen as "usage", so the shades get dropped and `bg-primary`
+   resolves to transparent (invisible buttons/badges app-wide). `static` forces
+   every variable in this block to emit. */
+@theme static {
 	/* Brand — FMUA "midnight" navy. 900 is the exact brand color #06234f.
 	   Exposed as a full ramp so NuxtUI can alias `primary` to it (app.config.ts). */
 	--color-midnight-50: #f0f5fb;
