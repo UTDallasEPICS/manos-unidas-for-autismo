@@ -58,5 +58,24 @@
 	"Have you been formally diagnosed?": "Have you been formally diagnosed?",
 	"Do you want to perform a Diagnostic Evaluation on the patient?": "Do you want to perform a Diagnostic Evaluation on the patient?",
 	"Any Comments for the therapist?": "Any Comments for the therapist?",
-	"Submit form": "Submit form"
+	"Submit form": "Submit form",
+	"nav": {
+		"dashboard": "Dashboard",
+		"schedule": "Schedule",
+		"profile": "My Profile",
+		"children": "My Children",
+		"patients": "Patients",
+		"reviewForms": "Review Forms",
+		"assignSpecialist": "Assign Specialist",
+		"employees": "Employees",
+		"evaluators": "Evaluations",
+		"logout": "Log Out"
+	},
+	"common": {
+		"loadError": "Something went wrong while loading.",
+		"retry": "Retry"
+	},
+	"children": {
+		"empty": "No children are linked to your account yet."
+	}
 }

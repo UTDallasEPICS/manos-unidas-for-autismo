@@ -58,5 +58,24 @@
 	"Have you been formally diagnosed?": "¿Le han diagnosticado formalmente?",
 	"Do you want to perform a Diagnostic Evaluation on the patient?": "¿Desea realizar una evaluación diagnóstica al paciente?",
 	"Any Comments for the therapist?": "¿Algún comentario para el terapeuta?",
-	"Submit form": "Enviar formulario"
+	"Submit form": "Enviar formulario",
+	"nav": {
+		"dashboard": "Panel",
+		"schedule": "Calendario",
+		"profile": "Mi perfil",
+		"children": "Mis hijos",
+		"patients": "Pacientes",
+		"reviewForms": "Revisar formularios",
+		"assignSpecialist": "Asignar especialista",
+		"employees": "Empleados",
+		"evaluators": "Evaluaciones",
+		"logout": "Cerrar sesión"
+	},
+	"common": {
+		"loadError": "Algo salió mal al cargar.",
+		"retry": "Reintentar"
+	},
+	"children": {
+		"empty": "Aún no hay hijos vinculados a su cuenta."
+	}
 }

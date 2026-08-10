@@ -77,6 +77,8 @@ import { ref } from "#imports";
 import { authClient } from "~/utils/auth-client";
 import { useDashboardNavigation } from "~/composables/auth/useDashboardNavigation";
 
+definePageMeta({ layout: "auth" });
+
 const email = ref("");
 const otp = ref("");
 const step = ref<"email" | "otp">("email");
