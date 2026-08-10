@@ -8,7 +8,7 @@ const localePath = useLocalePath();
 <template>
 	<div class="bg-default text-default flex min-h-screen flex-col">
 		<header
-			class="border-default flex items-center justify-between gap-4 border-b px-4 py-3 sm:px-6"
+			class="border-default bg-default relative z-10 flex items-center justify-between gap-4 border-b px-4 py-3 sm:px-6"
 		>
 			<NuxtLink
 				:to="localePath('index')"

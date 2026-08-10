@@ -22,9 +22,9 @@ export default defineNuxtRouteMiddleware((to) => {
 		return;
 	}
 
-	// Not logged in → login.
+	// Not logged in → the login page, which now lives at the root route (/).
 	if (!userId.value) {
-		return navigateTo("/login");
+		return navigateTo("/");
 	}
 
 	// Logged in but missing the page's required permission → their dashboard.

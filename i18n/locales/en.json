@@ -296,5 +296,21 @@
 		"complementary": "Complementary services",
 		"workshops": "Workshops / classes",
 		"noServices": "No services selected."
+	},
+	"login": {
+		"title": "Sign in",
+		"subtitle": "Enter your email and we'll send you a sign-in code.",
+		"email": "Email",
+		"sendCode": "Send code",
+		"sendError": "Failed to send code. Please try again.",
+		"code": "6-digit code",
+		"codeSentTo": "Enter the code sent to {email}",
+		"verify": "Sign in",
+		"invalidCode": "Invalid or expired code.",
+		"resend": "Resend code",
+		"differentEmail": "Use a different email",
+		"newPatientTitle": "New patient?",
+		"newPatientBody": "Request services and our team will follow up.",
+		"requestServices": "Request services"
 	}
 }
