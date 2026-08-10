@@ -1,271 +1,11 @@
-<template>
-	<div class="font-sc-encode mx-auto max-w-3xl p-8">
-		<div class="mb-6 flex items-center justify-between">
-			<NuxtLink
-				to="/viewContactForms"
-				class="text-sm text-gray-500 hover:text-black"
-			>
-				&larr; Back to Contact Forms
-			</NuxtLink>
-			<button
-				v-if="request"
-				class="rounded-md bg-green-700 px-3 py-1 text-sm text-white hover:bg-green-600"
-				@click="completeIntake"
-			>
-				Complete Intake
-			</button>
-		</div>
-
-		<p v-if="loading" class="text-gray-500">Loading request…</p>
-		<p v-else-if="notFound" class="text-gray-500">Request not found.</p>
-
-		<div v-else-if="request">
-			<!-- Header -->
-			<div class="mb-6">
-				<h1 class="font-cormorant-garamond text-3xl text-gray-500">
-					Full Request &mdash; #{{ request.id }}
-				</h1>
-			</div>
-
-			<!-- Metadata -->
-			<div class="mb-6 flex gap-6 text-sm text-gray-500">
-				<span
-					>Submitted:
-					{{ new Date(request.createdAt).toLocaleDateString() }}</span
-				>
-				<span>Status: {{ request.status }}</span>
-				<span>{{
-					request.isAdult ? "Adult (self)" : "Parent / Guardian"
-				}}</span>
-			</div>
-
-			<!-- Contact Person -->
-			<section class="mb-6">
-				<h3
-					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
-				>
-					{{
-						request.isAdult
-							? "Patient / Contact Person"
-							: "Contact Person (Parent / Guardian)"
-					}}
-				</h3>
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<p class="text-sm text-gray-500">Full Name</p>
-						<p class="text-gray-500">
-							{{ request.firstName }}
-							{{ request.middleName ?? "" }}
-							{{ request.lastName }}
-						</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">ID Card (Cédula)</p>
-						<p class="text-gray-500">{{ request.idNumber }}</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">Email</p>
-						<p class="text-gray-500">{{ request.email }}</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">Phone</p>
-						<p class="text-gray-500">
-							{{ request.phone.map((p) => p.number).join(", ") }}
-						</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">WhatsApp</p>
-						<p class="text-gray-500">{{ request.whatsapp }}</p>
-					</div>
-				</div>
-			</section>
-
-			<!-- Address -->
-			<section class="mb-6">
-				<h3
-					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
-				>
-					Address
-				</h3>
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<p class="text-sm text-gray-500">Street</p>
-						<p class="text-gray-500">
-							{{ request.streetName }} {{ request.streetNum }}
-						</p>
-					</div>
-					<div v-if="request.buildingNum">
-						<p class="text-sm text-gray-500">
-							Building / Apartment
-						</p>
-						<p class="text-gray-500">{{ request.buildingNum }}</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">Postal Code</p>
-						<p class="text-gray-500">{{ request.postCode }}</p>
-					</div>
-				</div>
-			</section>
-
-			<!-- Patient Info (only shown if parent is filling out) -->
-			<section v-if="!request.isAdult" class="mb-6">
-				<h3
-					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
-				>
-					Patient Information
-				</h3>
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<p class="text-sm text-gray-500">Patient Name</p>
-						<p class="text-gray-500">
-							{{ request.patientFirstName }}
-							{{ request.patientMiddleName ?? "" }}
-							{{ request.patientLastName }}
-						</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">Age</p>
-						<p class="text-gray-500">{{ request.patientAge }}</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">Diagnosed</p>
-						<p class="text-gray-500">
-							{{ request.diagnosed ? "Yes" : "No" }}
-						</p>
-					</div>
-				</div>
-			</section>
-
-			<!-- Patient Info for adult -->
-			<section v-else class="mb-6">
-				<h3
-					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
-				>
-					Patient Details
-				</h3>
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<p class="text-sm text-gray-500">Age</p>
-						<p class="text-gray-500">{{ request.patientAge }}</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">Diagnosed</p>
-						<p class="text-gray-500">
-							{{ request.diagnosed ? "Yes" : "No" }}
-						</p>
-					</div>
-				</div>
-			</section>
-
-			<!-- History -->
-			<section class="mb-6">
-				<h3
-					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
-				>
-					History
-				</h3>
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<p class="text-sm text-gray-500">Previous Patient</p>
-						<p class="text-gray-500">
-							{{ request.returnPatient ? "Yes" : "No" }}
-						</p>
-					</div>
-					<div v-if="request.previousVisitDate">
-						<p class="text-sm text-gray-500">Previous Visit</p>
-						<p class="text-gray-500">
-							{{
-								new Date(
-									request.previousVisitDate
-								).toLocaleDateString()
-							}}
-						</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">
-							Wants Diagnostic Evaluation
-						</p>
-						<p class="text-gray-500">
-							{{ request.wantsEval ? "Yes" : "No" }}
-						</p>
-					</div>
-					<div>
-						<p class="text-sm text-gray-500">Has Referral</p>
-						<p class="text-gray-500">
-							{{ request.hasReferral ? "Yes" : "No" }}
-						</p>
-					</div>
-				</div>
-			</section>
-
-			<!-- Services -->
-			<section class="mb-6">
-				<h3
-					class="font-cormorant-garamond mb-3 border-b pb-1 text-2xl text-gray-500"
-				>
-					Services Requested
-				</h3>
-
-				<div v-if="request.therapies.length" class="mb-4">
-					<p class="mb-1 text-sm text-gray-500">Therapies</p>
-					<ul class="ml-5 list-disc text-gray-500">
-						<li v-for="t in request.therapies" :key="t.name">
-							{{ therapyLabel(t.name) }}
-						</li>
-					</ul>
-				</div>
-
-				<div v-if="request.complementaryServices.length" class="mb-4">
-					<p class="mb-1 text-sm text-gray-500">
-						Complementary Services
-					</p>
-					<ul class="ml-5 list-disc text-gray-500">
-						<li
-							v-for="s in request.complementaryServices"
-							:key="s.name"
-						>
-							{{ complementaryLabel(s.name) }}
-						</li>
-					</ul>
-				</div>
-
-				<div v-if="request.workshops.length" class="mb-4">
-					<p class="mb-1 text-sm text-gray-500">
-						Workshops / Classes
-					</p>
-					<ul class="ml-5 list-disc text-gray-500">
-						<li v-for="w in request.workshops" :key="w.name">
-							{{ workshopLabel(w.name) }}
-						</li>
-					</ul>
-				</div>
-
-				<p
-					v-if="
-						!request.therapies.length &&
-						!request.complementaryServices.length &&
-						!request.workshops.length
-					"
-					class="text-gray-400 italic"
-				>
-					No services selected.
-				</p>
-			</section>
-		</div>
-	</div>
-</template>
-
+<!-- Staff view of a single service request, with a "Complete Intake" hand-off. -->
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { $fetch } from "ofetch";
-
 interface RequestPhone {
 	id: number;
 	number: string;
 	requestId: number;
 }
-
-interface Request {
+interface RequestDetail {
 	id: number;
 	firstName: string;
 	middleName?: string;
@@ -295,70 +35,298 @@ interface Request {
 	workshops: { name: string }[];
 }
 
+const { t, locale } = useI18n();
+const localePath = useLocalePath();
 const route = useRoute();
-const router = useRouter();
 const requestId = route.params.id as string;
 
-const request = ref<Request | null>(null);
-const loading = ref(true);
-const notFound = ref(false);
-
-onMounted(async () => {
-	try {
-		request.value = await $fetch<Request>(`/api/request/${requestId}`);
-	} catch {
-		notFound.value = true;
-	} finally {
-		loading.value = false;
-	}
+const {
+	data: request,
+	status,
+	error,
+} = await useFetch<RequestDetail>(`/api/request/${requestId}`, {
+	default: () => null,
 });
 
+const yesNo = (v: boolean) => (v ? t("request.yes") : t("request.no"));
+const fmtDate = (v?: string) =>
+	v ? new Date(v).toLocaleDateString(locale.value) : "—";
+
 function completeIntake() {
-	router.push(`/intake/${requestId}`);
-}
-
-const therapyLabels: Record<string, string> = {
-	DIAGNOSTIC_ASSESSMENT: "Diagnostic Assessment (Evaluación Diagnóstica)",
-	EARLY_INTERVENTION: "Early Intervention (Intervención Temprana)",
-	BEHAVIORAL_THERAPY: "Behavioral Therapy (Terapia Conductual)",
-	LEARNING_THERAPY: "Learning Therapy (Terapia de Aprendizaje)",
-	SPEECH_THERAPY: "Speech Therapy (Terapia del Lenguaje)",
-	SOCIAL_SKILLS: "Social Skills (Habilidades Sociales)",
-	SEFVI: "SEFVI",
-};
-
-const complementaryLabels: Record<string, string> = {
-	MUSICAL_STIMULATION: "Musical Stimulation (Estimulación Musical)",
-	PHYSICAL_COGNITIVE_ACTIVITY:
-		"Physical and Cognitive Activity (Actividad Física y Cognitiva)",
-	LEARNING_IN_MOTION: "Learning in Motion (Aprendiendo en Movimiento)",
-	DYNAMIC_THINKING: "Dynamic Thinking (Pensamiento Dinámico)",
-	FAMILY_THERAPY: "Family Therapy (Terapia Familiar)",
-	COUPLES_THERAPY: "Couples Therapy (Terapia de Parejas)",
-	SEXUALITY_THERAPY:
-		"Sexuality Therapy and Consultations (Terapia y Consultas de Sexualidad)",
-	CHILD_ADOLESCENT_PSYCHOLOGICAL_THERAPY:
-		"Child and Adolescent Psychological Therapy (Terapia Psicológica Infanto-Juvenil)",
-	NUTRITIONAL_CONSULTATION: "Nutritional Consultation (Consulta Nutricional)",
-	SCHOOL_VISIT: "School Visit (Visita Escolar)",
-};
-
-const workshopLabels: Record<string, string> = {
-	THEATRE_COMMUNICATION:
-		"Theatre and Communication Classes (Clases de Teatro y Comunicación)",
-	TALKS_AND_WORKSHOPS:
-		"Request for Talks and Workshops (Solicitud de Charla y Talleres)",
-};
-
-function therapyLabel(name: string) {
-	return therapyLabels[name] ?? name;
-}
-
-function complementaryLabel(name: string) {
-	return complementaryLabels[name] ?? name;
-}
-
-function workshopLabel(name: string) {
-	return workshopLabels[name] ?? name;
+	navigateTo(localePath(`/intake/${requestId}`));
 }
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-3xl">
+		<div class="mb-6 flex items-center justify-between gap-3">
+			<UButton
+				:to="localePath('/viewContactForms')"
+				variant="link"
+				color="neutral"
+				icon="i-lucide-arrow-left"
+				:label="t('requestDetail.back')"
+			/>
+			<UButton
+				v-if="request"
+				color="success"
+				icon="i-lucide-clipboard-check"
+				:label="t('requestDetail.completeIntake')"
+				@click="completeIntake"
+			/>
+		</div>
+
+		<div v-if="status === 'pending'" class="space-y-4">
+			<USkeleton class="h-8 w-64" />
+			<USkeleton v-for="n in 3" :key="n" class="h-28 w-full" />
+		</div>
+
+		<UAlert
+			v-else-if="error || !request"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('requestDetail.notFound')"
+		/>
+
+		<div v-else class="space-y-6">
+			<div>
+				<h1 class="text-highlighted text-2xl font-semibold">
+					{{ t("requestDetail.title") }} — #{{ request.id }}
+				</h1>
+				<div
+					class="text-muted mt-2 flex flex-wrap items-center gap-3 text-sm"
+				>
+					<span
+						>{{ t("requestDetail.submitted") }}:
+						{{ fmtDate(request.createdAt) }}</span
+					>
+					<UBadge color="neutral" variant="subtle">{{
+						request.status
+					}}</UBadge>
+					<span>{{
+						request.isAdult
+							? t("requestDetail.adultSelf")
+							: t("requestDetail.guardian")
+					}}</span>
+				</div>
+			</div>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{
+							request.isAdult
+								? t("requestDetail.contactPerson")
+								: t("requestDetail.contactGuardian")
+						}}
+					</h2>
+				</template>
+				<dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.fullName") }}
+						</dt>
+						<dd class="text-default">
+							{{ request.firstName }}
+							{{ request.middleName ?? "" }}
+							{{ request.lastName }}
+						</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.idCard") }}
+						</dt>
+						<dd class="text-default">{{ request.idNumber }}</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.email") }}
+						</dt>
+						<dd class="text-default">{{ request.email }}</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.phone") }}
+						</dt>
+						<dd class="text-default">
+							{{
+								request.phone.map((p) => p.number).join(", ") ||
+								"—"
+							}}
+						</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.whatsapp") }}
+						</dt>
+						<dd class="text-default">{{ request.whatsapp }}</dd>
+					</div>
+				</dl>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("requestDetail.address") }}
+					</h2>
+				</template>
+				<dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.street") }}
+						</dt>
+						<dd class="text-default">
+							{{ request.streetName }} {{ request.streetNum }}
+						</dd>
+					</div>
+					<div v-if="request.buildingNum">
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.building") }}
+						</dt>
+						<dd class="text-default">{{ request.buildingNum }}</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.postalCode") }}
+						</dt>
+						<dd class="text-default">{{ request.postCode }}</dd>
+					</div>
+				</dl>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{
+							request.isAdult
+								? t("requestDetail.patientDetails")
+								: t("requestDetail.patientInfo")
+						}}
+					</h2>
+				</template>
+				<dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+					<div v-if="!request.isAdult">
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.patientName") }}
+						</dt>
+						<dd class="text-default">
+							{{ request.patientFirstName }}
+							{{ request.patientMiddleName ?? "" }}
+							{{ request.patientLastName }}
+						</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.age") }}
+						</dt>
+						<dd class="text-default">{{ request.patientAge }}</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.diagnosed") }}
+						</dt>
+						<dd class="text-default">
+							{{ yesNo(request.diagnosed) }}
+						</dd>
+					</div>
+				</dl>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("requestDetail.history") }}
+					</h2>
+				</template>
+				<dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.previousPatient") }}
+						</dt>
+						<dd class="text-default">
+							{{ yesNo(request.returnPatient) }}
+						</dd>
+					</div>
+					<div v-if="request.previousVisitDate">
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.previousVisit") }}
+						</dt>
+						<dd class="text-default">
+							{{ fmtDate(request.previousVisitDate) }}
+						</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.wantsEval") }}
+						</dt>
+						<dd class="text-default">
+							{{ yesNo(request.wantsEval) }}
+						</dd>
+					</div>
+					<div>
+						<dt class="text-muted text-sm">
+							{{ t("requestDetail.hasReferral") }}
+						</dt>
+						<dd class="text-default">
+							{{ yesNo(request.hasReferral) }}
+						</dd>
+					</div>
+				</dl>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("requestDetail.servicesRequested") }}
+					</h2>
+				</template>
+				<div class="space-y-4">
+					<div v-if="request.therapies.length">
+						<p class="text-muted mb-1 text-sm">
+							{{ t("requestDetail.therapies") }}
+						</p>
+						<ul class="text-default ml-5 list-disc">
+							<li v-for="s in request.therapies" :key="s.name">
+								{{ t(`request.svc_${s.name}`) }}
+							</li>
+						</ul>
+					</div>
+					<div v-if="request.complementaryServices.length">
+						<p class="text-muted mb-1 text-sm">
+							{{ t("requestDetail.complementary") }}
+						</p>
+						<ul class="text-default ml-5 list-disc">
+							<li
+								v-for="s in request.complementaryServices"
+								:key="s.name"
+							>
+								{{ t(`request.svc_${s.name}`) }}
+							</li>
+						</ul>
+					</div>
+					<div v-if="request.workshops.length">
+						<p class="text-muted mb-1 text-sm">
+							{{ t("requestDetail.workshops") }}
+						</p>
+						<ul class="text-default ml-5 list-disc">
+							<li v-for="s in request.workshops" :key="s.name">
+								{{ t(`request.svc_${s.name}`) }}
+							</li>
+						</ul>
+					</div>
+					<p
+						v-if="
+							!request.therapies.length &&
+							!request.complementaryServices.length &&
+							!request.workshops.length
+						"
+						class="text-dimmed text-sm italic"
+					>
+						{{ t("requestDetail.noServices") }}
+					</p>
+				</div>
+			</UCard>
+		</div>
+	</div>
+</template>
