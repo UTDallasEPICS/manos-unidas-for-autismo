@@ -71,9 +71,9 @@ async function verify() {
 		>
 			<div class="text-center">
 				<img
-					src="/fmua-logo.png"
+					src="/fmua-logo.svg"
 					alt="FMUA"
-					class="mx-auto mb-4 size-40"
+					class="mx-auto mb-6 h-auto w-64 max-w-[80%] sm:w-72"
 				/>
 				<h1 class="text-highlighted text-2xl font-semibold">
 					{{ t("login.title") }}
