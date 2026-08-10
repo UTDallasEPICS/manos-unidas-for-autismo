@@ -58,6 +58,19 @@ export default defineNuxtConfig({
 	],
 	hooks: {
 		"pages:extend"(pages) {
+			// Drop duplicate auto-generated routes that are superseded by the
+			// explicitly-gated aliases added below. Their page files are still
+			// reachable via the canonical gated paths (/myChildren, /myProfile,
+			// /patientProfile, /childProfile); these bare routes were ungated
+			// (surfaced by /dev) and just duplicated the same pages.
+			const dropRoutes = new Set([
+				"parent-children",
+				"patient-patientProfile-id",
+			]);
+			for (let i = pages.length - 1; i >= 0; i--) {
+				if (dropRoutes.has(pages[i].name || "")) pages.splice(i, 1);
+			}
+
 			// Override auto-generated routes for moved pages to maintain backward compatibility
 			const routeOverrides: Record<
 				string,

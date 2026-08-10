@@ -39,6 +39,7 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	// Patient Pages
 	"myProfile-id": AccessPermission.PATIENT,
 	"dashboard-patientDashboard": AccessPermission.PATIENT,
+	"patient-appointments": AccessPermission.PATIENT,
 	// Parent Pages
 	childSearch: AccessPermission.PARENT,
 	"dashboard-parentDashboard": AccessPermission.PARENT,
@@ -63,15 +64,13 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	"admin-createAccount": AccessPermission.ADMIN,
 
 	"dashboard-admin": AccessPermission.ADMIN,
-	"admin-userSearch": AccessPermission.ADMIN,
 	// "admin-employeeSearch": AccessPermission.ADMIN,
 
 	// testing:
 	"patient-testingForm": AccessPermission.PATIENT,
 
-	// Contact & About
+	// Contact
 	contact: AccessPermission.USER,
-	about: AccessPermission.USER,
 
 	requestForm: AccessPermission.PUBLIC,
 	"dashboard-evaluatorDashboard": AccessPermission.EVALUATOR,
