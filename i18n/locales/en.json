@@ -77,5 +77,14 @@
 	},
 	"children": {
 		"empty": "No children are linked to your account yet."
+	},
+	"appointments": {
+		"title": "My Appointments",
+		"request": "Request Appointment",
+		"upcoming": "Upcoming Appointments",
+		"past": "Past Appointments",
+		"noUpcoming": "No upcoming appointments.",
+		"noPast": "No past appointments.",
+		"session": "Session"
 	}
 }
