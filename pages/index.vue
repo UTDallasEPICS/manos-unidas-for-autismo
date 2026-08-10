@@ -73,17 +73,23 @@ async function verify() {
 				<img
 					src="/fmua-logo.svg"
 					alt="FMUA"
-					class="mx-auto mb-6 h-auto w-64 max-w-[80%] sm:w-72"
+					class="mx-auto h-auto w-64 max-w-[80%] sm:w-72"
 				/>
-				<h1 class="text-highlighted text-2xl font-semibold">
-					{{ t("login.title") }}
-				</h1>
-				<p class="text-default mt-1 text-sm">
-					{{ t("login.subtitle") }}
-				</p>
 			</div>
 
 			<UCard>
+				<div class="mb-5">
+					<h1 class="text-highlighted text-xl font-semibold">
+						{{ t("login.title") }}
+					</h1>
+					<p class="text-muted mt-1 text-sm">
+						{{
+							step === "email"
+								? t("login.subtitle")
+								: t("login.codeSentTo", { email })
+						}}
+					</p>
+				</div>
 				<form
 					v-if="step === 'email'"
 					class="space-y-4"
@@ -115,9 +121,6 @@ async function verify() {
 				</form>
 
 				<form v-else class="space-y-4" @submit.prevent="verify">
-					<p class="text-muted text-sm">
-						{{ t("login.codeSentTo", { email }) }}
-					</p>
 					<UFormField :label="t('login.code')" name="otp">
 						<UInput
 							v-model="otp"
