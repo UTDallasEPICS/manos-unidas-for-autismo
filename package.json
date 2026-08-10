@@ -3,15 +3,13 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"i18n:deepl": "node scripts/i18n-deepl.js",
-		"i18n:fill": "node scripts/i18n-report.js",
-		"predev": "npm run i18n:deepl",
+		"i18n:check": "node scripts/i18n-check.js",
 		"build": "nuxt build",
 		"dev": "nuxt dev",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"checker": "node scripts/check-endpoint-auth.mjs && eslint && prettier . --check",
+		"checker": "node scripts/check-endpoint-auth.mjs && node scripts/i18n-check.js && eslint && prettier . --check",
 		"prepare": "husky"
 	},
 	"prisma": {
