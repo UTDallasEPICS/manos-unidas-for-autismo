@@ -1,7 +1,35 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { execSync } from "node:child_process";
 import tailwindcss from "@tailwindcss/vite";
 
+// Build-time provenance surfaced on the ADMIN/IT-only /dev diagnostics page.
+// Falls back to CI-provided env vars, then "unknown", so a git-less prod build
+// (e.g. Docker without .git) never breaks the build.
+function buildInfo() {
+	const git = (cmd: string, envKey: string) => {
+		try {
+			return execSync(cmd, { stdio: ["ignore", "pipe", "ignore"] })
+				.toString()
+				.trim();
+		} catch {
+			return process.env[envKey] || "unknown";
+		}
+	};
+	return {
+		sha: git("git rev-parse --short HEAD", "GIT_SHA"),
+		branch: git("git rev-parse --abbrev-ref HEAD", "GIT_BRANCH"),
+		time: new Date().toISOString(),
+		env: process.env.DEPLOY_ENV || process.env.NODE_ENV || "development",
+	};
+}
+
 export default defineNuxtConfig({
+	runtimeConfig: {
+		public: {
+			// Read on /dev via useRuntimeConfig().public.build.
+			build: buildInfo(),
+		},
+	},
 	modules: ["@nuxtjs/i18n", "@nuxt/eslint", "@nuxt/ui"],
 	i18n: {
 		locales: [
