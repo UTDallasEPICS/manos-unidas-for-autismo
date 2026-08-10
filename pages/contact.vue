@@ -48,5 +48,6 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ layout: "auth" });
 // No logic needed
 </script>

@@ -111,16 +111,18 @@ export default defineNuxtConfig({
 				path: "/patientProfile/:id",
 				file: "~/pages/patient/patientProfile/[id].vue",
 			});
-			//pages.push({
-			//name: "childProfile-id",
-			//path: "/childProfile/:id",
-			//file: "~/pages/patientProfile/[id].vue",
-			//});
-			// pages.push({
-			// 	name: "childSearch",
-			// 	path: "/myChildren",
-			// 	file: "~/pages/patient/patientSearch.vue",
-			// });
+			// Parent-scoped children list + child profile view (#209). Access is
+			// PARENT in pageAccessMap; server enforces parent-of ownership.
+			pages.push({
+				name: "childSearch",
+				path: "/myChildren",
+				file: "~/pages/parent/children.vue",
+			});
+			pages.push({
+				name: "childProfile-id",
+				path: "/childProfile/:id",
+				file: "~/pages/patient/patientProfile/[id].vue",
+			});
 		},
 	},
 });

@@ -632,6 +632,8 @@ import {
 } from "@headlessui/vue";
 import { $fetch } from "ofetch";
 
+definePageMeta({ layout: "auth" });
+
 const genders = ["Male", "Female", "Other"];
 const gender = ref("");
 
