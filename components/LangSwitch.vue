@@ -16,7 +16,7 @@ const langs = [
 			:key="l.code"
 			:label="l.label"
 			size="xs"
-			:color="locale === l.code ? 'primary' : 'neutral'"
+			color="neutral"
 			:variant="locale === l.code ? 'solid' : 'ghost'"
 			:aria-pressed="locale === l.code"
 			@click="setLocale(l.code)"
