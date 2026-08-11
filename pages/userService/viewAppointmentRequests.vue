@@ -1,75 +1,10 @@
-<template>
-	<div class="font-sc-encode p-4">
-		<!-- Header -->
-		<div class="mb-2">
-			<h1 class="font-cormorant-garamond text-2xl font-bold">
-				Evaluation Appointment Requests
-			</h1>
-		</div>
-		<div class="mb-4 flex justify-end">
-			<RefreshButton :onRefresh="refreshAppointments" />
-		</div>
-		<AssignModal
-			v-model:modelValue="isAssignModalOpen"
-			:mode="assignMode"
-			:item="selectedAppointment"
-			@assigned="handleAppointmentAssigned"
-		/>
-
-		<!-- Appointments Table -->
-		<table class="w-full table-auto border-collapse">
-			<thead class="bg-gray-100">
-				<tr>
-					<th class="px-4 py-2 text-left">Name</th>
-					<th class="px-4 py-2 text-left">Email</th>
-					<th class="px-4 py-2 text-left">Phone</th>
-					<th class="px-4 py-2 text-left">Service Type</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					v-for="appointment in appointmentRequests"
-					:key="appointment.id"
-					class="cursor-pointer border-t hover:bg-gray-100"
-					@click="openAssignModal(appointment)"
-				>
-					<td class="px-4 py-2">
-						<span
-							class="cursor-pointer text-blue-600 hover:underline"
-						>
-							{{ appointment.firstName }}
-							{{ appointment.lastName }}
-						</span>
-					</td>
-					<td class="px-4 py-2">{{ appointment.email || "—" }}</td>
-					<td class="px-4 py-2">{{ appointment.phone || "—" }}</td>
-					<td class="px-4 py-2">
-						{{ appointment.serviceType || "—" }}
-					</td>
-				</tr>
-				<tr v-if="!appointmentRequests.length" class="border-t">
-					<td colspan="4" class="px-4 py-2 text-center">
-						No appointment requests found.
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<!-- Error State -->
-		<div v-if="error" class="mt-4 text-red-600">
-			Failed to load appointment requests.
-		</div>
-	</div>
-</template>
-
+<!-- User-service: evaluation appointment requests. Assign an evaluator per row
+     via AssignModal. Rebuilt on NuxtUI (UTable). -->
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import type { TableColumn } from "@nuxt/ui";
 import AssignModal from "~/components/userService/AssignModal.vue";
-import RefreshButton from "~/components/userService/RefreshButton.vue";
-import { useFetch } from "#imports";
-import { AccessPermission } from "~/types/permissions";
 
-const { access } = useAuthState();
+const { t } = useI18n();
 
 interface Appointment {
 	id: string;
@@ -80,39 +15,98 @@ interface Appointment {
 	serviceType: string;
 }
 
-const {
-	data: appointmentData,
-	error,
-	refresh: refreshAppointmentData,
-} = await getAppointments();
-
-async function getAppointments() {
-	if (access.value?.[AccessPermission.USER_SERVICE]) {
-		return useFetch<Appointment[]>("/api/session/appointments");
+const { data, status, error, refresh } = await useFetch<Appointment[]>(
+	"/api/session/appointments",
+	{
+		default: () => [],
 	}
-	return {
-		data: { value: [] as Appointment[] },
-		error: "User not authorized to view appointment requests",
-		refresh: async () => {},
-	};
-}
+);
 
-const appointmentRequests = computed(() => appointmentData?.value ?? []);
-const isAssignModalOpen = ref(false);
-const selectedAppointment = ref<Appointment | null>(null);
-const assignMode = ref<"appointment" | "referral">("appointment");
+type Row = Appointment & { name: string };
+const rows = computed<Row[]>(() =>
+	(data.value ?? []).map((a) => ({
+		...a,
+		name: `${a.firstName} ${a.lastName}`.trim() || "—",
+		email: a.email || "—",
+		phone: a.phone || "—",
+		serviceType: a.serviceType || "—",
+	}))
+);
 
-function openAssignModal(appointment: Appointment) {
-	selectedAppointment.value = appointment;
-	assignMode.value = "appointment";
-	isAssignModalOpen.value = true;
-}
+const columns = computed<TableColumn<Row>[]>(() => [
+	{ accessorKey: "name", header: t("assign.colName") },
+	{ accessorKey: "email", header: t("assign.colEmail") },
+	{ accessorKey: "phone", header: t("assign.colPhone") },
+	{ accessorKey: "serviceType", header: t("assign.colService") },
+	{ accessorKey: "actions", header: "" },
+]);
 
-async function handleAppointmentAssigned() {
-	await refreshAppointmentData();
-}
-
-async function refreshAppointments() {
-	await refreshAppointmentData();
+const open = ref(false);
+const selected = ref<Appointment | null>(null);
+function openAssign(row: Row) {
+	selected.value = row;
+	open.value = true;
 }
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-6xl">
+		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+			<h1 class="text-highlighted text-xl font-semibold">
+				{{ t("assign.apptTitle") }}
+			</h1>
+			<UButton
+				icon="i-lucide-refresh-cw"
+				color="neutral"
+				variant="outline"
+				:label="t('assign.refresh')"
+				:loading="status === 'pending'"
+				@click="refresh()"
+			/>
+		</div>
+
+		<UAlert
+			v-if="error"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('common.loadError')"
+			:actions="[
+				{
+					label: t('common.retry'),
+					color: 'neutral',
+					variant: 'subtle',
+					onClick: () => refresh(),
+				},
+			]"
+		/>
+		<div
+			v-else-if="!rows.length && status !== 'pending'"
+			class="border-default text-muted rounded-lg border border-dashed py-12 text-center"
+		>
+			{{ t("assign.emptyAppts") }}
+		</div>
+		<UTable
+			v-else
+			:data="rows"
+			:columns="columns"
+			:loading="status === 'pending'"
+		>
+			<template #actions-cell="{ row }">
+				<UButton
+					size="xs"
+					icon="i-lucide-user-plus"
+					:label="t('assign.assign')"
+					@click="openAssign(row.original)"
+				/>
+			</template>
+		</UTable>
+
+		<AssignModal
+			v-model="open"
+			mode="appointment"
+			:item="selected"
+			@assigned="refresh()"
+		/>
+	</div>
+</template>
