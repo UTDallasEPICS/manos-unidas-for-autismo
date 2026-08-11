@@ -95,7 +95,6 @@ const LEGACY_I18N_ALLOWLIST = new Set([
 	"components/schedule/FilterAppointments.vue",
 	"components/schedule/WeekViewCalendar.vue",
 	"components/therapy/NotesHistory.vue",
-	"components/therapy/PatientModal.vue",
 	"components/therapy/ReportModal.vue",
 	"components/therapy/ViewNoteModal.vue",
 	"pages/admin/createAccount.vue",
@@ -104,7 +103,6 @@ const LEGACY_I18N_ALLOWLIST = new Set([
 	"pages/contact.vue",
 	"pages/intake/[id].vue",
 	"pages/patient/patientProfile/[id].vue",
-	"pages/patient/patientSearch.vue",
 	"pages/patient/testingForm.vue",
 ]);
 

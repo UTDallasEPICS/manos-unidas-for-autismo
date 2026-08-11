@@ -1,4 +1,31 @@
 {
+	"patients": {
+		"title": "Ver todos los pacientes",
+		"searchPlaceholder": "Buscar por nombre...",
+		"name": "Nombre",
+		"age": "Edad",
+		"gender": "Género",
+		"view": "Ver",
+		"empty": "No se encontraron pacientes.",
+		"modalTitle": "Información del paciente",
+		"genderAge": "Género / Edad",
+		"identification": "Identificación",
+		"email": "Correo electrónico",
+		"phone": "Teléfono",
+		"whatsApp": "WhatsApp",
+		"contactPref": "Preferencia de contacto",
+		"status": "Estado",
+		"diagnosed": "Diagnosticado",
+		"insurance": "Seguro (ARS)",
+		"sponsor": "Patrocinador",
+		"none": "Ninguno",
+		"assignedTherapist": "Terapeuta asignado",
+		"therapyRecommendation": "Recomendación de terapia",
+		"therapistType": "Tipo de terapeuta",
+		"recordCreated": "Registro creado",
+		"viewProfile": "Ver perfil",
+		"close": "Cerrar"
+	},
 	"assign": {
 		"apptTitle": "Solicitudes de cita de evaluación",
 		"referralTitle": "Asignar referencias de neuroespecialista",
@@ -130,7 +157,9 @@
 	},
 	"common": {
 		"loadError": "Algo salió mal al cargar.",
-		"retry": "Reintentar"
+		"retry": "Reintentar",
+		"yes": "Sí",
+		"no": "No"
 	},
 	"children": {
 		"empty": "Aún no hay hijos vinculados a su cuenta."

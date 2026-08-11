@@ -1,69 +1,10 @@
-<template>
-	<div class="font-sc-encode p-4">
-		<!-- Header + Search -->
-		<div class="mb-4 flex items-center">
-			<h1 class="font-cormorant-garamond text-2xl font-bold">
-				View All Patients
-			</h1>
-
-			<div
-				class="ml-4 flex flex-1 items-center overflow-hidden rounded border border-gray-300"
-			>
-				<input
-					v-model="searchQuery"
-					type="text"
-					placeholder="Search by name..."
-					class="flex-1 px-3 py-2 focus:outline-none"
-				/>
-				<button class="px-3">
-					<Search class="h-5 w-5" />
-				</button>
-			</div>
-		</div>
-
-		<!-- Patients Table -->
-		<table class="w-full table-auto border-collapse">
-			<thead class="bg-gray-100">
-				<tr>
-					<th class="px-4 py-2 text-left">Name</th>
-					<th class="px-4 py-2 text-left">Age</th>
-					<th class="px-4 py-2 text-left">Gender</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr
-					v-for="p in filteredPatients"
-					:key="p.id"
-					class="cursor-pointer border-t hover:bg-gray-100"
-					@click="openModal(p)"
-				>
-					<td class="px-4 py-2">{{ p.name }}</td>
-					<td class="px-4 py-2">{{ p.age ?? "—" }}</td>
-					<td class="px-4 py-2">{{ p.gender ?? "—" }}</td>
-				</tr>
-
-				<tr v-if="!filteredPatients.length" class="border-t">
-					<td colspan="3" class="px-4 py-2 text-center">
-						No patients found.
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<!-- MODAL -->
-		<PatientModal
-			v-if="is_clicked && selected"
-			:patient="selected"
-			@close="is_clicked = false"
-		/>
-	</div>
-</template>
-
+<!-- Staff patient directory: search all patients, open a quick-view modal per
+     row (which links to the full profile). Rebuilt on NuxtUI (UTable). -->
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { Search } from "lucide-vue-next";
+import type { TableColumn } from "@nuxt/ui";
 import PatientModal from "~/components/therapy/PatientModal.vue";
+
+const { t } = useI18n();
 
 interface PatientRow {
 	id: string;
@@ -72,7 +13,6 @@ interface PatientRow {
 	age: number | null;
 	gender: string | null;
 }
-
 interface PatientDetail {
 	id: string;
 	name: string;
@@ -89,24 +29,31 @@ interface PatientDetail {
 	insurance?: string | null;
 }
 
+// Every patient (not just those with a referral). Endpoint is staff-gated and
+// returns a minimal projection; full detail is fetched on demand below.
+const {
+	data: patients,
+	status,
+	error,
+} = await useFetch<PatientRow[]>("/api/search/all", { default: () => [] });
+
 const searchQuery = ref("");
-const is_clicked = ref(false);
-const selected = ref<PatientDetail | null>(null);
-
-// Every patient (not just those with a referral). The endpoint is staff-gated
-// and returns a minimal projection; full detail is fetched on click below.
-const { data: patients } = await useFetch<PatientRow[]>("/api/search/all", {
-	default: () => [],
-});
-
-const filteredPatients = computed(() =>
+const rows = computed(() =>
 	(patients.value ?? []).filter((p) =>
 		p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 	)
 );
 
-// Load full patient detail on demand through the ownership-gated profile
-// endpoint, then flatten it into the shape PatientModal expects.
+const columns = computed<TableColumn<PatientRow>[]>(() => [
+	{ accessorKey: "name", header: t("patients.name") },
+	{ accessorKey: "age", header: t("patients.age") },
+	{ accessorKey: "gender", header: t("patients.gender") },
+	{ accessorKey: "actions", header: "" },
+]);
+
+const showModal = ref(false);
+const selected = ref<PatientDetail | null>(null);
+
 async function openModal(row: PatientRow) {
 	try {
 		const u = await $fetch<{
@@ -141,9 +88,68 @@ async function openModal(row: PatientRow) {
 			status: pat?.status ?? undefined,
 			insurance: pat?.insurance ?? undefined,
 		};
-		is_clicked.value = true;
+		showModal.value = true;
 	} catch (err) {
 		console.error("Failed to load patient detail:", err);
 	}
 }
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-5xl">
+		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+			<h1 class="text-highlighted text-xl font-semibold">
+				{{ t("patients.title") }}
+			</h1>
+			<UInput
+				v-model="searchQuery"
+				icon="i-lucide-search"
+				:placeholder="t('patients.searchPlaceholder')"
+				class="w-64"
+			/>
+		</div>
+
+		<UAlert
+			v-if="error"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('common.loadError')"
+		/>
+		<div
+			v-else-if="!rows.length && status !== 'pending'"
+			class="border-default text-muted rounded-lg border border-dashed py-12 text-center"
+		>
+			{{ t("patients.empty") }}
+		</div>
+		<UTable
+			v-else
+			:data="rows"
+			:columns="columns"
+			:loading="status === 'pending'"
+		>
+			<template #age-cell="{ row }">{{
+				row.original.age ?? "—"
+			}}</template>
+			<template #gender-cell="{ row }">
+				{{ row.original.gender ?? "—" }}
+			</template>
+			<template #actions-cell="{ row }">
+				<UButton
+					size="xs"
+					color="neutral"
+					variant="outline"
+					icon="i-lucide-eye"
+					:label="t('patients.view')"
+					@click="openModal(row.original)"
+				/>
+			</template>
+		</UTable>
+
+		<PatientModal
+			v-if="showModal && selected"
+			:patient="selected"
+			@close="showModal = false"
+		/>
+	</div>
+</template>

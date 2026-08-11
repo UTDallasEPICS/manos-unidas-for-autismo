@@ -1,4 +1,31 @@
 {
+	"patients": {
+		"title": "View All Patients",
+		"searchPlaceholder": "Search by name...",
+		"name": "Name",
+		"age": "Age",
+		"gender": "Gender",
+		"view": "View",
+		"empty": "No patients found.",
+		"modalTitle": "Patient Information",
+		"genderAge": "Gender / Age",
+		"identification": "Identification",
+		"email": "Email",
+		"phone": "Phone",
+		"whatsApp": "WhatsApp",
+		"contactPref": "Contact Preference",
+		"status": "Status",
+		"diagnosed": "Diagnosed",
+		"insurance": "Insurance (ARS)",
+		"sponsor": "Sponsor",
+		"none": "None",
+		"assignedTherapist": "Assigned Therapist",
+		"therapyRecommendation": "Therapy Recommendation",
+		"therapistType": "Therapist Type",
+		"recordCreated": "Record Created",
+		"viewProfile": "View Profile",
+		"close": "Close"
+	},
 	"assign": {
 		"apptTitle": "Evaluation Appointment Requests",
 		"referralTitle": "Assign Neuro Specialist Referrals",
@@ -130,7 +157,9 @@
 	},
 	"common": {
 		"loadError": "Something went wrong while loading.",
-		"retry": "Retry"
+		"retry": "Retry",
+		"yes": "Yes",
+		"no": "No"
 	},
 	"children": {
 		"empty": "No children are linked to your account yet."
