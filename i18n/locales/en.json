@@ -404,7 +404,31 @@
 		"close": "Close",
 		"unknownPatient": "Unknown patient",
 		"addError": "Failed to add patient.",
-		"removeError": "Failed to remove patient."
+		"removeError": "Failed to remove patient.",
+		"evaluator": "Evaluator",
+		"sessionType": "Session Type",
+		"selectType": "Select a session type…",
+		"staff": "Staff Member",
+		"selectStaff": "Select a staff member…",
+		"date": "Date",
+		"time": "Time",
+		"duration": "Duration (minutes)",
+		"maxAttendance": "Max attendance",
+		"comment": "Comment",
+		"newSession": "New Session",
+		"edit": "Edit",
+		"delete": "Delete",
+		"cancel": "Cancel",
+		"save": "Save",
+		"create": "Create",
+		"deleteConfirm": "Delete this session? This can't be undone.",
+		"confirmDelete": "Delete",
+		"createSuccess": "Session created.",
+		"createError": "Failed to create session.",
+		"updateSuccess": "Session updated.",
+		"updateError": "Failed to update session.",
+		"deleteSuccess": "Session deleted.",
+		"deleteError": "Failed to delete session."
 	},
 	"requestDetail": {
 		"back": "Back to Contact Forms",
@@ -456,5 +480,19 @@
 		"newPatientTitle": "New patient?",
 		"newPatientBody": "Request services and our team will follow up.",
 		"requestServices": "Request services"
+	},
+	"calendar": {
+		"previous": "Previous",
+		"next": "Next",
+		"today": "Today",
+		"month": "Month",
+		"week": "Week",
+		"day": "Day",
+		"newSession": "New Session",
+		"session": "Session",
+		"filter": "Filter",
+		"loadError": "Failed to load appointments.",
+		"rescheduleSuccess": "Appointment rescheduled.",
+		"rescheduleError": "Failed to reschedule appointment."
 	}
 }

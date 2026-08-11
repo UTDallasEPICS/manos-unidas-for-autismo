@@ -404,7 +404,31 @@
 		"close": "Cerrar",
 		"unknownPatient": "Paciente desconocido",
 		"addError": "No se pudo agregar el paciente.",
-		"removeError": "No se pudo quitar el paciente."
+		"removeError": "No se pudo quitar el paciente.",
+		"evaluator": "Evaluador",
+		"sessionType": "Tipo de sesión",
+		"selectType": "Selecciona un tipo de sesión…",
+		"staff": "Miembro del personal",
+		"selectStaff": "Selecciona un miembro del personal…",
+		"date": "Fecha",
+		"time": "Hora",
+		"duration": "Duración (minutos)",
+		"maxAttendance": "Asistencia máxima",
+		"comment": "Comentario",
+		"newSession": "Nueva sesión",
+		"edit": "Editar",
+		"delete": "Eliminar",
+		"cancel": "Cancelar",
+		"save": "Guardar",
+		"create": "Crear",
+		"deleteConfirm": "¿Eliminar esta sesión? Esta acción no se puede deshacer.",
+		"confirmDelete": "Eliminar",
+		"createSuccess": "Sesión creada.",
+		"createError": "No se pudo crear la sesión.",
+		"updateSuccess": "Sesión actualizada.",
+		"updateError": "No se pudo actualizar la sesión.",
+		"deleteSuccess": "Sesión eliminada.",
+		"deleteError": "No se pudo eliminar la sesión."
 	},
 	"requestDetail": {
 		"back": "Volver a formularios de contacto",
@@ -456,5 +480,19 @@
 		"newPatientTitle": "¿Paciente nuevo?",
 		"newPatientBody": "Solicite servicios y nuestro equipo le contactará.",
 		"requestServices": "Solicitar servicios"
+	},
+	"calendar": {
+		"previous": "Anterior",
+		"next": "Siguiente",
+		"today": "Hoy",
+		"month": "Mes",
+		"week": "Semana",
+		"day": "Día",
+		"newSession": "Nueva sesión",
+		"session": "Sesión",
+		"filter": "Filtrar",
+		"loadError": "No se pudieron cargar las citas.",
+		"rescheduleSuccess": "Cita reprogramada.",
+		"rescheduleError": "No se pudo reprogramar la cita."
 	}
 }

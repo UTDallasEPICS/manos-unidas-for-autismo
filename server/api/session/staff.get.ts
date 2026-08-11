@@ -1,10 +1,11 @@
 import { AccessPermission } from "~/types/permissions";
 
 // Bookable "runs this session" candidates for the calendar's create/edit
-// form: therapists (regular sessions) and evaluators (evaluation
-// appointments). Kept separate from session/therapists.get.ts, which backs
-// the existing CreateAppointment.vue therapist-only dropdown and shouldn't
-// start offering evaluators as an option there.
+// form (SessionDetailModal): therapists (regular sessions) and evaluators
+// (evaluation appointments). Kept separate from session/therapists.get.ts,
+// which is THERAPIST-only and used elsewhere (e.g. resolving therapist names
+// on the evaluator referrals list) — that contract shouldn't start returning
+// evaluators too.
 export default defineAuthedHandler(
 	{ access: AccessPermission.STAFF },
 	async () => {

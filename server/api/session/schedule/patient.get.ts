@@ -2,7 +2,8 @@ import { z } from "zod";
 
 const schema = z.object({
 	userId: z.string(),
-	date: z.coerce.date(),
+	start: z.coerce.date(),
+	end: z.coerce.date(),
 });
 
 const validateSchema = schema.strict();
@@ -20,13 +21,14 @@ export default defineAuthedHandler(
 		},
 	},
 	async (event) => {
-		const { userId, date } = await validateQuery(event, validateSchema);
-
-		const { monday, saturday } = getWeekBounds(date);
+		const { userId, start, end } = await validateQuery(
+			event,
+			validateSchema
+		);
 
 		const sessions = await prisma.session.findMany({
 			where: {
-				time: { gte: monday, lt: saturday },
+				time: { gte: start, lt: end },
 				Patients: { some: { patientId: userId } },
 			},
 			include: sessionWithDetailsInclude,
