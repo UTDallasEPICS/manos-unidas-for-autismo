@@ -71,11 +71,15 @@ const navItems = computed<NavigationMenuItem[][]>(() => {
 		// Public / logged-out links (login, request form) never appear in the
 		// authenticated shell.
 		if (!link.to) continue;
+		const to = localePath({ name: link.to, params: link.params });
+		// Dedupe the role's own dashboard: it's already the "Dashboard" item
+		// above, so evaluators no longer get both "Dashboard" and "Evaluations".
+		if (to === dashboardPath.value) continue;
 		const meta = NAV_META[link.to];
 		items.push({
 			label: meta ? t(meta.key) : link.label,
 			icon: meta?.icon ?? "i-lucide-circle-dot",
-			to: localePath({ name: link.to, params: link.params }),
+			to,
 		});
 	}
 	return [items];

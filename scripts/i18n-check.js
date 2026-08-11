@@ -89,9 +89,6 @@ const LEGACY_I18N_ALLOWLIST = new Set([
 	"components/Form/Input/ObjectiveDetails.vue",
 	"components/Form/Input/TherapyDrilldown.vue",
 	"components/therapy/ReportModal.vue",
-	"pages/admin/createAccount.vue",
-	"pages/admin/employeeSearch.vue",
-	"pages/contact.vue",
 	"pages/intake/[id].vue",
 ]);
 
