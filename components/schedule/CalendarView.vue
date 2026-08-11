@@ -59,8 +59,24 @@ function openCreate(date: Date) {
 function closeModal() {
 	modalOpen.value = false;
 }
-function handleChanged() {
-	calendarRef.value?.getApi().refetchEvents();
+async function handleChanged() {
+	const api = calendarRef.value?.getApi();
+	api?.refetchEvents();
+
+	// The modal is bound to a snapshot of the session taken when it was
+	// opened; refetching the calendar's events doesn't feed fresh data back
+	// into that snapshot. Re-fetch the current view's sessions directly and
+	// re-sync the open modal so add/remove/edit reflect immediately instead
+	// of requiring a page reload.
+	if (activeSession.value && api) {
+		const sessions = await loadSessions(
+			api.view.activeStart.toISOString(),
+			api.view.activeEnd.toISOString()
+		);
+		const updated = sessions.find((s) => s.id === activeSession.value?.id);
+		activeSession.value = updated ?? null;
+		if (!updated) modalOpen.value = false;
+	}
 }
 
 const TYPE_COLORS: Record<string, string> = {
