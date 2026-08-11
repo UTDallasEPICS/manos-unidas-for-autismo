@@ -145,24 +145,39 @@ const sidebarCollapsed = ref(false);
 			</template>
 
 			<template #footer>
-				<div class="flex w-full flex-col gap-2">
-					<div class="flex items-center justify-between gap-2 px-1">
+				<!-- Collapsed rail: stack the controls vertically and drop the
+				     account label so nothing overflows the ~64px width. -->
+				<div class="flex w-full flex-col items-center gap-2">
+					<div
+						class="flex gap-2"
+						:class="
+							sidebarCollapsed
+								? 'flex-col items-center'
+								: 'w-full items-center justify-between px-1'
+						"
+					>
 						<LangSwitch />
 						<UColorModeButton />
 					</div>
 					<UDropdownMenu
 						:items="userMenuItems"
 						:content="{ align: 'start' }"
-						class="w-full"
+						:class="sidebarCollapsed ? '' : 'w-full'"
 					>
 						<UButton
-							:label="displayName"
+							:label="sidebarCollapsed ? undefined : displayName"
 							icon="i-lucide-user"
-							trailing-icon="i-lucide-chevron-up"
+							:trailing-icon="
+								sidebarCollapsed
+									? undefined
+									: 'i-lucide-chevron-up'
+							"
 							color="neutral"
 							variant="ghost"
-							block
-							class="justify-start"
+							:block="!sidebarCollapsed"
+							:square="sidebarCollapsed"
+							:class="sidebarCollapsed ? '' : 'justify-start'"
+							:aria-label="displayName"
 						/>
 					</UDropdownMenu>
 				</div>
