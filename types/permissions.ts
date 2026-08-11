@@ -66,9 +66,6 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	"dashboard-admin": AccessPermission.ADMIN,
 	// "admin-employeeSearch": AccessPermission.ADMIN,
 
-	// testing:
-	"patient-testingForm": AccessPermission.PATIENT,
-
 	// Contact
 	contact: AccessPermission.USER,
 
