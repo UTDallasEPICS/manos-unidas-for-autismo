@@ -1,4 +1,27 @@
 {
+	"schedule": {
+		"createAppointment": "Create Appointment",
+		"newAppointment": "New Appointment",
+		"therapist": "Therapist",
+		"pickTherapist": "Pick a therapist",
+		"sessionType": "Session Type",
+		"noSessionTypes": "No session types configured",
+		"pickSessionType": "Pick a session type",
+		"date": "Date",
+		"time": "Time",
+		"duration": "Duration (minutes)",
+		"maxAttendance": "Max patient attendance (min. 1)",
+		"comments": "Comments",
+		"commentsPlaceholder": "Additional details...",
+		"cancel": "Cancel",
+		"save": "Save",
+		"fillRequired": "Please fill out all required fields.",
+		"pastError": "Cannot create appointments in the past.",
+		"createError": "Failed to create appointment.",
+		"filterTitle": "Filter Appointments",
+		"filterHint": "Tick to hide the appointment type:",
+		"submit": "Submit"
+	},
 	"profile": {
 		"title": "User Profile",
 		"detailsTitle": "Profile Details",
