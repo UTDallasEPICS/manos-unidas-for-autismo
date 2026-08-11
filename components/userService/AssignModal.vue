@@ -1,126 +1,8 @@
-<template>
-	<div
-		v-if="modelValue"
-		class="fixed inset-0 z-50 flex items-center justify-center p-4"
-	>
-		<div
-			class="absolute inset-0 bg-black/50"
-			@click.self="closeModal"
-		></div>
-		<div
-			class="relative z-10 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded bg-white shadow-xl"
-		>
-			<div class="border-b px-6 py-4">
-				<h2 class="text-xl font-semibold">
-					Assign
-					{{ mode === "appointment" ? "Evaluator" : "Therapist" }}
-				</h2>
-				<p class="mt-1 text-sm text-gray-600">
-					Review this request and assign the right professional, or
-					decline the time.
-				</p>
-			</div>
-			<div class="space-y-4 px-6 py-5">
-				<div class="rounded border border-gray-200 bg-gray-50 p-4">
-					<div class="text-sm font-semibold text-gray-700">
-						Request Details
-					</div>
-					<div
-						class="mt-3 grid gap-3 text-sm text-gray-700 sm:grid-cols-2"
-					>
-						<div>
-							<div class="font-medium">Request ID</div>
-							<div>{{ item?.id ?? "—" }}</div>
-						</div>
-						<div>
-							<div class="font-medium">Type</div>
-							<div>
-								{{
-									mode === "appointment"
-										? "Appointment"
-										: "Referral"
-								}}
-							</div>
-						</div>
-						<div v-if="mode === 'appointment'">
-							<div class="font-medium">Patient</div>
-							<div>
-								{{ item?.firstName ?? "" }}
-								{{ item?.lastName ?? "" }}
-							</div>
-						</div>
-						<div v-if="mode === 'appointment'">
-							<div class="font-medium">Service Type</div>
-							<div>{{ item?.serviceType ?? "—" }}</div>
-						</div>
-						<div v-if="mode === 'referral'">
-							<div class="font-medium">Patient ID</div>
-							<div>{{ item?.patientId ?? "—" }}</div>
-						</div>
-						<div v-if="mode === 'referral'">
-							<div class="font-medium">Therapist Type</div>
-							<div>{{ item?.therapistType ?? "—" }}</div>
-						</div>
-						<div v-if="mode === 'referral'">
-							<div class="font-medium">Recommendation</div>
-							<div>{{ item?.therapyRecommendation ?? "—" }}</div>
-						</div>
-						<div class="sm:col-span-2">
-							<div class="font-medium">Submitted At</div>
-							<div>{{ formatDate(item?.submittedAt) }}</div>
-						</div>
-					</div>
-				</div>
-
-				<div>
-					<label class="block text-sm font-medium text-gray-700">
-						Assign
-						{{
-							mode === "appointment"
-								? "Evaluator ID"
-								: "Therapist ID"
-						}}
-					</label>
-					<input
-						v-model="assigneeId"
-						type="text"
-						class="mt-2 w-full rounded border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-						placeholder="Enter user ID"
-					/>
-				</div>
-				<div
-					v-if="errorMessage"
-					class="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-				>
-					{{ errorMessage }}
-				</div>
-			</div>
-			<div
-				class="flex flex-wrap items-center justify-end gap-3 border-t px-6 py-4"
-			>
-				<button
-					type="button"
-					class="rounded border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
-					@click="cancel"
-				>
-					Cancel
-				</button>
-				<button
-					type="button"
-					class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
-					:disabled="!assigneeId || isSubmitting"
-					@click="submitAssignment"
-				>
-					{{ isSubmitting ? "Submitting..." : "Submit" }}
-				</button>
-			</div>
-		</div>
-	</div>
-</template>
-
+<!-- User-service assignment modal: review an appointment request or a neuro
+     referral and assign an evaluator / therapist by user id. Parent controls
+     visibility via v-model; emits `assigned` after a successful PUT. Rebuilt on
+     NuxtUI (UModal) — same props/emits as the old custom-overlay version. -->
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-
 const props = defineProps<{
 	modelValue: boolean;
 	mode: "appointment" | "referral";
@@ -132,13 +14,25 @@ const emit = defineEmits<{
 	(event: "assigned"): void;
 }>();
 
+const { t } = useI18n();
+
 const assigneeId = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 
-const assignmentLabel = computed(() =>
-	props.mode === "appointment" ? "Evaluator ID" : "Therapist ID"
+const isAppointment = computed(() => props.mode === "appointment");
+const roleLabel = computed(() =>
+	isAppointment.value ? t("assign.evaluator") : t("assign.therapist")
 );
+const assigneeLabel = computed(() =>
+	isAppointment.value
+		? t("assign.assigneeEvaluator")
+		: t("assign.assigneeTherapist")
+);
+
+function formatDate(value: unknown) {
+	return value ? new Date(value as string).toLocaleString() : "—";
+}
 
 watch(
 	() => props.modelValue,
@@ -150,57 +44,170 @@ watch(
 	}
 );
 
-function closeModal() {
-	emit("update:modelValue", false);
-	errorMessage.value = "";
-}
-
 function cancel() {
-	closeModal();
+	emit("update:modelValue", false);
 }
 
 async function submitAssignment() {
 	if (!props.item) {
-		errorMessage.value = "No request selected.";
+		errorMessage.value = t("assign.noSelection");
 		return;
 	}
-
 	if (!assigneeId.value) {
-		errorMessage.value = `${assignmentLabel.value} is required.`;
+		errorMessage.value = t("assign.required", {
+			field: assigneeLabel.value,
+		});
 		return;
 	}
 
 	isSubmitting.value = true;
 	errorMessage.value = "";
 
-	const endpoint =
-		props.mode === "appointment"
-			? "/api/session/appointments"
-			: "/api/session/referrals";
-	const payload =
-		props.mode === "appointment"
-			? {
-					appointmentRequestId: String(props.item.id),
-					evaluatorId: assigneeId.value,
-				}
-			: {
-					therapistReferralId: String(props.item.id),
-					therapistId: assigneeId.value,
-				};
+	const endpoint = isAppointment.value
+		? "/api/session/appointments"
+		: "/api/session/referrals";
+	const payload = isAppointment.value
+		? {
+				appointmentRequestId: String(props.item.id),
+				evaluatorId: assigneeId.value,
+			}
+		: {
+				therapistReferralId: String(props.item.id),
+				therapistId: assigneeId.value,
+			};
 
 	try {
-		await $fetch(endpoint, {
-			method: "PUT",
-			body: payload,
-		});
+		await $fetch(endpoint, { method: "PUT", body: payload });
 		emit("assigned");
-		closeModal();
+		emit("update:modelValue", false);
 	} catch (err) {
 		errorMessage.value =
-			(err instanceof Error && err.message) ||
-			"Failed to complete assignment. Please try again.";
+			(err instanceof Error && err.message) || t("assign.submitError");
 	} finally {
 		isSubmitting.value = false;
 	}
 }
 </script>
+
+<template>
+	<UModal
+		:open="modelValue"
+		:title="t('assign.title', { role: roleLabel })"
+		:description="t('assign.subtitle')"
+		@update:open="(v) => emit('update:modelValue', v)"
+	>
+		<template #body>
+			<div class="space-y-4">
+				<div class="bg-muted rounded-lg p-4">
+					<p class="text-highlighted mb-3 text-sm font-semibold">
+						{{ t("assign.requestDetails") }}
+					</p>
+					<dl class="grid gap-3 text-sm sm:grid-cols-2">
+						<div>
+							<dt class="text-muted">
+								{{ t("assign.requestId") }}
+							</dt>
+							<dd class="text-default">{{ item?.id ?? "—" }}</dd>
+						</div>
+						<div>
+							<dt class="text-muted">{{ t("assign.type") }}</dt>
+							<dd class="text-default">
+								{{
+									isAppointment
+										? t("assign.typeAppointment")
+										: t("assign.typeReferral")
+								}}
+							</dd>
+						</div>
+						<template v-if="isAppointment">
+							<div>
+								<dt class="text-muted">
+									{{ t("assign.patient") }}
+								</dt>
+								<dd class="text-default">
+									{{ item?.firstName ?? "" }}
+									{{ item?.lastName ?? "" }}
+								</dd>
+							</div>
+							<div>
+								<dt class="text-muted">
+									{{ t("assign.serviceType") }}
+								</dt>
+								<dd class="text-default">
+									{{ item?.serviceType ?? "—" }}
+								</dd>
+							</div>
+						</template>
+						<template v-else>
+							<div>
+								<dt class="text-muted">
+									{{ t("assign.patientId") }}
+								</dt>
+								<dd class="text-default">
+									{{ item?.patientId ?? "—" }}
+								</dd>
+							</div>
+							<div>
+								<dt class="text-muted">
+									{{ t("assign.therapistType") }}
+								</dt>
+								<dd class="text-default">
+									{{ item?.therapistType ?? "—" }}
+								</dd>
+							</div>
+							<div class="sm:col-span-2">
+								<dt class="text-muted">
+									{{ t("assign.recommendation") }}
+								</dt>
+								<dd class="text-default">
+									{{ item?.therapyRecommendation ?? "—" }}
+								</dd>
+							</div>
+						</template>
+						<div class="sm:col-span-2">
+							<dt class="text-muted">
+								{{ t("assign.submittedAt") }}
+							</dt>
+							<dd class="text-default">
+								{{ formatDate(item?.submittedAt) }}
+							</dd>
+						</div>
+					</dl>
+				</div>
+
+				<UFormField :label="assigneeLabel" name="assignee">
+					<UInput
+						v-model="assigneeId"
+						:placeholder="t('assign.assigneePlaceholder')"
+						class="w-full"
+					/>
+				</UFormField>
+
+				<UAlert
+					v-if="errorMessage"
+					color="error"
+					variant="subtle"
+					icon="i-lucide-triangle-alert"
+					:title="errorMessage"
+				/>
+			</div>
+		</template>
+
+		<template #footer>
+			<div class="flex w-full justify-end gap-3">
+				<UButton
+					color="neutral"
+					variant="outline"
+					:label="t('assign.cancel')"
+					@click="cancel"
+				/>
+				<UButton
+					:loading="isSubmitting"
+					:disabled="!assigneeId"
+					:label="t('assign.submit')"
+					@click="submitAssignment"
+				/>
+			</div>
+		</template>
+	</UModal>
+</template>

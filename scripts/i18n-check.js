@@ -98,7 +98,6 @@ const LEGACY_I18N_ALLOWLIST = new Set([
 	"components/therapy/PatientModal.vue",
 	"components/therapy/ReportModal.vue",
 	"components/therapy/ViewNoteModal.vue",
-	"components/userService/AssignModal.vue",
 	"pages/admin/createAccount.vue",
 	"pages/admin/employeeSearch.vue",
 	"pages/admin/scheduleView.vue",
@@ -107,8 +106,6 @@ const LEGACY_I18N_ALLOWLIST = new Set([
 	"pages/patient/patientProfile/[id].vue",
 	"pages/patient/patientSearch.vue",
 	"pages/patient/testingForm.vue",
-	"pages/userService/assignNeuroSpecialist.vue",
-	"pages/userService/viewAppointmentRequests.vue",
 ]);
 
 function walkVue(dir, out = []) {
