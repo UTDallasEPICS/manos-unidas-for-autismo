@@ -156,7 +156,7 @@ const sidebarCollapsed = ref(false);
 								: 'w-full items-center justify-between px-1'
 						"
 					>
-						<LangSwitch />
+						<LangSwitch :vertical="sidebarCollapsed" />
 						<UColorModeButton />
 					</div>
 					<UDropdownMenu
