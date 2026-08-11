@@ -1,58 +1,10 @@
-<template>
-	<div class="font-sc-encode p-4">
-		<!-- Dashboard Header -->
-		<div class="mb-4 flex flex-row items-center">
-			<h1 class="font-cormorant-garamond text-nowrap text-3xl font-bold">
-				User Profile
-			</h1>
-			<div class="w-full"></div>
-
-			<!-- Patient-only buttons -->
-			<template v-if="can('PATIENT')">
-				<button
-					class="btn text-nowrap hover:cursor-pointer"
-					@click="patientSection?.openEditModal()"
-				>
-					Edit Profile
-				</button>
-				<button
-					class="ml-2 rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-					@click="patientSection?.openRecommendationsModal()"
-				>
-					Therapist Recommendations
-				</button>
-			</template>
-
-			<button
-				v-if="can('THERAPIST')"
-				class="btn text-nowrap hover:cursor-pointer"
-				@click="patientSection?.handleNewNote()"
-			>
-				Write Therapy Notes
-			</button>
-		</div>
-
-		<!-- Profile Details -->
-		<ProfileDetails
-			:profile="profile"
-			:non-employee="nonEmployee"
-			:patient="patient"
-			:paid="paid"
-		/>
-
-		<!-- Therapy section (notes history + all modals) -->
-		<PatientSection
-			ref="patientSection"
-			:patient-id="uId"
-			:profile="profile"
-			@profile-updated="getProfile"
-		/>
-	</div>
-</template>
-
+<!-- Patient profile page. Composes the read-only Details with PatientSection
+     (which holds the edit / recommendations / therapy-note modals). Header
+     actions are role-gated. Rebuilt on NuxtUI. -->
 <script setup lang="ts">
 import PatientSection from "~/components/patient/Section.vue";
 
+const { t } = useI18n();
 const route = useRoute();
 const uId = route.params.id as string;
 
@@ -64,3 +16,50 @@ const patientSection = ref<InstanceType<typeof PatientSection> | null>(null);
 
 getProfile();
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-4xl">
+		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+			<h1 class="text-highlighted text-xl font-semibold">
+				{{ t("profile.title") }}
+			</h1>
+
+			<div class="flex flex-wrap gap-2">
+				<template v-if="can('PATIENT')">
+					<UButton
+						icon="i-lucide-pencil"
+						:label="t('profile.editProfile')"
+						@click="patientSection?.openEditModal()"
+					/>
+					<UButton
+						color="neutral"
+						variant="outline"
+						icon="i-lucide-clipboard-list"
+						:label="t('profile.therapistRecommendations')"
+						@click="patientSection?.openRecommendationsModal()"
+					/>
+				</template>
+				<UButton
+					v-if="can('THERAPIST')"
+					icon="i-lucide-file-plus"
+					:label="t('profile.writeTherapyNotes')"
+					@click="patientSection?.handleNewNote()"
+				/>
+			</div>
+		</div>
+
+		<ProfileDetails
+			:profile="profile"
+			:non-employee="nonEmployee"
+			:patient="patient"
+			:paid="paid"
+		/>
+
+		<PatientSection
+			ref="patientSection"
+			:patient-id="uId"
+			:profile="profile"
+			@profile-updated="getProfile"
+		/>
+	</div>
+</template>
