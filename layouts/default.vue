@@ -98,11 +98,16 @@ const displayName = computed(() =>
 const pageTitle = computed(
 	() => (route.meta.title as string | undefined) ?? ""
 );
+
+// Track the sidebar's collapsed state so the header shows just the centered
+// icon on the rail (the label would otherwise widen the row and clip the logo).
+const sidebarCollapsed = ref(false);
 </script>
 
 <template>
 	<UDashboardGroup storage-key="fmua-dashboard">
 		<UDashboardSidebar
+			v-model:collapsed="sidebarCollapsed"
 			collapsible
 			resizable
 			:min-size="14"
@@ -123,6 +128,7 @@ const pageTitle = computed(
 						class="size-8 shrink-0"
 					/>
 					<span
+						v-if="!sidebarCollapsed"
 						class="text-highlighted truncate text-sm font-semibold"
 					>
 						Connected Care
