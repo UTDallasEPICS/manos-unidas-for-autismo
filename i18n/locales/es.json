@@ -1,4 +1,27 @@
 {
+	"schedule": {
+		"createAppointment": "Crear cita",
+		"newAppointment": "Nueva cita",
+		"therapist": "Terapeuta",
+		"pickTherapist": "Elija un terapeuta",
+		"sessionType": "Tipo de sesión",
+		"noSessionTypes": "No hay tipos de sesión configurados",
+		"pickSessionType": "Elija un tipo de sesión",
+		"date": "Fecha",
+		"time": "Hora",
+		"duration": "Duración (minutos)",
+		"maxAttendance": "Asistencia máxima de pacientes (mín. 1)",
+		"comments": "Comentarios",
+		"commentsPlaceholder": "Detalles adicionales...",
+		"cancel": "Cancelar",
+		"save": "Guardar",
+		"fillRequired": "Complete todos los campos obligatorios.",
+		"pastError": "No se pueden crear citas en el pasado.",
+		"createError": "No se pudo crear la cita.",
+		"filterTitle": "Filtrar citas",
+		"filterHint": "Marque para ocultar el tipo de cita:",
+		"submit": "Enviar"
+	},
 	"profile": {
 		"title": "Perfil del usuario",
 		"detailsTitle": "Detalles del perfil",

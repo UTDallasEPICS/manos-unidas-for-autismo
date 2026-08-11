@@ -1,118 +1,74 @@
-<template>
-	<div
-		class="font-sc-encode fixed top-0 right-0 z-50 h-full w-full items-center text-left"
-	>
-		<div class="fixed h-full w-full bg-black/70" @click="closeWindow"></div>
+<!-- Schedule filter: tick session types to HIDE them from the calendar. Rebuilt
+     on NuxtUI (UModal). Parent mounts via v-if; emits closeFilterWindow. -->
+<script setup lang="ts">
+type SessionType = { id: string; name: string };
 
-		<div
-			class="text-md relative m-7 flex max-h-full flex-col overflow-y-auto bg-white p-4 text-black"
-		>
-			<div
-				class="flex cursor-pointer justify-end pr-2 text-right"
-				@click="closeWindow"
-			>
-				<X :size="30" />
-			</div>
-
-			<div class="m-3 flex flex-col gap-3">
-				<h1 class="font-cormorant-garamond text-3xl font-bold">
-					{{ $t("Filter Appointments") }}
-				</h1>
-				<h3 class="font-bold">Tick to hide appointment:</h3>
-				<div>
-					<div v-for="(type, index) in sessionTypes" :key="type.id">
-						<input
-							:id="`session-type-${type.id}`"
-							v-model="filteredTypes[index]"
-							type="checkbox"
-							:true-value="type.id"
-							:false-value="null"
-							:checked="oldFilters[index]"
-						/>
-						<span class="px-2">{{ type.name }}</span>
-					</div>
-				</div>
-			</div>
-
-			<div class="flex flex-col justify-center gap-3">
-				<div class="flex justify-center">
-					<button class="btn cursor-pointer" @click="submitForm">
-						{{ $t("Submit") }}
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</template>
-
-<script lang="ts" setup>
-import { ref, watch, useFetch } from "#imports";
-import { computedAsync } from "@vueuse/core";
-import { X } from "lucide-vue-next";
-
-type SessionType = {
-	id: string;
-	name: string;
-};
-
-const props = defineProps<{
-	filter?: string[];
+const props = defineProps<{ filter?: string[] }>();
+const emit = defineEmits<{
+	closeFilterWindow: [];
+	addFilters: [filter: string[]];
 }>();
 
-const emit = defineEmits(["closeFilterWindow", "addFilters"]);
+const { t } = useI18n();
 
-function closeWindow() {
-	emit("closeFilterWindow");
-}
-
-const sessionTypes = computedAsync(async () => {
-	return await fetchSessionTypes();
-}, [] as SessionType[]);
-
-watch(
-	() => sessionTypes.value,
-	() => {
-		oldFilters.value = getOldFilterSettings();
-	}
+const { data: sessionTypes } = await useFetch<SessionType[]>(
+	"/api/session/types",
+	{ default: () => [] }
 );
 
-const oldFilters = ref(getOldFilterSettings());
-const filteredTypes = ref<string[]>([]);
-
-function getOldFilterSettings() {
-	const result: boolean[] = [];
-
-	if (!props.filter) {
-		return result;
-	}
-
-	for (let i = 0; i < sessionTypes.value.length; i++) {
-		result.push(props.filter.indexOf(sessionTypes.value[i].id) !== -1);
-	}
-
-	return result;
-}
-
-async function fetchSessionTypes(): Promise<SessionType[]> {
-	const { data } = await useFetch<SessionType[]>("/api/session/types", {
-		method: "GET",
-		default: () => [],
-	});
-
-	return data.value ?? [];
-}
-
-function submitForm() {
-	const result: string[] = [];
-
-	for (let i = 0; i < filteredTypes.value.length; i++) {
-		const value = filteredTypes.value[i];
-		if (value !== null && value !== undefined && value !== "") {
-			result.push(value);
+const checked = ref<Record<string, boolean>>({});
+watch(
+	sessionTypes,
+	(types) => {
+		const init: Record<string, boolean> = {};
+		for (const st of types ?? []) {
+			init[st.id] = props.filter?.includes(st.id) ?? false;
 		}
-	}
+		checked.value = init;
+	},
+	{ immediate: true }
+);
 
-	emit("addFilters", result);
-	closeWindow();
+const open = ref(true);
+watch(open, (v) => {
+	if (!v) emit("closeFilterWindow");
+});
+
+function submit() {
+	const hidden = Object.entries(checked.value)
+		.filter(([, v]) => v)
+		.map(([id]) => id);
+	emit("addFilters", hidden);
+	open.value = false;
 }
 </script>
+
+<template>
+	<UModal v-model:open="open" :title="t('schedule.filterTitle')">
+		<template #body>
+			<p class="text-muted mb-3 text-sm">
+				{{ t("schedule.filterHint") }}
+			</p>
+			<div class="flex flex-col gap-2">
+				<UCheckbox
+					v-for="type in sessionTypes"
+					:key="type.id"
+					v-model="checked[type.id]"
+					:label="type.name"
+				/>
+			</div>
+		</template>
+
+		<template #footer>
+			<div class="flex w-full justify-end gap-3">
+				<UButton
+					color="neutral"
+					variant="outline"
+					:label="t('schedule.cancel')"
+					@click="open = false"
+				/>
+				<UButton :label="t('schedule.submit')" @click="submit" />
+			</div>
+		</template>
+	</UModal>
+</template>
