@@ -1,4 +1,19 @@
 {
+	"contactForms": {
+		"title": "Incoming Contact Forms",
+		"sortBy": "Sort by",
+		"sortDate": "Date submitted",
+		"sortName": "Last name",
+		"colContact": "Contact name",
+		"colEmail": "Email",
+		"colPhone": "Phone",
+		"colPatient": "Patient name",
+		"colDate": "Date submitted",
+		"colActions": "Actions",
+		"viewFull": "View full request",
+		"completeIntake": "Complete intake",
+		"empty": "No incoming contact forms."
+	},
 	"Create Appointment": "Create Appointment",
 	"New Appointment": "New Appointment",
 	"Date": "Date",

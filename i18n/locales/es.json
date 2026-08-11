@@ -1,4 +1,19 @@
 {
+	"contactForms": {
+		"title": "Formularios de contacto entrantes",
+		"sortBy": "Ordenar por",
+		"sortDate": "Fecha de envío",
+		"sortName": "Apellido",
+		"colContact": "Nombre de contacto",
+		"colEmail": "Correo electrónico",
+		"colPhone": "Teléfono",
+		"colPatient": "Nombre del paciente",
+		"colDate": "Fecha de envío",
+		"colActions": "Acciones",
+		"viewFull": "Ver solicitud completa",
+		"completeIntake": "Completar admisión",
+		"empty": "No hay formularios de contacto entrantes."
+	},
 	"Create Appointment": "Crear cita",
 	"New Appointment": "Nueva cita",
 	"Date": "Fecha",
