@@ -21,7 +21,7 @@ const keyOf = (to: Tile["to"]) => (typeof to === "string" ? to : to.name);
 			:to="tile.to"
 			:icon="tile.icon"
 			:title="tile.label"
-			spotlight
+			class="hover:bg-primary/5 hover:ring-primary transition-colors hover:ring-2"
 		/>
 	</UPageGrid>
 </template>
