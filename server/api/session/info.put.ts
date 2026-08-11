@@ -13,7 +13,7 @@ const updateSessionSchema = z.object({
 });
 
 export default defineAuthedHandler(
-	{ access: AccessPermission.USER_SERVICE },
+	{ access: [AccessPermission.USER_SERVICE, AccessPermission.ADMIN] },
 	async (event) => {
 		const { id, ...updateData } = await validateBody(
 			event,

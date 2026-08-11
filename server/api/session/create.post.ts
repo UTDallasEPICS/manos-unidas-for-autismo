@@ -14,7 +14,7 @@ const sessionSchema = z.object({
 });
 
 export default defineAuthedHandler(
-	{ access: AccessPermission.USER_SERVICE },
+	{ access: [AccessPermission.USER_SERVICE, AccessPermission.ADMIN] },
 	async (event) => {
 		const { typeId, time, comment, maxAttendance, therapistId, duration } =
 			await validateBody(event, sessionSchema);

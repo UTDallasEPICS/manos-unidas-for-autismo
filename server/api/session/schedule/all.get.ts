@@ -2,7 +2,8 @@ import { z } from "zod";
 import { AccessPermission } from "~/types/permissions";
 
 const schema = z.object({
-	date: z.coerce.date(),
+	start: z.coerce.date(),
+	end: z.coerce.date(),
 	filter: z.string().array().optional(),
 });
 
@@ -17,15 +18,13 @@ export default defineAuthedHandler(
 			query.filter = [query.filter];
 		}
 
-		const { date, filter } = validateSchema.parse(query);
-
-		const { monday, saturday } = getWeekBounds(date);
+		const { start, end, filter } = validateSchema.parse(query);
 
 		const constructedFilter = (filter ?? []).map((f) => ({ typeId: f }));
 
 		const sessions = await prisma.session.findMany({
 			where: {
-				time: { gte: monday, lt: saturday },
+				time: { gte: start, lt: end },
 				NOT: { OR: constructedFilter },
 			},
 			include: sessionWithDetailsInclude,
