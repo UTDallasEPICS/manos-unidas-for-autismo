@@ -12,6 +12,7 @@ import esLocale from "@fullcalendar/core/locales/es";
 import type {
 	DateSelectArg,
 	DatesSetArg,
+	EventApi,
 	EventClickArg,
 	EventDropArg,
 	EventInput,
@@ -216,6 +217,35 @@ function handleDatesSet(arg: DatesSetArg) {
 	currentViewType.value = arg.view.type;
 }
 
+// Visible time window. Defaults to the clinic day (fits without scrolling) but
+// auto-expands to include any session scheduled before 7am / after 8pm, so
+// out-of-hours events are never hidden. When it grows past what fits, the grid
+// falls back to its own scroll for those rows.
+const DEFAULT_MIN_HOUR = 7;
+const DEFAULT_MAX_HOUR = 20;
+const slotMinTime = ref(`${String(DEFAULT_MIN_HOUR).padStart(2, "0")}:00:00`);
+const slotMaxTime = ref(`${String(DEFAULT_MAX_HOUR).padStart(2, "0")}:00:00`);
+
+function handleEventsSet(events: EventApi[]) {
+	let minHour = DEFAULT_MIN_HOUR;
+	let maxHour = DEFAULT_MAX_HOUR;
+	for (const e of events) {
+		if (e.start) minHour = Math.min(minHour, e.start.getHours());
+		const end = e.end ?? e.start;
+		if (end) {
+			maxHour = Math.max(
+				maxHour,
+				end.getHours() + (end.getMinutes() > 0 ? 1 : 0)
+			);
+		}
+	}
+	slotMinTime.value = `${String(minHour).padStart(2, "0")}:00:00`;
+	slotMaxTime.value =
+		maxHour >= 24
+			? "24:00:00"
+			: `${String(maxHour).padStart(2, "0")}:00:00`;
+}
+
 const calendarOptions = computed(() => ({
 	plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
 	initialView: "timeGridWeek",
@@ -227,8 +257,8 @@ const calendarOptions = computed(() => ({
 	height: "100%" as const,
 	expandRows: true,
 	allDaySlot: false,
-	slotMinTime: "07:00:00",
-	slotMaxTime: "20:00:00",
+	slotMinTime: slotMinTime.value,
+	slotMaxTime: slotMaxTime.value,
 	firstDay: 1,
 	nowIndicator: true,
 	selectable: canManage.value,
@@ -242,6 +272,7 @@ const calendarOptions = computed(() => ({
 	eventDrop: handleEventDrop,
 	eventResize: handleEventResize,
 	datesSet: handleDatesSet,
+	eventsSet: handleEventsSet,
 	locale: locale.value === "es" ? esLocale : "en",
 }));
 

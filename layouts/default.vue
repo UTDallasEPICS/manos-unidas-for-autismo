@@ -112,12 +112,15 @@ const pageTitle = computed(
 			<template #header>
 				<NuxtLink
 					:to="dashboardPath"
-					class="flex items-center gap-2.5 overflow-hidden"
+					class="flex w-full min-w-0 items-center justify-center gap-2.5 overflow-hidden"
 				>
+					<!-- Square puzzle-circle mark: scales crisply at any sidebar
+					     width and stays centered. The label truncates away as the
+					     rail narrows / collapses, leaving just the centered icon. -->
 					<img
-						src="/fmua-logo.png"
+						src="/fmua-icon.png"
 						alt="FMUA"
-						class="size-9 shrink-0"
+						class="size-8 shrink-0"
 					/>
 					<span
 						class="text-highlighted truncate text-sm font-semibold"
