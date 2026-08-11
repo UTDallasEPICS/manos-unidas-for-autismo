@@ -1,6 +1,10 @@
 <!-- Create a session/appointment (user-service). Rebuilt on NuxtUI (UModal +
-     UForm-style fields). Refetches the schedule after a successful create. -->
+     UForm-style fields). reloadNuxtApp() after create so the (still-legacy)
+     calendar re-mounts and shows the new session — a proper reactive refresh
+     lands with the WeekViewCalendar migration (part 2). -->
 <script setup lang="ts">
+import { reloadNuxtApp } from "#app";
+
 const { t } = useI18n();
 const toast = useToast();
 
@@ -97,7 +101,7 @@ async function submitForm() {
 		}
 		open.value = false;
 		reset();
-		await refreshNuxtData();
+		reloadNuxtApp();
 	} catch (err) {
 		console.error("Could not save session:", err);
 		toast.add({ title: t("schedule.createError"), color: "error" });
