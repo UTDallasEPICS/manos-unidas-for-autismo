@@ -14,7 +14,7 @@ const sessionSchema = z.object({
 });
 
 export default defineAuthedHandler(
-	{ access: AccessPermission.USER_SERVICE },
+	{ access: [AccessPermission.USER_SERVICE, AccessPermission.ADMIN] },
 	async (event) => {
 		const { typeId, time, comment, maxAttendance, therapistId, duration } =
 			await validateBody(event, sessionSchema);
@@ -22,24 +22,7 @@ export default defineAuthedHandler(
 		// #52: reject a session that overlaps another for the same therapist.
 		// Checked before the try so the 409 propagates (handlePrismaError below
 		// only translates Prisma errors).
-		const newStart = time.getTime();
-		const newEnd = newStart + duration * 60 * 1000;
-		const therapistSessions = await prisma.session.findMany({
-			where: { therapistId },
-			select: { time: true, duration: true },
-		});
-		const overlaps = therapistSessions.some((s) => {
-			const start = new Date(s.time).getTime();
-			const end = start + s.duration * 60 * 1000;
-			return start < newEnd && end > newStart;
-		});
-		if (overlaps) {
-			throw createError({
-				statusCode: 409,
-				statusMessage:
-					"This therapist already has an overlapping session.",
-			});
-		}
+		await assertNoTherapistOverlap({ therapistId, time, duration });
 
 		try {
 			const newSession = await prisma.session.create({

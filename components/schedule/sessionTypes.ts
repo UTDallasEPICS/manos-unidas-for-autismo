@@ -20,7 +20,9 @@ export type SessionWithAttendance = {
 	time: string | Date;
 	duration: number;
 	maxAttendance: number;
-	Type: { name: string } | null;
+	comment?: string | null;
+	typeId?: string;
+	Type: { id?: string; name: string; color?: string } | null;
 	Therapist: {
 		id: string;
 		fName: string | null;

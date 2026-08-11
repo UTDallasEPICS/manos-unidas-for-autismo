@@ -1,8 +1,36 @@
-<!-- 27 Apr 2025
-schedule view page, clicking the buttons changes the week that's being displayed -->
+<!-- Shared appointment calendar (all roles land here via the "Schedule" nav
+     link). USER_SERVICE/ADMIN get full CRUD via CalendarView; everyone else
+     gets a read-only view of their own sessions. -->
+<script setup lang="ts">
+import { AccessPermission } from "~/types/permissions";
+import FilterAppointments from "~/components/schedule/FilterAppointments.vue";
+import CalendarView from "~/components/schedule/CalendarView.vue";
+
+definePageMeta({
+	path: "/scheduleView",
+});
+
+const { t } = useI18n();
+const { access } = useAuthState();
+
+const permissions = computed(() => {
+	const actions = { filter: false };
+	if (access.value) {
+		if (access.value[AccessPermission.USER_SERVICE]) actions.filter = true;
+		if (access.value[AccessPermission.ADMIN]) actions.filter = true;
+	}
+	return actions;
+});
+
+const showFilterWindow = ref(false);
+const filters = ref<string[]>([]);
+function addFilters(filter: string[]) {
+	filters.value = filter;
+}
+</script>
+
 <template>
-	<div class="font-sc-encode pb-8">
-		<!-- Filter modal window -->
+	<div>
 		<FilterAppointments
 			v-if="showFilterWindow"
 			:filter="filters"
@@ -10,150 +38,20 @@ schedule view page, clicking the buttons changes the week that's being displayed
 			@add-filters="(filter) => addFilters(filter)"
 		/>
 
-		<!-- Page -->
-		<div class="mx-10">
-			<!-- Title part + option buttons -->
-			<div class="my-5 flex justify-between">
-				<div
-					class="font-cormorant-garamond flex flex-col justify-center"
-				>
-					<div class="text-2xl">Schedule for</div>
-					<div class="text-3xl">{{ currentWeek }}</div>
-				</div>
-				<div class="justify-right flex flex-col gap-2">
-					<CreateAppointment v-if="permissions.editAppointments" />
-					<!-- placeholder style for the button so it's not just text lmao -->
-					<button
-						v-if="permissions.filter"
-						class="btn cursor-pointer"
-						@click="showFilterWindow = true"
-					>
-						{{ $t("Filter") }}
-					</button>
-				</div>
-			</div>
-
-			<!-- Calendar part -->
-			<div class="flex w-full justify-center">
-				<div class="pr-3 align-top text-3xl">
-					<button class="cursor-pointer" @click="changeWeek(false)">
-						&#x25C0;
-					</button>
-				</div>
-
-				<WeekViewCalendar :week="date" :filter="filters" class="grow" />
-				<div class="pl-3 align-top text-3xl">
-					<button class="cursor-pointer" @click="changeWeek(true)">
-						&#x25B6;
-					</button>
-				</div>
-			</div>
+		<div class="mb-4 flex items-center justify-between">
+			<h1 class="text-highlighted text-xl font-semibold">
+				{{ t("nav.schedule") }}
+			</h1>
+			<UButton
+				v-if="permissions.filter"
+				color="neutral"
+				variant="outline"
+				icon="i-lucide-filter"
+				:label="t('calendar.filter')"
+				@click="showFilterWindow = true"
+			/>
 		</div>
+
+		<CalendarView :filter="filters" />
 	</div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, definePageMeta } from "#imports";
-import { AccessPermission } from "~/types/permissions";
-import CreateAppointment from "~/components/schedule/CreateAppointment.vue";
-import FilterAppointments from "~/components/schedule/FilterAppointments.vue";
-import WeekViewCalendar from "~/components/schedule/WeekViewCalendar.vue";
-
-definePageMeta({
-	path: "/scheduleView",
-});
-
-const { access } = useAuthState();
-
-const permissions = computed(() => {
-	const actions = {
-		filter: false, // user service/admin = true, admin/patient/therapist = false
-		editAppointments: false, // user service = true, admin/patient/therapist = false
-	};
-
-	if (access.value) {
-		if (access.value[AccessPermission.USER_SERVICE]) {
-			actions.filter = true;
-			actions.editAppointments = true;
-		}
-		if (access.value[AccessPermission.ADMIN]) {
-			actions.filter = true;
-		}
-	}
-
-	return actions;
-});
-
-const date = ref(new Date(Date.now()));
-
-const monthNames = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
-];
-
-// gets the monday & friday given the current date
-const currentWeek = ref("");
-getCurrentWeek();
-
-// updates the current week
-function getCurrentWeek() {
-	if (!date.value) return;
-
-	// get monday & friday
-	const firstDay =
-		date.value.getDate() -
-		date.value.getDay() +
-		(date.value.getDay() == 0 ? -6 : 1);
-	const monday = new Date(date.value.getTime());
-	monday.setDate(firstDay);
-	const friday = new Date(date.value.getTime());
-	friday.setDate(firstDay + 4);
-
-	const result =
-		monday.getDate() +
-		" " +
-		monthNames[monday.getMonth()] +
-		" " +
-		monday.getFullYear() +
-		" to " +
-		friday.getDate() +
-		" " +
-		monthNames[friday.getMonth()] +
-		" " +
-		friday.getFullYear();
-
-	currentWeek.value = result;
-}
-
-// true is moving forward, false is moving back a week
-function changeWeek(forward: boolean) {
-	if (!date.value) return;
-
-	if (forward) {
-		date.value = new Date(date.value.setDate(date.value.getDate() + 7));
-	} else {
-		date.value = new Date(date.value.setDate(date.value.getDate() - 7));
-	}
-
-	getCurrentWeek();
-}
-
-// for showing the filter window
-const showFilterWindow = ref(false);
-
-const filters = ref<string[]>([]);
-
-function addFilters(filter: string[]) {
-	filters.value = filter;
-}
-</script>
