@@ -82,15 +82,7 @@ const IGNORE_TEXT = new Set(
 	].map((s) => s.toLowerCase())
 );
 const IGNORE_FILE_PREFIXES = ["pages/dev/"];
-const LEGACY_I18N_ALLOWLIST = new Set([
-	"components/Form/Input/CheckboxGroup.vue",
-	"components/Form/Input/CustomGoals.vue",
-	"components/Form/Input/Multitext.vue",
-	"components/Form/Input/ObjectiveDetails.vue",
-	"components/Form/Input/TherapyDrilldown.vue",
-	"components/therapy/ReportModal.vue",
-	"pages/intake/[id].vue",
-]);
+const LEGACY_I18N_ALLOWLIST = new Set(["pages/intake/[id].vue"]);
 
 function walkVue(dir, out = []) {
 	if (!fs.existsSync(dir)) return out;

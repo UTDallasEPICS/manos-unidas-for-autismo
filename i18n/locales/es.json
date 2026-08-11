@@ -560,5 +560,21 @@
 		"loadError": "No se pudieron cargar las citas.",
 		"rescheduleSuccess": "Cita reprogramada.",
 		"rescheduleError": "No se pudo reprogramar la cita."
+	},
+	"therapyNote": {
+		"selectTherapy": "Seleccione una terapia",
+		"selectTherapyFirst": "Seleccione primero una terapia para ver sus objetivos.",
+		"objectivesByTherapy": "Objetivos trabajados (según la terapia)",
+		"noOptions": "No hay opciones disponibles.",
+		"selectObjectiveAbove": "Seleccione al menos un objetivo arriba.",
+		"detailsFor": "Detalles de: {objective}",
+		"date": "Fecha",
+		"addOtherGoal": "Agregar otro objetivo",
+		"remove": "Eliminar",
+		"goalNamePlaceholder": "Nombre del objetivo (p. ej., 'Otro: XYZ')",
+		"goalDetailsPlaceholder": "Detalles de este otro objetivo",
+		"addGoalHint": "Haga clic en \"Agregar otro objetivo\" para definir objetivos personalizados para esta terapia.",
+		"addQuestion": "Agregar pregunta",
+		"validationError": "Corrija los campos indicados antes de guardar."
 	}
 }

@@ -560,5 +560,21 @@
 		"loadError": "Failed to load appointments.",
 		"rescheduleSuccess": "Appointment rescheduled.",
 		"rescheduleError": "Failed to reschedule appointment."
+	},
+	"therapyNote": {
+		"selectTherapy": "Select a therapy",
+		"selectTherapyFirst": "Select a therapy first to see its objectives.",
+		"objectivesByTherapy": "Objectives worked on (according to therapy)",
+		"noOptions": "No options available.",
+		"selectObjectiveAbove": "Select at least one objective above.",
+		"detailsFor": "Details for: {objective}",
+		"date": "Date",
+		"addOtherGoal": "Add other goal",
+		"remove": "Remove",
+		"goalNamePlaceholder": "Goal name (e.g., 'Other: XYZ')",
+		"goalDetailsPlaceholder": "Details for this other goal",
+		"addGoalHint": "Click \"Add other goal\" to define custom goals for this therapy.",
+		"addQuestion": "Add question",
+		"validationError": "Please fix the highlighted fields before saving."
 	}
 }

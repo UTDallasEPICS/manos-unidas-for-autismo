@@ -1,29 +1,96 @@
-<template>
-	<div
-		v-if="modelValue"
-		class="fixed inset-0 z-50 flex items-center justify-center"
-		aria-modal="true"
-		role="dialog"
-	>
-		<div
-			class="absolute inset-0 bg-black/70"
-			@click.self="$emit('update:modelValue', false)"
-		></div>
+<!-- Therapy note create/edit form. Rebuilt on NuxtUI UModal (replaces the deleted
+     custom Form engine). Rendering only — all data lives in useTherapyFormData,
+     which owns the saved shape, validation and edit-populate. Blueprint fields
+     are dispatched by field.type (textarea / date) and bound via
+     getFieldValue/setFieldValue exactly as before; the three custom inputs
+     (therapy drill-down, objective details, custom goals) keep their v-model
+     contracts. Emits save / add-question / update:modelValue; editingNote prop
+     drives populate-vs-reset inside the composable. -->
+<script setup lang="ts">
+import { therapyFormBlueprint } from "~/types/FormConfig";
+import { useTherapyFormData } from "~/composables/therapy/useTherapyFormData";
+import type {
+	FormFieldConfig,
+	DrilldownValue,
+	ObjectiveDetailsValue,
+	CustomGoal,
+} from "~/types/FormConfig/formConfig";
+import type {
+	TherapyNoteForm,
+	TherapyNote,
+} from "~/types/FormConfig/TherapyForms/therapyInfo";
 
-		<div
-			class="relative z-10 mx-4 max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded bg-white p-6 shadow-md"
-			@click.stop
-		>
-			<h2 class="mb-4 text-xl font-bold">Therapy Note</h2>
-			<form @submit.prevent="handleSubmit">
-				<!-- Custom inputs (therapy select, objective details, custom goals) -->
-				<div
-					v-for="input in customInputs"
-					:key="input.config.name"
-					class="mb-4"
-				>
-					<FormDynamicInput
-						v-model="input.model.value"
+const props = defineProps<{
+	modelValue: boolean;
+	editingNote?: TherapyNote;
+}>();
+
+const emit = defineEmits<{
+	"update:modelValue": [value: boolean];
+	save: [data: TherapyNoteForm];
+	"add-question": [];
+}>();
+
+const { t } = useI18n();
+const toast = useToast();
+
+const {
+	formData,
+	customInputs,
+	getFieldValue,
+	setFieldValue,
+	isRowVisible,
+	validate,
+} = useTherapyFormData(
+	toRef(props, "modelValue"),
+	toRef(props, "editingNote") as Ref<TherapyNote | undefined>
+);
+
+function fieldKey(field: FormFieldConfig): string {
+	return field.dataKey ? `${field.dataKey}-${field.name}` : field.name;
+}
+
+function handleSubmit() {
+	if (!validate()) {
+		toast.add({
+			title: t("therapyNote.validationError"),
+			color: "error",
+			icon: "i-lucide-triangle-alert",
+		});
+		return;
+	}
+	emit("save", formData.value);
+}
+</script>
+
+<template>
+	<UModal
+		:open="modelValue"
+		:title="t('profile.noteTitle')"
+		:ui="{ content: 'max-w-3xl' }"
+		@update:open="(v: boolean) => emit('update:modelValue', v)"
+	>
+		<template #body>
+			<form
+				id="therapy-note-form"
+				class="space-y-4"
+				@submit.prevent="handleSubmit"
+			>
+				<!-- Custom inputs (therapy drill-down, objective details, custom goals) -->
+				<div v-for="input in customInputs" :key="input.config.name">
+					<TherapyInputsTherapyDrilldown
+						v-if="input.config.type === 'therapydrilldown'"
+						v-model="input.model.value as DrilldownValue"
+						:field-config="input.config"
+					/>
+					<TherapyInputsObjectiveDetails
+						v-else-if="input.config.type === 'objectivedetails'"
+						v-model="input.model.value as ObjectiveDetailsValue"
+						:field-config="input.config"
+					/>
+					<TherapyInputsCustomGoals
+						v-else-if="input.config.type === 'customgoals'"
+						v-model="input.model.value as CustomGoal[]"
 						:field-config="input.config"
 					/>
 				</div>
@@ -39,83 +106,81 @@
 						:key="rowIdx"
 						:class="
 							row.length > 1
-								? 'mb-4 grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]'
-								: 'mb-4'
+								? 'grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]'
+								: ''
 						"
+						class="mb-4"
 					>
-						<FormDynamicInput
+						<UFormField
 							v-for="field in row"
-							:key="
-								field.dataKey
-									? `${field.dataKey}-${field.name}`
-									: field.name
-							"
-							:model-value="getFieldValue(field)"
-							:field-config="field"
-							@update:model-value="setFieldValue(field, $event)"
-						/>
+							:key="fieldKey(field)"
+							:label="field.label"
+							:required="field.required"
+						>
+							<UTextarea
+								v-if="field.type === 'textarea'"
+								:model-value="
+									(getFieldValue(field) as string) ?? ''
+								"
+								:placeholder="field.placeholder"
+								:rows="3"
+								class="w-full"
+								@update:model-value="
+									setFieldValue(field, $event)
+								"
+							/>
+							<UInput
+								v-else-if="field.type === 'date'"
+								:model-value="
+									(getFieldValue(field) as string) ?? ''
+								"
+								type="date"
+								class="w-full"
+								@update:model-value="
+									setFieldValue(field, String($event))
+								"
+							/>
+							<UInput
+								v-else
+								:model-value="
+									(getFieldValue(field) as string) ?? ''
+								"
+								:placeholder="field.placeholder"
+								class="w-full"
+								@update:model-value="
+									setFieldValue(field, String($event))
+								"
+							/>
+						</UFormField>
 					</div>
 				</div>
 
-				<button
-					class="bg-smoky mb-4 flex w-full cursor-pointer justify-center"
+				<UButton
 					type="button"
-					@click="$emit('add-question')"
-				>
-					<Plus />
-				</button>
-
-				<div class="flex justify-end space-x-2">
-					<button
-						type="button"
-						class="bg-blay px-2 hover:cursor-pointer"
-						@click="$emit('update:modelValue', false)"
-					>
-						Cancel
-					</button>
-					<button type="submit" class="btn hover:cursor-pointer">
-						Save
-					</button>
-				</div>
+					color="neutral"
+					variant="outline"
+					block
+					icon="i-lucide-plus"
+					:label="t('therapyNote.addQuestion')"
+					@click="emit('add-question')"
+				/>
 			</form>
-		</div>
-	</div>
+		</template>
+
+		<template #footer>
+			<div class="flex w-full justify-end gap-3">
+				<UButton
+					color="neutral"
+					variant="outline"
+					:label="t('profile.cancel')"
+					@click="emit('update:modelValue', false)"
+				/>
+				<UButton
+					type="submit"
+					form="therapy-note-form"
+					:label="t('profile.save')"
+				/>
+			</div>
+		</template>
+	</UModal>
 </template>
-
-<script setup lang="ts">
-import { Plus } from "lucide-vue-next";
-import { therapyFormBlueprint } from "~/types/FormConfig";
-import { useTherapyFormData } from "~/composables/therapy/useTherapyFormData";
-import type { TherapyNoteForm } from "~/types/FormConfig/TherapyForms/therapyInfo";
-
-const props = defineProps<{
-	modelValue: boolean;
-	editingNote?: import("~/types/FormConfig/TherapyForms/therapyInfo").TherapyNote;
-}>();
-
-const emit = defineEmits<{
-	"update:modelValue": [value: boolean];
-	save: [data: TherapyNoteForm];
-	"add-question": [];
-}>();
-
-const {
-	formData,
-	customInputs,
-	getFieldValue,
-	setFieldValue,
-	isRowVisible,
-	validate,
-} = useTherapyFormData(
-	toRef(props, "modelValue"),
-	toRef(props, "editingNote") as Ref<
-		| import("~/types/FormConfig/TherapyForms/therapyInfo").TherapyNote
-		| undefined
-	>
-);
-
-function handleSubmit() {
-	if (!validate()) return;
-	emit("save", formData.value);
-}
-</script>
