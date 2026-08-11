@@ -82,7 +82,7 @@ const IGNORE_TEXT = new Set(
 	].map((s) => s.toLowerCase())
 );
 const IGNORE_FILE_PREFIXES = ["pages/dev/"];
-const LEGACY_I18N_ALLOWLIST = new Set(["pages/intake/[id].vue"]);
+const LEGACY_I18N_ALLOWLIST = new Set([]);
 
 function walkVue(dir, out = []) {
 	if (!fs.existsSync(dir)) return out;
