@@ -88,13 +88,10 @@ const LEGACY_I18N_ALLOWLIST = new Set([
 	"components/Form/Input/Multitext.vue",
 	"components/Form/Input/ObjectiveDetails.vue",
 	"components/Form/Input/TherapyDrilldown.vue",
-	"components/schedule/CreateAppointment.vue",
 	"components/schedule/FilterAppointments.vue",
-	"components/schedule/WeekViewCalendar.vue",
 	"components/therapy/ReportModal.vue",
 	"pages/admin/createAccount.vue",
 	"pages/admin/employeeSearch.vue",
-	"pages/admin/scheduleView.vue",
 	"pages/contact.vue",
 	"pages/intake/[id].vue",
 ]);
