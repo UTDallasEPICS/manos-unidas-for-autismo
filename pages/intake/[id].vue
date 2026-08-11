@@ -1,25 +1,35 @@
 <template>
 	<div class="mx-auto max-w-5xl p-8">
-		<h1 class="font-cormorant-garamond mb-2 text-4xl">Complete Intake</h1>
-		<p class="mb-8 text-gray-500">Request ID: {{ route.params.id }}</p>
+		<h1 class="font-cormorant-garamond mb-2 text-4xl">
+			{{ t("intake.title") }}
+		</h1>
+		<p class="mb-8 text-gray-500">
+			{{ t("intake.requestId", { id: route.params.id }) }}
+		</p>
 
 		<UForm :state="form" class="space-y-8">
 			<!-- Patient Information -->
 			<UCard>
 				<template #header>
-					<h2 class="text-xl font-semibold">Patient Information</h2>
+					<h2 class="text-xl font-semibold">
+						{{ t("intake.patientInfo") }}
+					</h2>
 				</template>
 				<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-					<UFormField label="Record Number" name="recordNumber">
+					<UFormField
+						:label="t('intake.recordNumber')"
+						name="recordNumber"
+					>
 						<UInput
 							:model-value="
-								form.patient.recordNumber || 'System-generated'
+								form.patient.recordNumber ||
+								t('intake.systemGenerated')
 							"
 							disabled
 						/>
 					</UFormField>
 
-					<UFormField label="Status" name="status">
+					<UFormField :label="t('intake.status')" name="status">
 						<USelect
 							v-model="form.patient.status"
 							:items="statusOptions"
@@ -27,19 +37,25 @@
 						/>
 					</UFormField>
 
-					<UFormField label="First Name" name="firstName">
+					<UFormField :label="t('intake.firstName')" name="firstName">
 						<UInput v-model="form.patient.firstName" />
 					</UFormField>
 
-					<UFormField label="Middle Name" name="middleName">
+					<UFormField
+						:label="t('intake.middleName')"
+						name="middleName"
+					>
 						<UInput v-model="form.patient.middleName" />
 					</UFormField>
 
-					<UFormField label="Last Name" name="lastName">
+					<UFormField :label="t('intake.lastName')" name="lastName">
 						<UInput v-model="form.patient.lastName" />
 					</UFormField>
 
-					<UFormField label="Date of Birth" name="dateOfBirth">
+					<UFormField
+						:label="t('intake.dateOfBirth')"
+						name="dateOfBirth"
+					>
 						<UInput
 							v-model="form.patient.dateOfBirth"
 							type="date"
@@ -47,7 +63,7 @@
 						/>
 					</UFormField>
 
-					<UFormField label="Age" name="age">
+					<UFormField :label="t('intake.age')" name="age">
 						<UInput
 							v-model="form.patient.age"
 							type="number"
@@ -55,39 +71,45 @@
 						/>
 					</UFormField>
 
-					<UFormField label="Sex" name="sex">
+					<UFormField :label="t('intake.sex')" name="sex">
 						<USelect
 							v-model="form.patient.sex"
-							:items="['MALE', 'FEMALE', 'OTHER']"
+							:items="sexOptions"
 							class="w-full"
 						/>
 					</UFormField>
 
-					<UFormField label="Nationality" name="nationality">
+					<UFormField
+						:label="t('intake.nationality')"
+						name="nationality"
+					>
 						<UInput v-model="form.patient.nationality" />
 					</UFormField>
 
 					<UFormField
-						label="National ID / Birth Certificate"
+						:label="t('intake.nationalId')"
 						name="nationalId"
 					>
 						<UInput v-model="form.patient.nationalId" />
 					</UFormField>
 
-					<UFormField label="Social Security Number (NSS)" name="nss">
+					<UFormField :label="t('intake.nss')" name="nss">
 						<UInput v-model="form.patient.nss" />
 					</UFormField>
 
-					<UFormField label="Phone Number" name="phoneNumber">
+					<UFormField
+						:label="t('intake.phoneNumber')"
+						name="phoneNumber"
+					>
 						<UInput v-model="form.patient.phoneNumber" />
 					</UFormField>
 
-					<UFormField label="Email" name="email">
+					<UFormField :label="t('intake.email')" name="email">
 						<UInput v-model="form.patient.email" />
 					</UFormField>
 
 					<UFormField
-						label="Health Insurance (ARS)"
+						:label="t('intake.healthInsurance')"
 						name="healthInsurance"
 					>
 						<USelect
@@ -102,11 +124,13 @@
 			<!-- Intake Dates -->
 			<UCard>
 				<template #header>
-					<h2 class="text-xl font-semibold">Intake Dates</h2>
+					<h2 class="text-xl font-semibold">
+						{{ t("intake.intakeDates") }}
+					</h2>
 				</template>
 				<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 					<UFormField
-						label="Initial Interview Date"
+						:label="t('intake.interviewDate')"
 						name="interviewDate"
 					>
 						<UInput
@@ -116,7 +140,7 @@
 					</UFormField>
 
 					<UFormField
-						label="Program Evaluation Date"
+						:label="t('intake.evaluationDate')"
 						name="evaluationDate"
 					>
 						<UInput
@@ -126,7 +150,7 @@
 					</UFormField>
 
 					<UFormField
-						label="Therapy Start Date"
+						:label="t('intake.therapyStartDate')"
 						name="therapyStartDate"
 					>
 						<UInput
@@ -143,17 +167,15 @@
 					<div class="flex items-center justify-between">
 						<div>
 							<h2 class="text-xl font-semibold">
-								Parents / Guardians / Tutors
+								{{ t("intake.guardiansTitle") }}
 							</h2>
 							<p class="mt-1 text-sm text-gray-500">
-								A guardian with an email can log in to view this
-								patient. Add every guardian who should have
-								access.
+								{{ t("intake.guardiansHint") }}
 							</p>
 						</div>
-						<UButton size="sm" variant="soft" @click="addGuardian"
-							>+ Add Guardian</UButton
-						>
+						<UButton size="sm" variant="soft" @click="addGuardian">
+							{{ t("intake.addGuardian") }}
+						</UButton>
 					</div>
 				</template>
 
@@ -161,7 +183,7 @@
 					v-if="form.guardians.length === 0"
 					class="text-gray-400 italic"
 				>
-					No guardians added.
+					{{ t("intake.noGuardians") }}
 				</div>
 
 				<div
@@ -171,86 +193,87 @@
 				>
 					<div class="mb-2 flex items-center justify-between">
 						<p class="font-medium">
-							Guardian #{{ index + 1 }}
+							{{ t("intake.guardianNum", { num: index + 1 }) }}
 							<span
 								v-if="index === 0"
 								class="ml-2 text-xs text-gray-500"
-								>(primary)</span
 							>
+								{{ t("intake.primary") }}
+							</span>
 						</p>
 						<button
 							class="text-sm text-red-500 hover:underline"
 							@click="removeGuardian(index)"
 						>
-							Remove
+							{{ t("intake.remove") }}
 						</button>
 					</div>
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<UFormField
-							label="Full Name"
+							:label="t('intake.guardianName')"
 							:name="`guardians[${index}].name`"
 						>
 							<UInput v-model="g.name" />
 						</UFormField>
 
 						<UFormField
-							label="Relationship"
+							:label="t('intake.relationship')"
 							:name="`guardians[${index}].relationship`"
 						>
 							<UInput v-model="g.relationship" />
 						</UFormField>
 
 						<UFormField
-							label="ID Number (Cédula)"
+							:label="t('intake.idNumber')"
 							:name="`guardians[${index}].idNumber`"
 						>
 							<UInput v-model="g.idNumber" />
 						</UFormField>
 
 						<UFormField
-							label="Social Security Number (NSS)"
+							:label="t('intake.nss')"
 							:name="`guardians[${index}].nss`"
 						>
 							<UInput v-model="g.nss" />
 						</UFormField>
 
 						<UFormField
-							label="Phone Number"
+							:label="t('intake.phoneNumber')"
 							:name="`guardians[${index}].phone`"
 						>
 							<UInput v-model="g.phone" />
 						</UFormField>
 
 						<UFormField
-							label="Email (enables login)"
+							:label="t('intake.guardianEmail')"
 							:name="`guardians[${index}].email`"
 						>
 							<UInput v-model="g.email" type="email" />
 						</UFormField>
 
 						<UFormField
-							label="Street Name"
+							:label="t('intake.streetName')"
 							:name="`guardians[${index}].streetName`"
 						>
 							<UInput v-model="g.streetName" />
 						</UFormField>
 
 						<UFormField
-							label="Street Number"
+							:label="t('intake.streetNum')"
 							:name="`guardians[${index}].streetNum`"
 						>
 							<UInput v-model="g.streetNum" />
 						</UFormField>
 
 						<UFormField
-							label="Building / Apartment Number"
+							:label="t('intake.buildingNum')"
 							:name="`guardians[${index}].buildingNum`"
 						>
 							<UInput v-model="g.buildingNum" />
 						</UFormField>
 
 						<UFormField
-							label="Postal Code"
+							:label="t('intake.postCode')"
 							:name="`guardians[${index}].postCode`"
 						>
 							<UInput v-model="g.postCode" />
@@ -262,25 +285,30 @@
 			<!-- Medical Information -->
 			<UCard>
 				<template #header>
-					<h2 class="text-xl font-semibold">Medical Information</h2>
+					<h2 class="text-xl font-semibold">
+						{{ t("intake.medicalInfo") }}
+					</h2>
 				</template>
 				<div class="space-y-4">
-					<UFormField label="Diagnosis(es)" name="diagnosis">
+					<UFormField :label="t('intake.diagnosis')" name="diagnosis">
 						<UTextarea v-model="form.medical.diagnosis" :rows="3" />
 					</UFormField>
 
-					<UFormField label="Medications" name="medications">
+					<UFormField
+						:label="t('intake.medications')"
+						name="medications"
+					>
 						<UTextarea
 							v-model="form.medical.medications"
 							:rows="2"
 						/>
 					</UFormField>
 
-					<UFormField label="Allergies" name="allergies">
+					<UFormField :label="t('intake.allergies')" name="allergies">
 						<UTextarea v-model="form.medical.allergies" :rows="2" />
 					</UFormField>
 
-					<UFormField label="Dietary Restrictions" name="diet">
+					<UFormField :label="t('intake.diet')" name="diet">
 						<UTextarea
 							v-model="form.medical.dietaryRestrictions"
 							:rows="2"
@@ -292,11 +320,13 @@
 			<!-- Developmental History -->
 			<UCard>
 				<template #header>
-					<h2 class="text-xl font-semibold">Developmental History</h2>
+					<h2 class="text-xl font-semibold">
+						{{ t("intake.developmentalHistory") }}
+					</h2>
 				</template>
 				<div class="space-y-4">
 					<UFormField
-						label="Language and Speech"
+						:label="t('intake.languageSpeech')"
 						name="languageSpeech"
 					>
 						<UTextarea
@@ -305,7 +335,7 @@
 						/>
 					</UFormField>
 
-					<UFormField label="Behavior" name="behavior">
+					<UFormField :label="t('intake.behavior')" name="behavior">
 						<UTextarea
 							v-model="form.developmental.behavior"
 							:rows="2"
@@ -313,7 +343,7 @@
 					</UFormField>
 
 					<UFormField
-						label="Adaptive Behavior"
+						:label="t('intake.adaptiveBehavior')"
 						name="adaptiveBehavior"
 					>
 						<UTextarea
@@ -322,24 +352,24 @@
 						/>
 					</UFormField>
 
-					<UFormField label="Sleep" name="sleep">
+					<UFormField :label="t('intake.sleep')" name="sleep">
 						<UTextarea
 							v-model="form.developmental.sleep"
 							:rows="2"
 						/>
 					</UFormField>
 
-					<UFormField
-						label="Nutrition / Eating Habits"
-						name="nutrition"
-					>
+					<UFormField :label="t('intake.nutrition')" name="nutrition">
 						<UTextarea
 							v-model="form.developmental.nutrition"
 							:rows="2"
 						/>
 					</UFormField>
 
-					<UFormField label="Motor Skills" name="motorSkills">
+					<UFormField
+						:label="t('intake.motorSkills')"
+						name="motorSkills"
+					>
 						<UTextarea
 							v-model="form.developmental.motorSkills"
 							:rows="2"
@@ -351,15 +381,19 @@
 			<!-- Services Requested -->
 			<UCard>
 				<template #header>
-					<h2 class="text-xl font-semibold">Services Requested</h2>
+					<h2 class="text-xl font-semibold">
+						{{ t("intake.servicesRequested") }}
+					</h2>
 					<p class="mt-1 text-sm text-gray-500">
-						Pre-filled from the request form — edit as needed.
+						{{ t("intake.servicesHint") }}
 					</p>
 				</template>
 
 				<div class="space-y-6">
 					<div>
-						<p class="mb-2 font-medium">Therapies</p>
+						<p class="mb-2 font-medium">
+							{{ t("intake.therapies") }}
+						</p>
 						<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
 							<label
 								v-for="therapy in therapyOptions"
@@ -377,7 +411,9 @@
 					</div>
 
 					<div>
-						<p class="mb-2 font-medium">Complementary Services</p>
+						<p class="mb-2 font-medium">
+							{{ t("intake.complementaryServices") }}
+						</p>
 						<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
 							<label
 								v-for="service in complementaryOptions"
@@ -397,7 +433,9 @@
 					</div>
 
 					<div>
-						<p class="mb-2 font-medium">Workshops / Classes</p>
+						<p class="mb-2 font-medium">
+							{{ t("intake.workshops") }}
+						</p>
 						<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
 							<label
 								v-for="workshop in workshopOptions"
@@ -420,13 +458,16 @@
 			<UCard>
 				<template #header>
 					<div class="flex items-center justify-between">
-						<h2 class="text-xl font-semibold">Sponsorship</h2>
+						<h2 class="text-xl font-semibold">
+							{{ t("intake.sponsorship") }}
+						</h2>
 						<UButton
 							size="sm"
 							variant="soft"
 							@click="addSponsorship"
-							>+ Add Sponsorship</UButton
 						>
+							{{ t("intake.addSponsorship") }}
+						</UButton>
 					</div>
 				</template>
 
@@ -434,7 +475,7 @@
 					v-if="form.sponsorships.length === 0"
 					class="text-gray-400 italic"
 				>
-					No sponsorships added.
+					{{ t("intake.noSponsorships") }}
 				</div>
 
 				<div
@@ -443,45 +484,47 @@
 					class="mb-6 rounded border p-4"
 				>
 					<div class="mb-2 flex items-center justify-between">
-						<p class="font-medium">Sponsorship #{{ index + 1 }}</p>
+						<p class="font-medium">
+							{{ t("intake.sponsorshipNum", { num: index + 1 }) }}
+						</p>
 						<button
 							class="text-sm text-red-500 hover:underline"
 							@click="removeSponsorship(index)"
 						>
-							Remove
+							{{ t("intake.remove") }}
 						</button>
 					</div>
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<UFormField
-							:label="'Sponsor Name'"
+							:label="t('intake.sponsorName')"
 							:name="`sponsorships[${index}].sponsorName`"
 						>
 							<UInput v-model="s.sponsorName" />
 						</UFormField>
 
 						<UFormField
-							:label="'Amount'"
+							:label="t('intake.amount')"
 							:name="`sponsorships[${index}].amount`"
 						>
 							<UInput v-model="s.amount" type="number" />
 						</UFormField>
 
 						<UFormField
-							:label="'Start Date'"
+							:label="t('intake.startDate')"
 							:name="`sponsorships[${index}].startDate`"
 						>
 							<UInput v-model="s.startDate" type="date" />
 						</UFormField>
 
 						<UFormField
-							:label="'End Date'"
+							:label="t('intake.endDate')"
 							:name="`sponsorships[${index}].endDate`"
 						>
 							<UInput v-model="s.endDate" type="date" />
 						</UFormField>
 
 						<UFormField
-							:label="'Continuation Date'"
+							:label="t('intake.newDate')"
 							:name="`sponsorships[${index}].newDate`"
 						>
 							<UInput v-model="s.newDate" type="date" />
@@ -493,21 +536,29 @@
 			<!-- Therapist Notes -->
 			<UCard>
 				<template #header>
-					<h2 class="text-xl font-semibold">Therapist Notes</h2>
+					<h2 class="text-xl font-semibold">
+						{{ t("intake.therapistNotesTitle") }}
+					</h2>
 				</template>
 				<div class="space-y-4">
-					<UFormField label="Therapist Name" name="therapistName">
+					<UFormField
+						:label="t('intake.therapistName')"
+						name="therapistName"
+					>
 						<UInput v-model="form.clinicalNotes.therapistName" />
 					</UFormField>
 
-					<UFormField label="Date of Note" name="noteDate">
+					<UFormField :label="t('intake.noteDate')" name="noteDate">
 						<UInput
 							v-model="form.clinicalNotes.noteDate"
 							type="date"
 						/>
 					</UFormField>
 
-					<UFormField label="Therapist Notes" name="therapistNotes">
+					<UFormField
+						:label="t('intake.therapistNotes')"
+						name="therapistNotes"
+					>
 						<UTextarea
 							v-model="form.clinicalNotes.therapistNotes"
 							:rows="8"
@@ -538,7 +589,7 @@
 						variant="soft"
 						@click="() => navigateTo('/viewContactForms')"
 					>
-						Back to Review Forms
+						{{ t("intake.backToReview") }}
 					</UButton>
 
 					<div class="flex gap-4">
@@ -547,10 +598,10 @@
 							variant="soft"
 							@click="saveDraft"
 						>
-							Save Draft
+							{{ t("intake.saveDraft") }}
 						</UButton>
 						<UButton type="button" @click="submitIntake">
-							Complete Intake
+							{{ t("intake.submit") }}
 						</UButton>
 					</div>
 				</div>
@@ -561,15 +612,22 @@
 
 <script setup lang="ts">
 const route = useRoute();
+const { t } = useI18n();
 
 // Enum dropdowns bind the underscore Prisma enum value; the label is display-only.
-const statusOptions = [
-	{ value: "ACTIVE", label: "Active" },
-	{ value: "WITHDRAWN", label: "Withdrawn" },
-	{ value: "DROPPED_OUT", label: "Dropped Out" },
-];
+const statusOptions = computed(() => [
+	{ value: "ACTIVE", label: t("intake.status_ACTIVE") },
+	{ value: "WITHDRAWN", label: t("intake.status_WITHDRAWN") },
+	{ value: "DROPPED_OUT", label: t("intake.status_DROPPED_OUT") },
+]);
 
-const insuranceOptions = [
+const sexOptions = computed(() => [
+	{ value: "MALE", label: t("signup.gender_MALE") },
+	{ value: "FEMALE", label: t("signup.gender_FEMALE") },
+	{ value: "OTHER", label: t("signup.gender_OTHER") },
+]);
+
+const insuranceOptions = computed(() => [
 	{ value: "SENASA_CONTRIBUTIVO", label: "SENASA Contributivo" },
 	{ value: "SENASA_SUBSIDIADO", label: "SENASA Subsidiado" },
 	{ value: "ARS_HUMANO", label: "ARS Humano" },
@@ -582,76 +640,41 @@ const insuranceOptions = [
 		label: "ARS Plan Salud Banco Central",
 	},
 	{ value: "RENACER", label: "Renacer" },
-	{ value: "OTRO", label: "Otro" },
-];
+	{ value: "OTRO", label: t("intake.insurance_OTRO") },
+]);
 
-// Service options matching existing enums
-const therapyOptions = [
-	{
-		value: "DIAGNOSTIC_ASSESSMENT",
-		label: "Diagnostic Assessment (Evaluación Diagnóstica)",
-	},
-	{
-		value: "EARLY_INTERVENTION",
-		label: "Early Intervention (Intervención Temprana)",
-	},
-	{
-		value: "BEHAVIORAL_THERAPY",
-		label: "Behavioral Therapy (Terapia Conductual)",
-	},
-	{
-		value: "LEARNING_THERAPY",
-		label: "Learning Therapy (Terapia de Aprendizaje)",
-	},
-	{ value: "SPEECH_THERAPY", label: "Speech Therapy (Terapia del Lenguaje)" },
-	{ value: "SOCIAL_SKILLS", label: "Social Skills (Habilidades Sociales)" },
-	{ value: "SEFVI", label: "SEFVI" },
-];
+// Service options matching existing enums; labels reuse the shared request.svc_* keys.
+const THERAPIES = [
+	"DIAGNOSTIC_ASSESSMENT",
+	"EARLY_INTERVENTION",
+	"BEHAVIORAL_THERAPY",
+	"LEARNING_THERAPY",
+	"SPEECH_THERAPY",
+	"SOCIAL_SKILLS",
+	"SEFVI",
+] as const;
 
-const complementaryOptions = [
-	{
-		value: "MUSICAL_STIMULATION",
-		label: "Musical Stimulation (Estimulación Musical)",
-	},
-	{
-		value: "PHYSICAL_COGNITIVE_ACTIVITY",
-		label: "Physical and Cognitive Activity (Actividad Física y Cognitiva)",
-	},
-	{
-		value: "LEARNING_IN_MOTION",
-		label: "Learning in Motion (Aprendiendo en Movimiento)",
-	},
-	{
-		value: "DYNAMIC_THINKING",
-		label: "Dynamic Thinking (Pensamiento Dinámico)",
-	},
-	{ value: "FAMILY_THERAPY", label: "Family Therapy (Terapia Familiar)" },
-	{ value: "COUPLES_THERAPY", label: "Couples Therapy (Terapia de Parejas)" },
-	{
-		value: "SEXUALITY_THERAPY",
-		label: "Sexuality Therapy and Consultations (Terapia y Consultas de Sexualidad)",
-	},
-	{
-		value: "CHILD_ADOLESCENT_PSYCHOLOGICAL_THERAPY",
-		label: "Child and Adolescent Psychological Therapy (Terapia Psicológica Infanto-Juvenil)",
-	},
-	{
-		value: "NUTRITIONAL_CONSULTATION",
-		label: "Nutritional Consultation (Consulta Nutricional)",
-	},
-	{ value: "SCHOOL_VISIT", label: "School Visit (Visita Escolar)" },
-];
+const COMPLEMENTARY = [
+	"MUSICAL_STIMULATION",
+	"PHYSICAL_COGNITIVE_ACTIVITY",
+	"LEARNING_IN_MOTION",
+	"DYNAMIC_THINKING",
+	"FAMILY_THERAPY",
+	"COUPLES_THERAPY",
+	"SEXUALITY_THERAPY",
+	"CHILD_ADOLESCENT_PSYCHOLOGICAL_THERAPY",
+	"NUTRITIONAL_CONSULTATION",
+	"SCHOOL_VISIT",
+] as const;
 
-const workshopOptions = [
-	{
-		value: "THEATRE_COMMUNICATION",
-		label: "Theatre and Communication Classes (Clases de Teatro y Comunicación)",
-	},
-	{
-		value: "TALKS_AND_WORKSHOPS",
-		label: "Request for Talks and Workshops (Solicitud de Charla y Talleres)",
-	},
-];
+const WORKSHOPS = ["THEATRE_COMMUNICATION", "TALKS_AND_WORKSHOPS"] as const;
+
+const svcItems = (vals: readonly string[]) =>
+	vals.map((v) => ({ value: v, label: t(`request.svc_${v}`) }));
+
+const therapyOptions = computed(() => svcItems(THERAPIES));
+const complementaryOptions = computed(() => svcItems(COMPLEMENTARY));
+const workshopOptions = computed(() => svcItems(WORKSHOPS));
 
 const form = reactive({
 	request: {
@@ -833,7 +856,7 @@ function populateFromRequest(request: RequestData) {
 			{
 				...emptyGuardian(),
 				name: `${request.firstName} ${request.lastName}`,
-				relationship: "Parent/Guardian",
+				relationship: t("intake.defaultRelationship"),
 				idNumber: request.idNumber,
 				email: request.email ?? "",
 				phone: request.phone?.[0]?.number ?? "",
@@ -875,11 +898,11 @@ async function saveDraft() {
 			method: "POST",
 			body: form,
 		});
-		successMessage.value = "Draft saved successfully.";
+		successMessage.value = t("intake.draftSaved");
 		errorMessage.value = "";
 	} catch (err) {
 		console.error(err);
-		errorMessage.value = "Failed to save draft.";
+		errorMessage.value = t("intake.draftSaveError");
 		successMessage.value = "";
 	}
 }
@@ -890,11 +913,11 @@ async function submitIntake() {
 			method: "POST",
 			body: form,
 		});
-		successMessage.value = "Intake completed successfully.";
+		successMessage.value = t("intake.submitSuccess");
 		errorMessage.value = "";
 	} catch (err) {
 		console.error(err);
-		errorMessage.value = "Failed to submit intake. Please try again.";
+		errorMessage.value = t("intake.submitError");
 		successMessage.value = "";
 	}
 }
