@@ -1,159 +1,134 @@
+<!-- Read-only patient quick-view. Mounted via v-if by the parent; emits `close`
+     when dismissed. Links to the full profile. Rebuilt on NuxtUI (UModal). -->
+<script setup lang="ts">
+const props = defineProps<{
+	patient: {
+		id: string;
+		name: string;
+		gender?: string;
+		age?: number;
+		identification?: string;
+		email?: string;
+		phone?: string;
+		whatsApp?: string;
+		contactPref?: string;
+		diagnosed?: boolean;
+		sponsorId?: string | null;
+		status?: string;
+		insurance?: string | null;
+	};
+	therapist?: { id: string; name?: string };
+	therapyRecommendation?: string;
+	therapistType?: string;
+	createdAt?: Date | string;
+}>();
+
+const emit = defineEmits<{ close: [] }>();
+const { t } = useI18n();
+const localePath = useLocalePath();
+
+const open = ref(true);
+watch(open, (v) => {
+	if (!v) emit("close");
+});
+
+const genderAge = computed(() =>
+	[props.patient?.gender, props.patient?.age].filter(Boolean).join(" • ")
+);
+</script>
+
 <template>
-	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-		@click.self="emit('close')"
-	>
-		<div
-			class="flex max-h-[85vh] w-[520px] flex-col overflow-hidden rounded bg-white shadow-xl"
-		>
-			<!-- Header -->
-			<div class="border-b border-gray-200 px-6 pt-6 pb-4">
-				<div class="text-xl font-bold text-gray-800">
-					Patient Information
+	<UModal v-model:open="open" :title="t('patients.modalTitle')">
+		<template #body>
+			<dl class="grid grid-cols-2 gap-4 text-sm">
+				<div class="col-span-2">
+					<dt class="text-muted">{{ t("patients.name") }}</dt>
+					<dd class="text-default">{{ patient?.name || "—" }}</dd>
 				</div>
-			</div>
-
-			<!-- Body -->
-			<div class="flex flex-col gap-5 overflow-y-auto px-6 py-4">
-				<!-- Identity -->
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500">Name</span>
-					<span class="text-sm text-gray-800">
-						{{ patient?.name }}
-					</span>
+				<div>
+					<dt class="text-muted">{{ t("patients.genderAge") }}</dt>
+					<dd class="text-default">{{ genderAge || "—" }}</dd>
 				</div>
-
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Gender / Age</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient?.gender }} • {{ patient?.age }}
-					</span>
+				<div>
+					<dt class="text-muted">
+						{{ t("patients.identification") }}
+					</dt>
+					<dd class="text-default">
+						{{ patient?.identification || "—" }}
+					</dd>
 				</div>
-
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Identification</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient?.identification }}
-					</span>
+				<div>
+					<dt class="text-muted">{{ t("patients.email") }}</dt>
+					<dd class="text-default">{{ patient?.email || "—" }}</dd>
 				</div>
-
-				<!-- Contact Info -->
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500">Email</span>
-					<span class="text-sm text-gray-800">
-						{{ patient?.email }}
-					</span>
+				<div>
+					<dt class="text-muted">{{ t("patients.phone") }}</dt>
+					<dd class="text-default">{{ patient?.phone || "—" }}</dd>
 				</div>
-
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500">Phone</span>
-					<span class="text-sm text-gray-800">
-						{{ patient?.phone }}
-					</span>
+				<div>
+					<dt class="text-muted">{{ t("patients.whatsApp") }}</dt>
+					<dd class="text-default">{{ patient?.whatsApp || "—" }}</dd>
 				</div>
-
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>WhatsApp</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient?.whatsApp }}
-					</span>
+				<div>
+					<dt class="text-muted">{{ t("patients.contactPref") }}</dt>
+					<dd class="text-default">
+						{{ patient?.contactPref || "—" }}
+					</dd>
 				</div>
-
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Contact Preference</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient?.contactPref }}
-					</span>
+				<div v-if="patient?.status">
+					<dt class="text-muted">{{ t("patients.status") }}</dt>
+					<dd class="text-default">{{ patient.status }}</dd>
 				</div>
-
-				<!-- Clinical Summary -->
-				<div v-if="patient?.status" class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Status</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient.status }}
-					</span>
+				<div>
+					<dt class="text-muted">{{ t("patients.diagnosed") }}</dt>
+					<dd class="text-default">
+						{{
+							patient?.diagnosed
+								? t("common.yes")
+								: t("common.no")
+						}}
+					</dd>
 				</div>
-
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Diagnosed</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient?.diagnosed ? "Yes" : "No" }}
-					</span>
+				<div v-if="patient?.insurance">
+					<dt class="text-muted">{{ t("patients.insurance") }}</dt>
+					<dd class="text-default">{{ patient.insurance }}</dd>
 				</div>
-
-				<div v-if="patient?.insurance" class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Insurance (ARS)</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient.insurance }}
-					</span>
+				<div>
+					<dt class="text-muted">{{ t("patients.sponsor") }}</dt>
+					<dd class="text-default">
+						{{ patient?.sponsorId || t("patients.none") }}
+					</dd>
 				</div>
-
-				<div class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Sponsor</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ patient?.sponsorId || "None" }}
-					</span>
+				<div v-if="therapist" class="col-span-2 border-t pt-3">
+					<dt class="text-muted">
+						{{ t("patients.assignedTherapist") }}
+					</dt>
+					<dd class="text-default">{{ therapist?.name || "—" }}</dd>
 				</div>
-
-				<!-- Related Info -->
-				<div v-if="therapist" class="flex flex-col gap-1 border-t pt-3">
-					<span class="text-xs font-medium text-gray-500"
-						>Assigned Therapist</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ therapist?.name }}
-					</span>
+				<div v-if="therapyRecommendation">
+					<dt class="text-muted">
+						{{ t("patients.therapyRecommendation") }}
+					</dt>
+					<dd class="text-default">{{ therapyRecommendation }}</dd>
 				</div>
-
-				<div v-if="therapyRecommendation" class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Therapy Recommendation</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ therapyRecommendation }}
-					</span>
+				<div v-if="therapistType">
+					<dt class="text-muted">
+						{{ t("patients.therapistType") }}
+					</dt>
+					<dd class="text-default">{{ therapistType }}</dd>
 				</div>
-
-				<div v-if="therapistType" class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Therapist Type</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ therapistType }}
-					</span>
+				<div v-if="createdAt">
+					<dt class="text-muted">
+						{{ t("patients.recordCreated") }}
+					</dt>
+					<dd class="text-default">{{ createdAt }}</dd>
 				</div>
+			</dl>
+		</template>
 
-				<div v-if="createdAt" class="flex flex-col gap-1">
-					<span class="text-xs font-medium text-gray-500"
-						>Record Created</span
-					>
-					<span class="text-sm text-gray-800">
-						{{ createdAt }}
-					</span>
-				</div>
-			</div>
-
-			<!-- Footer -->
-			<div
-				class="flex items-center justify-between border-t border-gray-200 px-6 py-4"
-			>
-				<NuxtLink
+		<template #footer>
+			<div class="flex w-full items-center justify-between">
+				<UButton
 					v-if="patient?.id"
 					:to="
 						localePath({
@@ -161,52 +136,13 @@
 							params: { id: patient.id },
 						})
 					"
-					class="rounded border border-gray-300 px-5 py-2 text-sm text-gray-700 hover:bg-gray-50"
-				>
-					View Profile
-				</NuxtLink>
-				<button
-					class="cursor-pointer rounded px-5 py-2 text-sm text-white"
-					style="background-color: #1e3a5f"
-					@click="emit('close')"
-				>
-					Close
-				</button>
+					color="neutral"
+					variant="outline"
+					icon="i-lucide-external-link"
+					:label="t('patients.viewProfile')"
+				/>
+				<UButton :label="t('patients.close')" @click="open = false" />
 			</div>
-		</div>
-	</div>
+		</template>
+	</UModal>
 </template>
-
-<script setup lang="ts">
-const emit = defineEmits(["close"]);
-const localePath = useLocalePath();
-
-defineProps<{
-	patient: {
-		id: string;
-		name: string;
-		gender?: string;
-		age?: number;
-		identification?: string;
-
-		email?: string;
-		phone?: string;
-		whatsApp?: string;
-		contactPref?: string;
-
-		diagnosed?: boolean;
-		sponsorId?: string | null;
-		status?: string;
-		insurance?: string | null;
-	};
-
-	therapist?: {
-		id: string;
-		name?: string;
-	};
-
-	therapyRecommendation?: string;
-	therapistType?: string;
-	createdAt?: Date | string;
-}>();
-</script>
