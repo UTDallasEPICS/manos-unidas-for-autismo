@@ -1,70 +1,12 @@
-<template>
-	<div class="font-sc-encode p-4">
-		<!-- Header + Search -->
-		<div class="mb-4 flex items-center">
-			<h1 class="font-cormorant-garamond text-2xl font-bold">
-				View All Employees
-			</h1>
-			<div
-				class="ml-4 flex flex-1 items-center overflow-hidden rounded border border-gray-300"
-			>
-				<input
-					v-model="searchQuery"
-					type="text"
-					placeholder="Search by name..."
-					class="flex-1 px-3 py-2 focus:outline-none"
-				/>
-				<button class="px-3">
-					<Search class="h-5 w-5" />
-				</button>
-			</div>
-		</div>
-
-		<!-- Employees Table -->
-		<table class="w-full table-auto border-collapse">
-			<thead class="bg-gray-100">
-				<tr>
-					<th class="px-4 py-2 text-left">Name</th>
-					<th class="px-4 py-2 text-left">Type</th>
-					<th class="px-4 py-2 text-left">Email</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					v-for="user in filteredUsers"
-					:key="user.id"
-					class="cursor-pointer border-t hover:bg-gray-100"
-					@click="goToProfile(user.id)"
-				>
-					<td class="px-4 py-2">{{ user.name }}</td>
-					<td class="px-4 py-2">{{ user.type || "—" }}</td>
-					<td class="px-4 py-2">{{ user.email || "—" }}</td>
-				</tr>
-				<tr v-if="!filteredUsers.length" class="border-t">
-					<td colspan="3" class="px-4 py-2 text-center">
-						No employees found.
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<!-- Error State -->
-		<div v-if="error" class="mt-4 text-red-600">
-			Failed to load patients.
-		</div>
-	</div>
-</template>
-
+<!-- Admin employee directory. Rebuilt on NuxtUI (UTable). The old row-click
+     navigated to a non-existent employee-profile route, so it's dropped until
+     that page exists. -->
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useFetch, navigateTo } from "#imports";
-import { Search } from "lucide-vue-next";
-import { AccessPermission } from "~/types/permissions";
+import type { TableColumn } from "@nuxt/ui";
 
-// typed cookie: map of permission enum -> boolean, or null when not present
-const { access } = useAuthState();
+const { t } = useI18n();
 
-interface User {
+interface Employee {
 	id: string;
 	name: string;
 	type: string | null;
@@ -72,37 +14,64 @@ interface User {
 	email: string | null;
 }
 
-const goToProfile = async (id: string) => {
-	let name = "bad";
-	if (access.value?.[AccessPermission.ADMIN]) {
-		name = "employees-id";
-	}
-	await navigateTo({
-		name: name,
-		params: { id: id },
-	});
-};
+const { data, status, error } = await useFetch<Employee[]>(
+	"/api/search/employees",
+	{ default: () => [] }
+);
 
 const searchQuery = ref("");
-
-// Fetch patients from API
-const { data: usersData, error } = await getUsers();
-
-async function getUsers() {
-	if (access.value?.[AccessPermission.ADMIN]) {
-		return useFetch<User[]>("/api/search/employees");
-	}
-	return {
-		data: { value: [] },
-		error: "User not authorized to view employees",
-	};
-}
-
-// Filter Employees on search query
-const filteredUsers = computed(() => {
-	const list: User[] = usersData?.value ?? [];
-	return list.filter((u) =>
+const rows = computed(() =>
+	(data.value ?? []).filter((u) =>
 		u.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-	);
-});
+	)
+);
+
+const columns = computed<TableColumn<Employee>[]>(() => [
+	{ accessorKey: "name", header: t("employees.colName") },
+	{ accessorKey: "type", header: t("employees.colType") },
+	{ accessorKey: "email", header: t("employees.colEmail") },
+]);
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-5xl">
+		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+			<h1 class="text-highlighted text-xl font-semibold">
+				{{ t("employees.title") }}
+			</h1>
+			<UInput
+				v-model="searchQuery"
+				icon="i-lucide-search"
+				:placeholder="t('employees.searchPlaceholder')"
+				class="w-64"
+			/>
+		</div>
+
+		<UAlert
+			v-if="error"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('common.loadError')"
+		/>
+		<div
+			v-else-if="!rows.length && status !== 'pending'"
+			class="border-default text-muted rounded-lg border border-dashed py-12 text-center"
+		>
+			{{ t("employees.empty") }}
+		</div>
+		<UTable
+			v-else
+			:data="rows"
+			:columns="columns"
+			:loading="status === 'pending'"
+		>
+			<template #type-cell="{ row }">{{
+				row.original.type || "—"
+			}}</template>
+			<template #email-cell="{ row }">
+				{{ row.original.email || "—" }}
+			</template>
+		</UTable>
+	</div>
+</template>

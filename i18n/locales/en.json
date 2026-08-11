@@ -1,4 +1,47 @@
 {
+	"employees": {
+		"title": "View All Employees",
+		"searchPlaceholder": "Search by name...",
+		"colName": "Name",
+		"colType": "Type",
+		"colEmail": "Email",
+		"empty": "No employees found."
+	},
+	"createAccount": {
+		"title": "Create New Account",
+		"firstName": "First name",
+		"middleInitial": "Middle initial",
+		"lastName": "Last name",
+		"email": "Email",
+		"phone": "Phone",
+		"whatsapp": "WhatsApp",
+		"gender": "Gender",
+		"selectGender": "Select gender",
+		"male": "Male",
+		"female": "Female",
+		"other": "Other",
+		"contactPref": "Contact preference",
+		"selectPref": "Select preference",
+		"prefEmail": "Email",
+		"prefText": "Text",
+		"prefOther": "Other",
+		"accountType": "Account type",
+		"selectType": "Select type",
+		"typePatient": "Patient",
+		"typeTherapist": "Therapist",
+		"typeAdmin": "Admin",
+		"typeParent": "Parent",
+		"submit": "Create Account",
+		"notAvailable": "Account creation isn't available yet."
+	},
+	"contact": {
+		"title": "Contact Us",
+		"email": "Email",
+		"phone": "Phone",
+		"website": "Website",
+		"websiteLink": "manosunidasporautismo.org",
+		"message": "Feel free to reach out anytime for questions or support."
+	},
 	"schedule": {
 		"createAppointment": "Create Appointment",
 		"newAppointment": "New Appointment",

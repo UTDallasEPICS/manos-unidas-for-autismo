@@ -1,4 +1,47 @@
 {
+	"employees": {
+		"title": "Ver todos los empleados",
+		"searchPlaceholder": "Buscar por nombre...",
+		"colName": "Nombre",
+		"colType": "Tipo",
+		"colEmail": "Correo electrónico",
+		"empty": "No se encontraron empleados."
+	},
+	"createAccount": {
+		"title": "Crear nueva cuenta",
+		"firstName": "Nombre",
+		"middleInitial": "Inicial del segundo nombre",
+		"lastName": "Apellido",
+		"email": "Correo electrónico",
+		"phone": "Teléfono",
+		"whatsapp": "WhatsApp",
+		"gender": "Género",
+		"selectGender": "Seleccione género",
+		"male": "Masculino",
+		"female": "Femenino",
+		"other": "Otro",
+		"contactPref": "Preferencia de contacto",
+		"selectPref": "Seleccione preferencia",
+		"prefEmail": "Correo electrónico",
+		"prefText": "Mensaje de texto",
+		"prefOther": "Otro",
+		"accountType": "Tipo de cuenta",
+		"selectType": "Seleccione tipo",
+		"typePatient": "Paciente",
+		"typeTherapist": "Terapeuta",
+		"typeAdmin": "Administrador",
+		"typeParent": "Padre/Tutor",
+		"submit": "Crear cuenta",
+		"notAvailable": "La creación de cuentas aún no está disponible."
+	},
+	"contact": {
+		"title": "Contáctenos",
+		"email": "Correo electrónico",
+		"phone": "Teléfono",
+		"website": "Sitio web",
+		"websiteLink": "manosunidasporautismo.org",
+		"message": "No dude en comunicarse en cualquier momento para preguntas o apoyo."
+	},
 	"schedule": {
 		"createAppointment": "Crear cita",
 		"newAppointment": "Nueva cita",
