@@ -220,7 +220,15 @@ const calendarOptions = computed(() => ({
 	plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
 	initialView: "timeGridWeek",
 	headerToolbar: false as const,
-	height: "auto" as const,
+	// Fill the calendar shell (which is sized to the viewport below) and let the
+	// rows expand to fit, so the whole week is visible without scrolling. Hours
+	// are trimmed to the clinic window and the all-day row is dropped to keep the
+	// time grid compact.
+	height: "100%" as const,
+	expandRows: true,
+	allDaySlot: false,
+	slotMinTime: "07:00:00",
+	slotMaxTime: "20:00:00",
 	firstDay: 1,
 	nowIndicator: true,
 	selectable: canManage.value,
@@ -324,7 +332,9 @@ function setView(view: string) {
 			</div>
 		</div>
 
-		<div class="calendar-shell border-default rounded-lg border p-2">
+		<div
+			class="calendar-shell border-default h-[calc(100vh-12rem)] rounded-lg border p-2"
+		>
 			<!-- FullCalendar manipulates the DOM directly and isn't SSR-safe
 			     (crashes on the server: "Class constructor ... cannot be invoked
 			     without 'new'"), so it's client-only. -->

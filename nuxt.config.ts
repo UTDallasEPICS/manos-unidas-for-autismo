@@ -30,6 +30,17 @@ export default defineNuxtConfig({
 			build: buildInfo(),
 		},
 	},
+	app: {
+		head: {
+			// Favicon = the FMUA multi-colour puzzle circle (public/fmua-icon.png,
+			// cropped from the full logo). .ico for legacy, PNG for modern browsers.
+			link: [
+				{ rel: "icon", href: "/favicon.ico", sizes: "any" },
+				{ rel: "icon", type: "image/png", href: "/fmua-icon.png" },
+				{ rel: "apple-touch-icon", href: "/fmua-icon.png" },
+			],
+		},
+	},
 	modules: ["@nuxtjs/i18n", "@nuxt/eslint", "@nuxt/ui"],
 	i18n: {
 		locales: [
