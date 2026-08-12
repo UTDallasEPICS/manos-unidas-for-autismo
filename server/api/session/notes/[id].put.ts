@@ -12,8 +12,12 @@ const therapyNoteUpdateSchema = z.object({
 
 export default defineAuthedHandler(
 	{
-		access: AccessPermission.THERAPIST,
+		access: [AccessPermission.THERAPIST, AccessPermission.ADMIN],
 		ownership: async (event) => {
+			if (event.context.permissions[AccessPermission.ADMIN]) {
+				return true;
+			}
+
 			const idParam = getRouterParam(event, "id");
 			if (!idParam) return false;
 			const noteId = Number(idParam);

@@ -123,7 +123,19 @@
 		"generalObservations": "General observations",
 		"noDate": "No date",
 		"savedSuccess": "Profile updated successfully.",
-		"savedError": "Could not save profile changes. Please try again."
+		"savedError": "Could not save profile changes. Please try again.",
+		"appointments": "Appointments",
+		"columns": {
+			"dateTime": "Date & Time",
+			"type": "Type",
+			"therapist": "Therapist",
+			"note": "Note",
+			"actions": "Actions",
+			"viewNote": "View Note",
+			"noNote": "No note",
+			"editNote": "Edit Note",
+			"addNote": "Add Note"
+		}
 	},
 	"patients": {
 		"title": "View All Patients",

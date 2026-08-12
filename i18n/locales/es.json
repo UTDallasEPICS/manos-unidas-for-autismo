@@ -123,7 +123,19 @@
 		"generalObservations": "Observaciones generales",
 		"noDate": "Sin fecha",
 		"savedSuccess": "Perfil actualizado correctamente.",
-		"savedError": "No se pudieron guardar los cambios del perfil. Inténtelo de nuevo."
+		"savedError": "No se pudieron guardar los cambios del perfil. Inténtelo de nuevo.",
+		"appointments": "Citas",
+		"columns": {
+			"dateTime": "Fecho y Hora",
+			"type": "Tipo",
+			"therapist": "Terapeuta",
+			"note": "Nota",
+			"actions": "Acciones",
+			"viewNote": "Ver nota",
+			"noNote": "Sin nota",
+			"editNote": "Editar nota",
+			"addNote": "Agregar nota"
+		}
 	},
 	"patients": {
 		"title": "Ver todos los pacientes",

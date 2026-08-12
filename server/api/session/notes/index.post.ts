@@ -4,6 +4,7 @@ import { AccessPermission } from "~/types/permissions";
 const therapyNoteSchema = z.object({
 	patientId: z.string(),
 	therapyType: z.string(),
+	sessionId: z.string().optional().nullable(),
 	submitterID: z.number().int().optional().nullable(),
 	submitterId: z.number().int().optional().nullable(),
 	goalsAchieved: z.string().min(1, "Goals Achieved is required"),
@@ -17,8 +18,11 @@ const therapyNoteSchema = z.object({
 
 export default defineAuthedHandler(
 	{
-		access: AccessPermission.THERAPIST,
+		access: [AccessPermission.THERAPIST, AccessPermission.ADMIN],
 		ownership: async (event) => {
+			if (event.context.permissions[AccessPermission.ADMIN]) {
+				return true;
+			}
 			const data = await validateBody(event, therapyNoteSchema);
 			return isAssignedTherapist(event, data.patientId);
 		},
@@ -39,6 +43,7 @@ export default defineAuthedHandler(
 			data: {
 				patientId: data.patientId,
 				therapyType: data.therapyType,
+				sessionId: data.sessionId ?? null,
 				submitterId: data.submitterID ?? data.submitterId ?? null,
 
 				otherTherapies: data.otherTherapies ?? null,

@@ -35,28 +35,29 @@ export function useTherapyNoteForm() {
 		formData: Record<string, unknown>,
 		patientId: string,
 		noteId: number | null,
-		onSuccess: () => Promise<void>
+		onSuccess: () => Promise<void>,
+		sessionId?: string | null
 	) {
-		const objectives =
-			(formData.objectives as Record<string, unknown>) ?? {};
-		const goals = (formData.goals as Record<string, unknown>) ?? {};
 		const reinforcers =
 			(formData.reinforcers as Record<string, string>) ?? {};
-		const famRecs = (formData.famRecs as Record<string, string>) ?? {};
+		const famRecs =
+			(formData.familyRecommendations as Record<string, string>) ?? {};
 		const progressNotes =
 			(formData.progressNotes as Record<string, string>) ?? {};
 		const nextSeshObjectives =
-			(formData.nextSeshObjectives as Record<string, string>) ?? {};
+			(formData.nextSessionObjectives as Record<string, string>) ?? {};
 		const incidents = (formData.incidents as Record<string, string>) ?? {};
 		const observations =
-			(formData.observations as Record<string, string>) ?? {};
-		const goalsGoals = (goals.goals as Record<string, string>) ?? {};
+			(formData.generalObservations as Record<string, string>) ?? {};
+		const goalsAchieved =
+			(formData.goalsAchieved as Record<string, string>) ?? {};
 
-		const objectiveNames = (objectives.objectiveNames as string[]) ?? [];
+		const selectedObjectives =
+			(formData.selectedObjectives as string[]) ?? [];
 		const objectiveDetails =
-			(objectives.objectiveDetails as Record<string, string>) ?? {};
+			(formData.objectiveDetails as Record<string, string>) ?? {};
 		const customGoals =
-			(goals.customGoals as Array<{
+			(formData.customGoals as Array<{
 				id: number;
 				label: string;
 				details: string;
@@ -68,7 +69,7 @@ export function useTherapyNoteForm() {
 			details?: string | null;
 		}[] = [];
 
-		for (const key of objectiveNames) {
+		for (const key of selectedObjectives) {
 			objectivesPayload.push({
 				goalKey: key,
 				goalLabel: key,
@@ -87,10 +88,11 @@ export function useTherapyNoteForm() {
 
 		const payload = {
 			patientId,
-			therapyType: formData.therapy,
+			sessionId: sessionId ?? null,
+			therapyType: formData.selectedTherapy,
 			objectives: objectivesPayload,
 			objectivesDate: dateStringWithCurrentTime(
-				objectives.objectivesDate as string
+				formData.objectivesDate as string
 			),
 			reinforcersUsed: reinforcers.value || null,
 			reinforcersDate: dateStringWithCurrentTime(reinforcers.date),
@@ -98,8 +100,8 @@ export function useTherapyNoteForm() {
 			familyRecommendationsDate: dateStringWithCurrentTime(famRecs.date),
 			groupRecommendationParents:
 				(formData.groupRecommendationParents as string) || null,
-			goalsAchieved: goalsGoals.value || null,
-			goalsAchievedDate: dateStringWithCurrentTime(goalsGoals.date),
+			goalsAchieved: goalsAchieved.value || null,
+			goalsAchievedDate: dateStringWithCurrentTime(goalsAchieved.date),
 			progressNotes: progressNotes.value || null,
 			progressNotesDate: dateStringWithCurrentTime(progressNotes.date),
 			nextSessionObjectives: nextSeshObjectives.value || null,
@@ -124,6 +126,7 @@ export function useTherapyNoteForm() {
 			await $fetch(url, {
 				method,
 				body: payload,
+				credentials: "include",
 			});
 
 			await onSuccess();
