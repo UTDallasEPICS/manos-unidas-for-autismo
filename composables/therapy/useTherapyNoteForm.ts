@@ -28,6 +28,30 @@ export function useTherapyNoteForm() {
 	}
 
 	/**
+	 * Resolve the timestamp to persist for a dated field. When editing, the
+	 * form only carries the date portion (yyyy-mm-dd), so re-saving an unchanged
+	 * date would otherwise re-stamp its time to "now" on every update. If the
+	 * form date still matches the stored value, keep the original timestamp
+	 * exactly; only a new or genuinely changed date gets the current time.
+	 */
+	function resolveDate(
+		formDate: string | null | undefined,
+		originalDate: unknown
+	): string | null {
+		if (!formDate) return null;
+		if (originalDate) {
+			const original = new Date(originalDate as string | number | Date);
+			if (
+				!isNaN(original.getTime()) &&
+				original.toISOString().slice(0, 10) === formDate
+			) {
+				return original.toISOString();
+			}
+		}
+		return dateStringWithCurrentTime(formDate);
+	}
+
+	/**
 	 * Maps any form data shape to the API payload and saves.
 	 * Accepts Record<string, unknown> for flexibility with component emit types.
 	 */
@@ -36,7 +60,8 @@ export function useTherapyNoteForm() {
 		patientId: string,
 		noteId: number | null,
 		onSuccess: () => Promise<void>,
-		sessionId?: string | null
+		sessionId?: string | null,
+		originalNote?: Record<string, unknown> | null
 	) {
 		const reinforcers =
 			(formData.reinforcers as Record<string, string>) ?? {};
@@ -91,28 +116,46 @@ export function useTherapyNoteForm() {
 			sessionId: sessionId ?? null,
 			therapyType: formData.selectedTherapy,
 			objectives: objectivesPayload,
-			objectivesDate: dateStringWithCurrentTime(
-				formData.objectivesDate as string
+			objectivesDate: resolveDate(
+				formData.objectivesDate as string,
+				originalNote?.objectivesDate
 			),
 			reinforcersUsed: reinforcers.value || null,
-			reinforcersDate: dateStringWithCurrentTime(reinforcers.date),
+			reinforcersDate: resolveDate(
+				reinforcers.date,
+				originalNote?.reinforcersDate
+			),
 			familyRecommendations: famRecs.value || null,
-			familyRecommendationsDate: dateStringWithCurrentTime(famRecs.date),
+			familyRecommendationsDate: resolveDate(
+				famRecs.date,
+				originalNote?.familyRecommendationsDate
+			),
 			groupRecommendationParents:
 				(formData.groupRecommendationParents as string) || null,
 			goalsAchieved: goalsAchieved.value || null,
-			goalsAchievedDate: dateStringWithCurrentTime(goalsAchieved.date),
+			goalsAchievedDate: resolveDate(
+				goalsAchieved.date,
+				originalNote?.goalsAchievedDate
+			),
 			progressNotes: progressNotes.value || null,
-			progressNotesDate: dateStringWithCurrentTime(progressNotes.date),
+			progressNotesDate: resolveDate(
+				progressNotes.date,
+				originalNote?.progressNotesDate
+			),
 			nextSessionObjectives: nextSeshObjectives.value || null,
-			nextSessionObjectivesDate: dateStringWithCurrentTime(
-				nextSeshObjectives.date
+			nextSessionObjectivesDate: resolveDate(
+				nextSeshObjectives.date,
+				originalNote?.nextSessionObjectivesDate
 			),
 			incidents: incidents.value || null,
-			incidentsDate: dateStringWithCurrentTime(incidents.date),
+			incidentsDate: resolveDate(
+				incidents.date,
+				originalNote?.incidentsDate
+			),
 			generalObservations: observations.value || null,
-			generalObservationsDate: dateStringWithCurrentTime(
-				observations.date
+			generalObservationsDate: resolveDate(
+				observations.date,
+				originalNote?.generalObservationsDate
 			),
 		};
 

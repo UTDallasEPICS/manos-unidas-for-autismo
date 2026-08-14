@@ -90,14 +90,15 @@
 
 <script setup lang="ts">
 import type { TherapyNote, Recommendation } from "~/types/formTypes";
-const { t } = useI18n();
-const { locale } = useI18n();
+const { t, locale } = useI18n();
+const toast = useToast();
 
 const props = defineProps<{
 	patientId: string;
 }>();
 
 const { can } = useAccess();
+const canViewSessions = computed(() => can("THERAPIST") || can("ADMIN"));
 const {
 	therapyNotes,
 	loadTherapyNotes,
@@ -120,10 +121,12 @@ const activeNote = ref<TherapyNote | null>(null);
 const recommendations = ref<Recommendation[]>([]);
 const selectedSessionTime = ref<string | null>(null);
 
-// Fetch sessions for this patient
+// Fetch sessions for this patient. Only therapists/admins may hit this
+// endpoint — skip the request (and its 403) for every other profile viewer.
 const { data: sessions } = await useFetch("/api/profile/sessions", {
 	query: { patientId: props.patientId },
 	default: () => [],
+	immediate: canViewSessions.value,
 });
 
 const sessionColumns = computed(() => [
@@ -245,7 +248,10 @@ async function handleProgressReportSave(formData: Record<string, unknown>) {
 		async () => {
 			await loadTherapyNotes();
 		},
-		selectedSessionId.value
+		selectedSessionId.value,
+		// Pass the note being edited so unchanged dates keep their original
+		// timestamp instead of being re-stamped to "now".
+		editingNote.value as Record<string, unknown> | null
 	);
 
 	if (result.success) {
@@ -254,7 +260,13 @@ async function handleProgressReportSave(formData: Record<string, unknown>) {
 		selectedSessionId.value = null;
 		selectedSessionTime.value = null;
 	} else {
-		alert("Could not save therapy note: " + result.error);
+		toast.add({
+			title: t("therapyNote.saveError"),
+			description:
+				typeof result.error === "string" ? result.error : undefined,
+			color: "error",
+			icon: "i-lucide-triangle-alert",
+		});
 	}
 }
 </script>

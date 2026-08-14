@@ -668,6 +668,15 @@
 		"goalDetailsPlaceholder": "Details for this other goal",
 		"addGoalHint": "Click \"Add other goal\" to define custom goals for this therapy.",
 		"addQuestion": "Add question",
-		"validationError": "Please fix the highlighted fields before saving."
+		"validationError": "Please fix the highlighted fields before saving.",
+		"saveError": "Could not save therapy note. Please try again."
+	},
+	"therapyTypes": {
+		"LEARNING_THERAPY": "Learning Therapy",
+		"BEHAVIORAL_EARLY": "Behavioral Therapy & Early Intervention Therapy",
+		"SPEECH_THERAPY": "Speech Therapy",
+		"SOCIAL_SKILLS": "Social Skills Therapy",
+		"OCCUPATIONAL_THERAPY": "Occupational Therapy",
+		"INDEPENDENT_LIVING": "Independent Living Skills Training Program"
 	}
 }

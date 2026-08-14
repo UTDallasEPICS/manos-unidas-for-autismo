@@ -668,6 +668,15 @@
 		"goalDetailsPlaceholder": "Detalles de este otro objetivo",
 		"addGoalHint": "Haga clic en \"Agregar otro objetivo\" para definir objetivos personalizados para esta terapia.",
 		"addQuestion": "Agregar pregunta",
-		"validationError": "Corrija los campos indicados antes de guardar."
+		"validationError": "Corrija los campos indicados antes de guardar.",
+		"saveError": "No se pudo guardar la nota de terapia. Inténtalo de nuevo."
+	},
+	"therapyTypes": {
+		"LEARNING_THERAPY": "Terapia de Aprendizaje",
+		"BEHAVIORAL_EARLY": "Terapia Conductual y Terapia de Intervención Temprana",
+		"SPEECH_THERAPY": "Terapia del Lenguaje",
+		"SOCIAL_SKILLS": "Terapia de Habilidades Sociales",
+		"OCCUPATIONAL_THERAPY": "Terapia Ocupacional",
+		"INDEPENDENT_LIVING": "Programa de Entrenamiento en Habilidades para la Vida Independiente"
 	}
 }

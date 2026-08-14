@@ -220,53 +220,11 @@ const noteModals = reactive({
 	viewNote: false,
 });
 
-function parseVal(field: unknown): string {
-	if (!field) return "—";
-	if (typeof field === "string") {
-		try {
-			const parsed = JSON.parse(field);
-			return parsed?.value ?? field;
-		} catch {
-			return field;
-		}
-	}
-	if (typeof field === "object" && field !== null && "value" in field) {
-		return (field as { value?: string }).value ?? "—";
-	}
-	return String(field);
-}
-
-function parseJsonField<T>(field: unknown, fallback: T): T {
-	if (!field) return fallback;
-	if (typeof field === "string") {
-		try {
-			return JSON.parse(field) as T;
-		} catch {
-			return fallback;
-		}
-	}
-	return field as T;
-}
-
-//(View Mode): Converts DateAndVal to strings
-function formatNoteForView(note: TherapyNote): TherapyNote {
-	return {
-		...note,
-		objectives: Array.isArray(note.objectives)
-			? note.objectives
-			: parseJsonField(note.objectives, []),
-		goals: parseJsonField(note.goals, {}),
-		progressNotes: parseVal(note.progressNotes),
-		incidents: parseVal(note.incidents),
-		reinforcers: parseVal(note.reinforcers),
-		famRecs: parseVal(note.famRecs),
-		nextSeshObjectives: parseVal(note.nextSeshObjectives),
-		observations: parseVal(note.observations),
-	} as unknown as TherapyNote;
-}
-
 function handleViewNote(note: TherapyNote) {
-	activeNote.value = formatNoteForView(note);
+	// ViewNoteModal reads the raw TherapyNote fields (reinforcersUsed,
+	// familyRecommendations, generalObservations, …) directly — the same raw
+	// record the profile page passes it. No remapping needed.
+	activeNote.value = note;
 	noteModals.viewNote = true;
 }
 
@@ -298,7 +256,10 @@ async function handleNoteSave(formData: Record<string, unknown>) {
 			await refreshSessionNotes();
 			emit("changed");
 		},
-		activeSessionId.value
+		activeSessionId.value,
+		// Pass the note being edited so unchanged dates keep their original
+		// timestamp instead of being re-stamped to "now".
+		editingNote.value as Record<string, unknown> | null
 	);
 
 	if (result.success) {
