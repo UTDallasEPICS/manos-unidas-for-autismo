@@ -35,6 +35,19 @@
 	--font-sc-encode: "Inter", sans-serif;
 }
 
+/* -------------------------------------------------------------------------
+   Text contrast. NuxtUI's default light-mode body text is slate-700, which
+   reads as washed-out grey. Darken the light-mode text tokens so copy renders
+   near-black across every page and component. Scoped to :root:not(.dark) so
+   dark mode keeps its light-on-dark text; `dimmed` (placeholders/hints) is
+   left light to preserve hierarchy.
+   ------------------------------------------------------------------------- */
+:root:not(.dark) {
+	--ui-text: var(--ui-color-neutral-900);
+	--ui-text-toned: var(--ui-color-neutral-800);
+	--ui-text-muted: var(--ui-color-neutral-600);
+}
+
 /* Erases the native date-picker indicator on inputs that opt out. */
 .no-calendar::-webkit-calendar-picker-indicator {
 	-webkit-appearance: none;
