@@ -99,9 +99,14 @@ const displayName = computed(() =>
 	user.value ? `${user.value.fName} ${user.value.lName}`.trim() : ""
 );
 
-const pageTitle = computed(
-	() => (route.meta.title as string | undefined) ?? ""
-);
+// Pages declare their title as an i18n key in definePageMeta({ title }); the
+// navbar renders the translated string (t() falls back to the raw value for a
+// non-key, and to "" when a page sets no title). This is the single place a
+// page title lives on desktop — pages no longer render their own <h1>.
+const pageTitle = computed(() => {
+	const key = route.meta.title as string | undefined;
+	return key ? t(key) : "";
+});
 
 // Track the sidebar's collapsed state so the header shows just the centered
 // icon on the rail (the label would otherwise widen the row and clip the logo).

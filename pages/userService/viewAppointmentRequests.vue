@@ -4,6 +4,10 @@
 import type { TableColumn } from "@nuxt/ui";
 import AssignModal from "~/components/userService/AssignModal.vue";
 
+definePageMeta({
+	title: "assign.apptTitle",
+});
+
 const { t } = useI18n();
 
 interface Appointment {
@@ -51,10 +55,7 @@ function openAssign(row: Row) {
 
 <template>
 	<div class="mx-auto w-full max-w-6xl">
-		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("assign.apptTitle") }}
-			</h1>
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
 			<UButton
 				icon="i-lucide-refresh-cw"
 				color="neutral"

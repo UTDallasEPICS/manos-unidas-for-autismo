@@ -3,6 +3,10 @@
      was a non-functional stub (dead button, unbound inputs). Fields are now
      bound so wiring a POST later is trivial. -->
 <script setup lang="ts">
+definePageMeta({
+	title: "createAccount.title",
+});
+
 const { t } = useI18n();
 const toast = useToast();
 
@@ -47,10 +51,6 @@ function submit() {
 
 <template>
 	<div class="mx-auto w-full max-w-3xl">
-		<h1 class="text-highlighted mb-6 text-xl font-semibold">
-			{{ t("createAccount.title") }}
-		</h1>
-
 		<form class="space-y-6" @submit.prevent="submit">
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<UFormField

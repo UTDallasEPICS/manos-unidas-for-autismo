@@ -1,5 +1,9 @@
 <!-- Evaluator: create a therapist referral for a patient. -->
 <script setup lang="ts">
+definePageMeta({
+	title: "referrals.createTitle",
+});
+
 const { t } = useI18n();
 const localePath = useLocalePath();
 const toast = useToast();
@@ -65,10 +69,7 @@ async function submitReferral() {
 
 <template>
 	<div class="mx-auto w-full max-w-xl">
-		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("referrals.createTitle") }}
-			</h1>
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
 			<UButton
 				:to="localePath({ name: 'evaluator-myReferrals' })"
 				variant="ghost"

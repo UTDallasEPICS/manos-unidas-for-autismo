@@ -35,6 +35,10 @@ interface RequestDetail {
 	workshops: { name: string }[];
 }
 
+definePageMeta({
+	title: "requestDetail.title",
+});
+
 const { t, locale } = useI18n();
 const localePath = useLocalePath();
 const route = useRoute();
@@ -92,7 +96,7 @@ function completeIntake() {
 		<div v-else class="space-y-6">
 			<div>
 				<h1 class="text-highlighted text-2xl font-semibold">
-					{{ t("requestDetail.title") }} — #{{ request.id }}
+					#{{ request.id }}
 				</h1>
 				<div
 					class="text-muted mt-2 flex flex-wrap items-center gap-3 text-sm"

@@ -4,6 +4,10 @@
 import type { TableColumn } from "@nuxt/ui";
 import PatientModal from "~/components/therapy/PatientModal.vue";
 
+definePageMeta({
+	title: "patients.title",
+});
+
 const { t } = useI18n();
 
 interface PatientRow {
@@ -97,10 +101,7 @@ async function openModal(row: PatientRow) {
 
 <template>
 	<div class="mx-auto w-full max-w-5xl">
-		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("patients.title") }}
-			</h1>
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
 			<UInput
 				v-model="searchQuery"
 				icon="i-lucide-search"

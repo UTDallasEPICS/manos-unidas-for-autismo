@@ -3,6 +3,10 @@
      enforces parent-of ownership; this is UX. Also a small reference page for
      the loading / empty / error states pattern. -->
 <script setup lang="ts">
+definePageMeta({
+	title: "nav.children",
+});
+
 const { t } = useI18n();
 const localePath = useLocalePath();
 const { userId } = useAuthState();
@@ -19,10 +23,6 @@ const {
 
 <template>
 	<div class="mx-auto w-full max-w-4xl">
-		<h1 class="text-highlighted mb-6 text-xl font-semibold">
-			{{ t("nav.children") }}
-		</h1>
-
 		<!-- Loading -->
 		<div v-if="status === 'pending'" class="grid gap-3 sm:grid-cols-2">
 			<USkeleton v-for="n in 4" :key="n" class="h-24 w-full" />

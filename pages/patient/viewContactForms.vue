@@ -4,6 +4,10 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 
+definePageMeta({
+	title: "contactForms.title",
+});
+
 const { t } = useI18n();
 const localePath = useLocalePath();
 
@@ -78,10 +82,7 @@ const columns = computed<TableColumn<Row>[]>(() => [
 
 <template>
 	<div class="mx-auto w-full max-w-6xl">
-		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("contactForms.title") }}
-			</h1>
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
 			<USelect
 				v-model="sortBy"
 				:items="sortItems"

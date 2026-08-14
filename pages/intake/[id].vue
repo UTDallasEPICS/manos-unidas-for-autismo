@@ -1,8 +1,5 @@
 <template>
 	<div class="mx-auto max-w-5xl p-8">
-		<h1 class="font-cormorant-garamond mb-2 text-4xl">
-			{{ t("intake.title") }}
-		</h1>
 		<p class="mb-8 text-gray-500">
 			{{ t("intake.requestId", { id: route.params.id }) }}
 		</p>
@@ -611,6 +608,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+	title: "intake.title",
+});
+
 const route = useRoute();
 const { t } = useI18n();
 

@@ -8,6 +8,7 @@ import CalendarView from "~/components/schedule/CalendarView.vue";
 
 definePageMeta({
 	path: "/scheduleView",
+	title: "nav.schedule",
 });
 
 const { t } = useI18n();
@@ -38,12 +39,8 @@ function addFilters(filter: string[]) {
 			@add-filters="(filter) => addFilters(filter)"
 		/>
 
-		<div class="mb-4 flex items-center justify-between">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("nav.schedule") }}
-			</h1>
+		<div v-if="permissions.filter" class="mb-4 flex justify-end">
 			<UButton
-				v-if="permissions.filter"
 				color="neutral"
 				variant="outline"
 				icon="i-lucide-filter"

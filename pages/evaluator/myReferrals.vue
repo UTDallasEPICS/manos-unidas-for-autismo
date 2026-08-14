@@ -2,6 +2,10 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
 
+definePageMeta({
+	title: "referrals.myTitle",
+});
+
 const { t } = useI18n();
 const localePath = useLocalePath();
 
@@ -84,10 +88,7 @@ const columns = computed<TableColumn<Row>[]>(() => [
 
 <template>
 	<div class="mx-auto w-full max-w-5xl">
-		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("referrals.myTitle") }}
-			</h1>
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
 			<UButton
 				:to="localePath({ name: 'evaluator-createReferral' })"
 				icon="i-lucide-clipboard-plus"

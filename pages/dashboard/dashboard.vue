@@ -13,5 +13,9 @@
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+	title: "nav.dashboard",
+});
+
 const { t } = useI18n();
 </script>

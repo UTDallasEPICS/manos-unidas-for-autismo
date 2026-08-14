@@ -3,6 +3,10 @@
 <script setup lang="ts">
 import type { SessionWithAttendance } from "~/components/schedule/sessionTypes";
 
+definePageMeta({
+	title: "appointments.title",
+});
+
 const { t, locale } = useI18n();
 const localePath = useLocalePath();
 
@@ -51,10 +55,7 @@ function formatSessionTime(session: SessionWithAttendance): string {
 
 <template>
 	<div class="mx-auto w-full max-w-3xl">
-		<header class="mb-6 flex flex-wrap items-center justify-between gap-3">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("appointments.title") }}
-			</h1>
+		<header class="mb-6 flex flex-wrap items-center justify-end gap-3">
 			<UButton
 				:to="localePath({ name: 'requestForm' })"
 				icon="i-lucide-calendar-plus"

@@ -4,6 +4,10 @@
 <script setup lang="ts">
 import PatientSection from "~/components/patient/Section.vue";
 
+definePageMeta({
+	title: "profile.title",
+});
+
 const { t } = useI18n();
 const route = useRoute();
 const uId = route.params.id as string;
@@ -19,11 +23,7 @@ getProfile();
 
 <template>
 	<div class="mx-auto w-full max-w-4xl">
-		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-			<h1 class="text-highlighted text-xl font-semibold">
-				{{ t("profile.title") }}
-			</h1>
-
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
 			<div class="flex flex-wrap gap-2">
 				<template v-if="can('PATIENT')">
 					<UButton

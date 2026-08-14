@@ -8,7 +8,11 @@
 <script setup lang="ts">
 import { pageAccessMap, AccessPermission } from "~/types/permissions";
 
-definePageMeta({ middleware: "dev", layout: "default" });
+definePageMeta({
+	middleware: "dev",
+	layout: "default",
+	title: "Developer diagnostics",
+});
 
 const { user, access } = useAuthState();
 const router = useRouter();
@@ -139,9 +143,6 @@ const myPermissions = computed(() =>
 	<div class="mx-auto w-full max-w-6xl space-y-6">
 		<div class="flex flex-wrap items-center justify-between gap-3">
 			<div>
-				<h1 class="text-highlighted text-xl font-semibold">
-					Developer diagnostics
-				</h1>
 				<p class="text-muted text-sm">
 					Route map, access-model audit and environment info. ADMIN/IT
 					only.
