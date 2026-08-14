@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AccessPermission } from "~/types/permissions";
 
 const schema = z.object({
 	date: z.coerce.date(),
@@ -13,28 +14,40 @@ const schema = z.object({
 
 const validateSchema = schema.strict();
 
-export default defineEventHandler(async (event) => {
-	const { date, pId, questions } = await validateBody(event, validateSchema);
+export default defineAuthedHandler(
+	{
+		access: AccessPermission.THERAPIST,
+		ownership: async (event) => {
+			const { pId } = await validateBody(event, validateSchema);
+			return isAssignedTherapist(event, pId);
+		},
+	},
+	async (event) => {
+		const { date, pId, questions } = await validateBody(
+			event,
+			validateSchema
+		);
 
-	try {
-		const result = await prisma.$transaction(async (tx) => {
-			const report = await tx.report.create({
-				data: { date, patientId: pId },
+		try {
+			const result = await prisma.$transaction(async (tx) => {
+				const report = await tx.report.create({
+					data: { date, patientId: pId },
+				});
+
+				await tx.reportData.createMany({
+					data: questions.map((q) => ({
+						reportId: report.id,
+						question: q.question,
+						answer: q.answer,
+					})),
+				});
+
+				return report;
 			});
 
-			await tx.reportData.createMany({
-				data: questions.map((q) => ({
-					reportId: report.id,
-					question: q.question,
-					answer: q.answer,
-				})),
-			});
-
-			return report;
-		});
-
-		return result;
-	} catch (e) {
-		handlePrismaError(e);
+			return result;
+		} catch (e) {
+			handlePrismaError(e);
+		}
 	}
-});
+);

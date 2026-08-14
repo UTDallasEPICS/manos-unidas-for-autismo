@@ -1,82 +1,14 @@
-<template>
-	<div class="font-sc-encode p-4">
-		<!-- Header -->
-		<div class="mb-2">
-			<h1 class="font-cormorant-garamond text-2xl font-bold">
-				Assign Neuro Specialist Referrals
-			</h1>
-		</div>
-		<div class="mb-4 flex justify-end">
-			<RefreshButton :onRefresh="refreshReferrals" />
-		</div>
-		<AssignModal
-			v-model:modelValue="isAssignModalOpen"
-			:mode="assignMode"
-			:item="selectedReferral"
-			@assigned="handleReferralAssigned"
-		/>
-
-		<!-- Referral Requests Table -->
-		<table class="w-full table-auto border-collapse">
-			<thead class="bg-gray-100">
-				<tr>
-					<th class="w-1/5 px-4 py-2 text-left">Patient ID</th>
-					<th class="w-1/5 px-4 py-2 text-left">Evaluator ID</th>
-					<th class="w-1/5 px-4 py-2 text-left">Therapist Type</th>
-					<th class="w-1/5 px-4 py-2 text-left">Recommendation</th>
-					<th class="w-1/5 px-4 py-2 text-left">Submitted At</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					v-for="referral in referrals"
-					:key="referral.id"
-					class="cursor-pointer border-t hover:bg-gray-100"
-					@click="openAssignModal(referral)"
-				>
-					<td class="px-4 py-2">
-						<span
-							class="cursor-pointer text-blue-600 hover:underline"
-						>
-							{{ referral.patientId }}
-						</span>
-					</td>
-					<td class="px-4 py-2">{{ referral.evaluatorId || "—" }}</td>
-					<td class="px-4 py-2">
-						{{ referral.therapistType || "—" }}
-					</td>
-					<td class="px-4 py-2">
-						{{ referral.therapyRecommendation || "—" }}
-					</td>
-					<td class="px-4 py-2">
-						{{ formatDate(referral.submittedAt) }}
-					</td>
-				</tr>
-				<tr v-if="!referrals.length" class="border-t">
-					<td colspan="5" class="px-4 py-2 text-center">
-						No neuro specialist referrals found.
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<!-- Error State -->
-		<div v-if="error" class="mt-4 text-red-600">
-			Failed to load referral requests.
-		</div>
-	</div>
-</template>
-
+<!-- User-service: neuro-specialist referrals. Assign a therapist per row via
+     AssignModal. Rebuilt on NuxtUI (UTable). -->
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import AssignModal from "./assignModal.vue";
-import RefreshButton from "./refreshButton.vue";
-import { useFetch, useCookie } from "#imports";
-import { AccessPermission } from "~/types/permissions";
+import type { TableColumn } from "@nuxt/ui";
+import AssignModal from "~/components/userService/AssignModal.vue";
 
-const access = useCookie<Record<AccessPermission, boolean> | null>(
-	"AccessPermission"
-);
+definePageMeta({
+	title: "assign.referralTitle",
+});
+
+const { t } = useI18n();
 
 interface ReferralRequest {
 	id: string;
@@ -87,42 +19,101 @@ interface ReferralRequest {
 	submittedAt: string;
 }
 
-const {
-	data: referralData,
-	error,
-	refresh: refreshReferralData,
-} = await getReferralRequests();
-
-async function getReferralRequests() {
-	if (access.value?.[AccessPermission.USER_SERVICE]) {
-		return useFetch<ReferralRequest[]>("/api/session/referrals");
+const { data, status, error, refresh } = await useFetch<ReferralRequest[]>(
+	"/api/session/referrals",
+	{
+		default: () => [],
 	}
-	return {
-		data: { value: [] },
-		error: "User not authorized to view referral requests",
-	};
-}
+);
 
-const referrals = computed(() => referralData?.value ?? []);
-const isAssignModalOpen = ref(false);
-const selectedReferral = ref<ReferralRequest | null>(null);
-const assignMode = ref<"appointment" | "referral">("referral");
+type Row = ReferralRequest & { submitted: string };
+const rows = computed<Row[]>(() =>
+	(data.value ?? []).map((r) => ({
+		...r,
+		evaluatorId: r.evaluatorId || "—",
+		therapistType: r.therapistType || "—",
+		therapyRecommendation: r.therapyRecommendation || "—",
+		submitted: r.submittedAt
+			? new Date(r.submittedAt).toLocaleString()
+			: "—",
+	}))
+);
 
-function openAssignModal(referral: ReferralRequest) {
-	selectedReferral.value = referral;
-	assignMode.value = "referral";
-	isAssignModalOpen.value = true;
-}
+const columns = computed<TableColumn<Row>[]>(() => [
+	{ accessorKey: "patientId", header: t("assign.colPatientId") },
+	{ accessorKey: "evaluatorId", header: t("assign.colEvaluatorId") },
+	{ accessorKey: "therapistType", header: t("assign.colTherapistType") },
+	{
+		accessorKey: "therapyRecommendation",
+		header: t("assign.colRecommendation"),
+	},
+	{ accessorKey: "submitted", header: t("assign.colSubmittedAt") },
+	{ accessorKey: "actions", header: "" },
+]);
 
-async function handleReferralAssigned() {
-	await refreshReferralData();
-}
-
-async function refreshReferrals() {
-	await refreshReferralData();
-}
-
-function formatDate(value: string) {
-	return value ? new Date(value).toLocaleString() : "—";
+const open = ref(false);
+const selected = ref<ReferralRequest | null>(null);
+function openAssign(row: Row) {
+	selected.value = row;
+	open.value = true;
 }
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-6xl">
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
+			<UButton
+				icon="i-lucide-refresh-cw"
+				color="neutral"
+				variant="outline"
+				:label="t('assign.refresh')"
+				:loading="status === 'pending'"
+				@click="refresh()"
+			/>
+		</div>
+
+		<UAlert
+			v-if="error"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('common.loadError')"
+			:actions="[
+				{
+					label: t('common.retry'),
+					color: 'neutral',
+					variant: 'subtle',
+					onClick: () => refresh(),
+				},
+			]"
+		/>
+		<div
+			v-else-if="!rows.length && status !== 'pending'"
+			class="border-default text-muted rounded-lg border border-dashed py-12 text-center"
+		>
+			{{ t("assign.emptyReferrals") }}
+		</div>
+		<UTable
+			v-else
+			:data="rows"
+			:columns="columns"
+			:loading="status === 'pending'"
+		>
+			<template #actions-cell="{ row }">
+				<UButton
+					size="xs"
+					icon="i-lucide-user-plus"
+					:label="t('assign.assign')"
+					@click="openAssign(row.original)"
+				/>
+			</template>
+		</UTable>
+
+		<AssignModal
+			v-model="open"
+			mode="referral"
+			:item="selected"
+			@assigned="refresh()"
+		/>
+	</div>
+</template>

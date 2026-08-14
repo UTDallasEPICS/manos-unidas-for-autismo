@@ -1,4 +1,5 @@
 import { prisma } from "~/server/utils/prisma";
+import { AccessPermission } from "~/types/permissions";
 
 type AppointmentRequestFindManyDelegate = {
 	findMany: () => Promise<unknown>;
@@ -29,7 +30,10 @@ function getAppointmentRequestDelegate(): AppointmentRequestFindManyDelegate {
 	return typed as AppointmentRequestFindManyDelegate;
 }
 
-export default defineEventHandler(async () => {
-	const appointmentRequest = getAppointmentRequestDelegate();
-	return await appointmentRequest.findMany();
-});
+export default defineAuthedHandler(
+	{ access: AccessPermission.USER_SERVICE },
+	async () => {
+		const appointmentRequest = getAppointmentRequestDelegate();
+		return await appointmentRequest.findMany();
+	}
+);

@@ -1,7 +1,8 @@
 import { prisma } from "~/server/utils/prisma";
+import { AccessPermission } from "~/types/permissions";
 
 type TherapistReferralFindManyDelegate = {
-	findMany: () => Promise<unknown>;
+	findMany: (args?: unknown) => Promise<unknown>;
 };
 
 function getTherapistReferralDelegate(): TherapistReferralFindManyDelegate {
@@ -29,7 +30,33 @@ function getTherapistReferralDelegate(): TherapistReferralFindManyDelegate {
 	return typed as TherapistReferralFindManyDelegate;
 }
 
-export default defineEventHandler(async () => {
-	const therapistReferral = getTherapistReferralDelegate();
-	return await therapistReferral.findMany();
-});
+export default defineAuthedHandler(
+	{
+		access: [
+			AccessPermission.USER_SERVICE,
+			AccessPermission.EVALUATOR,
+			AccessPermission.THERAPIST,
+		],
+	},
+	async (event) => {
+		const therapistReferral = getTherapistReferralDelegate();
+		const p = event.context.permissions;
+		const user = event.context.user!;
+
+		// A plain THERAPIST may only see referrals assigned to them, and a plain
+		// EVALUATOR may only see referrals they submitted; USER_SERVICE / ADMIN
+		// see all.
+		const isTherapistOnly =
+			!!p[AccessPermission.THERAPIST] &&
+			!(p[AccessPermission.USER_SERVICE] || p[AccessPermission.ADMIN]);
+		const isEvaluatorOnly =
+			!!p[AccessPermission.EVALUATOR] &&
+			!(p[AccessPermission.USER_SERVICE] || p[AccessPermission.ADMIN]);
+
+		let where: Record<string, unknown> | undefined;
+		if (isTherapistOnly) where = { therapistId: user.id };
+		else if (isEvaluatorOnly) where = { evaluatorId: user.id };
+
+		return await therapistReferral.findMany(where ? { where } : undefined);
+	}
+);

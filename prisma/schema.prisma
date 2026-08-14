@@ -8,45 +8,47 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  fName           String
-  mInit           String?
-  lName           String
-  name            String?
-  email           String           @unique
-  emailVerified   Boolean          @default(false)
-  image           String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt @default(now())
-  authSessions    AuthSession[]
-  accounts        Account[]
-  phone           String           @unique
-  whatsApp        String?          @unique
-  contactPref     ContactType      @default(EMAIL)
-  type            UserType?
-  NonEmployee     NonEmployee?
-  Sessions        Session[]
-  Specializations Specialization[] @relation("SpecializationToUser")
+  id                String               @id @default(uuid())
+  fName             String
+  mInit             String?
+  lName             String
+  name              String?
+  email             String               @unique
+  emailVerified     Boolean              @default(false)
+  image             String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @default(now()) @updatedAt
+  authSessions      AuthSession[]
+  accounts          Account[]
+  phone             String               @unique
+  whatsApp          String?              @unique
+  contactPref       ContactType          @default(EMAIL)
+  type              UserType?
+  NonEmployee       NonEmployee?
+  Sessions          Session[]
+  Specializations   Specialization[]     @relation("SpecializationToUser")
   EvaluatedRequests AppointmentRequest[] @relation("EvaluatorRequests")
 
   TherapistReferralsAsTherapist TherapistReferral[] @relation("TherapistReferrals")
   TherapistReferralsAsEvaluator TherapistReferral[] @relation("EvaluatorReferrals")
-  loggedInRequests LoggedInRequest[]
+  loggedInRequests              LoggedInRequest[]
 }
 
 model NonEmployee {
-  id              String       @id @unique
-  identification  String?
-  dob             DateTime?
-  gender          Gender?
-  streetName      String
-  streetNum       Int
-  buildingNum     Int?
-  postCode        Int
-  PostCodeCity    PostCodeCity? @relation(fields: [postCode], references: [postCode])
-  User            User         @relation(fields: [id], references: [id], onDelete: Cascade)
-  Patient         Patient?
-  Children        Patient[]    @relation("parent")
+  id             String            @id @unique
+  identification String?
+  dob            DateTime?
+  gender         Gender?
+  nationality    String?
+  nss            String?
+  streetName     String
+  streetNum      Int
+  buildingNum    Int?
+  postCode       Int
+  PostCodeCity   PostCodeCity?     @relation(fields: [postCode], references: [postCode])
+  User           User              @relation(fields: [id], references: [id], onDelete: Cascade)
+  Patient        Patient?
+  GuardianLinks  PatientGuardian[] @relation("GuardianLinks")
 }
 
 model PostCodeCity {
@@ -56,21 +58,83 @@ model PostCodeCity {
 }
 
 model Patient {
-  id                String           @id @unique
-  identification    String           @unique
-  ageAtRegistration Int?
-  diagnosed         Boolean
-  sponsorId         String?
-  ContactForm       ContactForm?
-  MedicalRecords    MedicalRecord[]
-  Sponsor           Sponsor?         @relation(fields: [sponsorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  User              NonEmployee      @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  ProgressReports   Report[]
-  Appointments      SessionPatient[]
-  Parents           NonEmployee[]    @relation(name: "parent")
-  TherapyNotes      TherapyNote[]
+  id                  String               @id @unique
+  identification      String               @unique
+  ageAtRegistration   Int?
+  diagnosed           Boolean
+  sponsorId           String?
+  ContactForm         ContactForm?
+  MedicalRecords      MedicalRecord[]
+  Sponsor             Sponsor?             @relation(fields: [sponsorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  User                NonEmployee          @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ProgressReports     Report[]
+  Appointments        SessionPatient[]
+  Guardians           PatientGuardian[]
+  TherapyNotes        TherapyNote[]
   AppointmentRequests AppointmentRequest[]
-  TherapistReferrals TherapistReferral[]
+  TherapistReferrals  TherapistReferral[]
+
+  initialInterviewDate DateTime?
+  programEvalDate      DateTime?
+  therapyStartDate     DateTime?
+  insurance            InsuranceCompany?
+  status               PatientStatus     @default(ACTIVE)
+  Diagnoses            Diagnosis[]
+  Sponsorships         Sponsorship[]
+  Support              PatientSupport[]
+}
+
+enum PatientStatus {
+  ACTIVE
+  WITHDRAWN
+  DROPPED_OUT
+}
+
+enum SupportType {
+  TRANSPORTATION
+  FOOD
+  DOMESTIC_HELP
+  OTHER
+}
+
+/// A guardian IS a User + NonEmployee (login-capable, deduped by email); this
+/// explicit join carries the per-relationship metadata and supports siblings
+/// (one guardian -> many patients) and multiple guardians per patient.
+model PatientGuardian {
+  patientId       String
+  guardianId      String
+  relationship    String
+  primaryGuardian Boolean     @default(false)
+  Patient         Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  Guardian        NonEmployee @relation("GuardianLinks", fields: [guardianId], references: [id], onDelete: Cascade)
+
+  @@id([patientId, guardianId])
+}
+
+model Diagnosis {
+  id        String    @id @default(uuid())
+  name      String
+  date      DateTime?
+  patientId String
+  Patient   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model Sponsorship {
+  id          String    @id @default(uuid())
+  sponsorName String
+  amount      Float?
+  startDate   DateTime
+  endDate     DateTime?
+  newDate     DateTime?
+  patientId   String
+  Patient     Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model PatientSupport {
+  id        String      @id @default(uuid())
+  type      SupportType
+  patientId String
+  Patient   Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
 
 model Specialization {
@@ -80,16 +144,18 @@ model Specialization {
 }
 
 model Session {
-  id            String           @id @default(uuid())
-  time          DateTime         @default(now())
-  duration      Int
-  comment       String?
-  maxAttendance Int              @default(1)
-  typeId        String
-  therapistId   String
-  Therapist     User             @relation(fields: [therapistId], references: [id])
-  Type          SessionType      @relation(fields: [typeId], references: [id])
-  Patients      SessionPatient[]
+  id                 String              @id @default(uuid())
+  time               DateTime            @default(now())
+  duration           Int
+  comment            String?
+  maxAttendance      Int                 @default(1)
+  typeId             String
+  therapistId        String
+  Therapist          User                @relation(fields: [therapistId], references: [id])
+  Type               SessionType         @relation(fields: [typeId], references: [id])
+  Patients           SessionPatient[]
+  AppointmentRequest AppointmentRequest?
+  TherapyNotes       TherapyNote[]
 
   @@unique([time, therapistId])
 }
@@ -195,6 +261,8 @@ model TherapyNote {
   submitterId Int?
 
   objectives TherapyNoteObjective[]
+  sessionId  String?
+  Session    Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 }
 
 model TherapyNoteObjective {
@@ -282,7 +350,13 @@ model AppointmentRequest {
   Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   evaluatorId String?
-  Evaluator   User? @relation("EvaluatorRequests", fields: [evaluatorId], references: [id], onDelete: Cascade)
+  Evaluator   User?   @relation("EvaluatorRequests", fields: [evaluatorId], references: [id], onDelete: Cascade)
+
+  // The bookable calendar Session created once an evaluator is assigned (the
+  // patient-meets-evaluator appointment). Nullable/SetNull so deleting the
+  // session (e.g. via the calendar) doesn't destroy the intake record.
+  sessionId String?  @unique
+  Session   Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 
   ipAddress String?
   createdAt DateTime @default(now())
@@ -305,37 +379,47 @@ model TherapistReferral {
 }
 
 model Request {
-  id                        Int      @id @default(autoincrement())
-  firstName                 String
-  middleName                String?
-  lastName                  String
-  email                     String
-  phone                     RequestPhone[]
-  whatsapp                  String
-  idNumber                  String
-  status                    Status           @default(PROCESSING)
+  id         Int            @id @default(autoincrement())
+  firstName  String
+  middleName String?
+  lastName   String
+  email      String
+  phone      RequestPhone[]
+  whatsapp   String
+  idNumber   String
+  status     Status         @default(PROCESSING)
 
-  streetName                String
-  streetNum                 String
-  buildingNum               String?
-  postCode                  String
+  streetName  String
+  streetNum   String
+  buildingNum String?
+  postCode    String
 
-  isAdult                   Boolean
-  patientFirstName          String
-  patientMiddleName         String?
-  patientLastName           String
-  patientAge                Int
-  diagnosed                 Boolean
+  isAdult           Boolean
+  patientFirstName  String
+  patientMiddleName String?
+  patientLastName   String
+  patientAge        Int
+  diagnosed         Boolean
 
-  returnPatient             Boolean
-  previousVisitDate         DateTime?
-  wantsEval                 Boolean
-  hasReferral               Boolean
-  createdAt                 DateTime @default(now())
+  returnPatient     Boolean
+  previousVisitDate DateTime?
+  wantsEval         Boolean
+  hasReferral       Boolean
+  createdAt         DateTime  @default(now())
 
-  therapies                 RequestTherapy[]
-  complementaryServices     RequestComplementaryService[]
-  workshops                 RequestWorkshop[]
+  therapies             RequestTherapy[]
+  complementaryServices RequestComplementaryService[]
+  workshops             RequestWorkshop[]
+  IntakeDraft           IntakeDraft?
+}
+
+model IntakeDraft {
+  id        String   @id @default(uuid())
+  requestId Int      @unique
+  data      String // JSON blob of the in-progress intake form
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
 }
 
 model RequestPhone {
@@ -374,34 +458,32 @@ enum WorkshopType {
 }
 
 model RequestTherapy {
-  id        String  @id @default(uuid())
+  id        String      @id @default(uuid())
   name      TherapyType
   requestId Int
-  Request   Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  Request   Request     @relation(fields: [requestId], references: [id], onDelete: Cascade)
 }
 
 model RequestComplementaryService {
-  id        String  @id @default(uuid())
+  id        String                   @id @default(uuid())
   name      ComplementaryServiceType
   requestId Int
-  Request   Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  Request   Request                  @relation(fields: [requestId], references: [id], onDelete: Cascade)
 }
 
 model RequestWorkshop {
-  id        String  @id @default(uuid())
+  id        String       @id @default(uuid())
   name      WorkshopType
   requestId Int
-  Request   Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  Request   Request      @relation(fields: [requestId], references: [id], onDelete: Cascade)
 }
 
 model LoggedInRequest {
   id        Int      @id @default(autoincrement())
-  services  String   // store selected services as CSV or JSON
+  services  String // store selected services as CSV or JSON
   createdAt DateTime @default(now())
   userId    String
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-
 }
 
 model AuthSession {
@@ -409,7 +491,7 @@ model AuthSession {
   expiresAt DateTime
   token     String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   ipAddress String?
   userAgent String?
   userId    String
@@ -433,7 +515,7 @@ model Account {
   scope                 String?
   password              String?
   createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
 
   @@index([userId])
 }
@@ -444,7 +526,7 @@ model Verification {
   value      String
   expiresAt  DateTime @default(now())
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
   @@index([identifier])
 }

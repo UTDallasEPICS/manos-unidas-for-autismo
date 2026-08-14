@@ -1,113 +1,156 @@
-<template>
-	<div class="font-sc-encode p-4">
-		<!-- Header + Search -->
-		<div class="mb-4 flex items-center">
-			<h1 class="font-cormorant-garamond text-2xl font-bold">
-				View All Patients
-			</h1>
+<!-- Staff patient directory: search all patients, open a quick-view modal per
+     row (which links to the full profile). Rebuilt on NuxtUI (UTable). -->
+<script setup lang="ts">
+import type { TableColumn } from "@nuxt/ui";
+import PatientModal from "~/components/therapy/PatientModal.vue";
 
-			<div
-				class="ml-4 flex flex-1 items-center overflow-hidden rounded border border-gray-300"
-			>
-				<input
-					v-model="searchQuery"
-					type="text"
-					placeholder="Search by name..."
-					class="flex-1 px-3 py-2 focus:outline-none"
-				/>
-				<button class="px-3">
-					<Search class="h-5 w-5" />
-				</button>
-			</div>
+definePageMeta({
+	title: "patients.title",
+});
+
+const { t } = useI18n();
+
+interface PatientRow {
+	id: string;
+	name: string;
+	type: string;
+	age: number | null;
+	gender: string | null;
+}
+interface PatientDetail {
+	id: string;
+	name: string;
+	gender?: string;
+	age?: number;
+	identification?: string;
+	email?: string;
+	phone?: string;
+	whatsApp?: string;
+	contactPref?: string;
+	diagnosed?: boolean;
+	sponsorId?: string | null;
+	status?: string;
+	insurance?: string | null;
+}
+
+// Every patient (not just those with a referral). Endpoint is staff-gated and
+// returns a minimal projection; full detail is fetched on demand below.
+const {
+	data: patients,
+	status,
+	error,
+} = await useFetch<PatientRow[]>("/api/search/all", { default: () => [] });
+
+const searchQuery = ref("");
+const rows = computed(() =>
+	(patients.value ?? []).filter((p) =>
+		p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+	)
+);
+
+const columns = computed<TableColumn<PatientRow>[]>(() => [
+	{ accessorKey: "name", header: t("patients.name") },
+	{ accessorKey: "age", header: t("patients.age") },
+	{ accessorKey: "gender", header: t("patients.gender") },
+	{ accessorKey: "actions", header: "" },
+]);
+
+const showModal = ref(false);
+const selected = ref<PatientDetail | null>(null);
+
+async function openModal(row: PatientRow) {
+	try {
+		const u = await $fetch<{
+			email: string;
+			phone: string;
+			whatsApp: string | null;
+			contactPref: string | null;
+			NonEmployee: {
+				Patient: {
+					identification: string;
+					diagnosed: boolean;
+					sponsorId: string | null;
+					status: string | null;
+					insurance: string | null;
+				} | null;
+			} | null;
+		} | null>("/api/profile/patient", { query: { id: row.id } });
+
+		const pat = u?.NonEmployee?.Patient ?? null;
+		selected.value = {
+			id: row.id,
+			name: row.name,
+			gender: row.gender ?? undefined,
+			age: row.age ?? undefined,
+			identification: pat?.identification,
+			email: u?.email,
+			phone: u?.phone,
+			whatsApp: u?.whatsApp ?? undefined,
+			contactPref: u?.contactPref ?? undefined,
+			diagnosed: pat?.diagnosed,
+			sponsorId: pat?.sponsorId,
+			status: pat?.status ?? undefined,
+			insurance: pat?.insurance ?? undefined,
+		};
+		showModal.value = true;
+	} catch (err) {
+		console.error("Failed to load patient detail:", err);
+	}
+}
+</script>
+
+<template>
+	<div class="mx-auto w-full max-w-5xl">
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
+			<UInput
+				v-model="searchQuery"
+				icon="i-lucide-search"
+				:placeholder="t('patients.searchPlaceholder')"
+				class="w-64"
+			/>
 		</div>
 
-		<!-- Patients Table (REFERRALS ONLY) -->
-		<table class="w-full table-auto border-collapse">
-			<thead class="bg-gray-100">
-				<tr>
-					<th class="px-4 py-2 text-left">Name</th>
-					<th class="px-4 py-2 text-left">Age</th>
-					<th class="px-4 py-2 text-left">Gender</th>
-				</tr>
-			</thead>
+		<UAlert
+			v-if="error"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('common.loadError')"
+		/>
+		<div
+			v-else-if="!rows.length && status !== 'pending'"
+			class="border-default text-muted rounded-lg border border-dashed py-12 text-center"
+		>
+			{{ t("patients.empty") }}
+		</div>
+		<UTable
+			v-else
+			:data="rows"
+			:columns="columns"
+			:loading="status === 'pending'"
+		>
+			<template #age-cell="{ row }">{{
+				row.original.age ?? "—"
+			}}</template>
+			<template #gender-cell="{ row }">
+				{{ row.original.gender ?? "—" }}
+			</template>
+			<template #actions-cell="{ row }">
+				<UButton
+					size="xs"
+					color="neutral"
+					variant="outline"
+					icon="i-lucide-eye"
+					:label="t('patients.view')"
+					@click="openModal(row.original)"
+				/>
+			</template>
+		</UTable>
 
-			<tbody>
-				<tr
-					v-for="ref in filteredReferrals"
-					:key="ref.id"
-					class="cursor-pointer border-t hover:bg-gray-100"
-					@click="openModal(ref)"
-				>
-					<td class="px-4 py-2">{{ ref.patient.name }}</td>
-					<td class="px-4 py-2">{{ ref.patient.age ?? "—" }}</td>
-					<td class="px-4 py-2">{{ ref.patient.gender ?? "—" }}</td>
-				</tr>
-
-				<tr v-if="!filteredReferrals.length" class="border-t">
-					<td colspan="3" class="px-4 py-2 text-center">
-						No patients found.
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<!-- MODAL -->
 		<PatientModal
-			v-if="is_clicked && selectedItem"
-			:patient="{
-				id: selectedItem.patient.id,
-				name: selectedItem.patient.name,
-				gender: selectedItem.patient.gender,
-				age: selectedItem.patient.age,
-				identification: selectedItem.patient.identification,
-
-				email: selectedItem.patient.email,
-				phone: selectedItem.patient.phone,
-				whatsApp: selectedItem.patient.whatsApp,
-				contactPref: selectedItem.patient.contactPref,
-
-				diagnosed: selectedItem.patient.diagnosed,
-				sponsorId: selectedItem.patient.sponsorId
-			}"
-			:therapist="selectedItem.therapist"
-			:therapyRecommendation="selectedItem.therapyRecommendation"
-			:therapistType="selectedItem.therapistType"
-			:createdAt="selectedItem.createdAt"
-			@close="is_clicked = false"
+			v-if="showModal && selected"
+			:patient="selected"
+			@close="showModal = false"
 		/>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from "vue";
-import { Search } from "lucide-vue-next";
-import PatientModal from "~/components/therapy/PatientModal.vue";
-
-/* AUTH */
-const { userId } = useAuthState();
-
-/* STATE */
-const searchQuery = ref("");
-const is_clicked = ref(false);
-const selectedItem = ref<any>(null);
-
-/* FETCH REFERRALS (THIS IS THE ONLY DATA SOURCE YOU NEED) */
-const { data: referrals } = await useFetch("/api/session/referrals");
-
-/* SEARCH FILTER */
-const filteredReferrals = computed(() => {
-	if (!referrals.value) return [];
-
-	return referrals.value.filter((r: any) =>
-		r.patient.name
-			.toLowerCase()
-			.includes(searchQuery.value.toLowerCase())
-	);
-});
-
-/* OPEN MODAL */
-function openModal(ref: any) {
-	selectedItem.value = ref;
-	is_clicked.value = true;
-}
-</script>

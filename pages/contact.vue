@@ -1,52 +1,53 @@
-<template>
-	<div>
-		<h1
-			class="font-cormorant-garamond mt-[100px] mb-8 text-center text-3xl font-bold"
-		>
-			Contact Us
-		</h1>
-		<div class="font-sc-encode flex justify-center p-4">
-			<div
-				class="mt-[30px] min-h-[300px] w-full max-w-[1200px] rounded border border-gray-300 bg-gray-100 p-8"
-			>
-				<!-- Header -->
+<!-- Public "Contact Us" info page (auth layout). Rebuilt on NuxtUI. -->
+<script setup lang="ts">
+definePageMeta({ layout: "auth" });
+const { t } = useI18n();
+</script>
 
-				<!-- Contact Info -->
-				<div class="grid grid-cols-2 gap-y-10 text-xl">
-					<div class="font-semibold">Email:</div>
-					<a
+<template>
+	<div class="mx-auto w-full max-w-2xl">
+		<h1 class="text-highlighted mb-6 text-center text-2xl font-semibold">
+			{{ t("contact.title") }}
+		</h1>
+
+		<UCard>
+			<dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-4 text-sm">
+				<dt class="text-muted font-medium">{{ t("contact.email") }}</dt>
+				<dd>
+					<ULink
 						href="mailto:fundación@manosunidasporautismo.org"
-						class="text-red-600 hover:underline"
+						class="text-primary"
 					>
 						fundación@manosunidasporautismo.org
-					</a>
+					</ULink>
+				</dd>
 
-					<div class="font-semibold">Phone:</div>
-					<a
-						href="tel:+18095953163"
-						class="text-red-600 hover:underline"
-					>
+				<dt class="text-muted font-medium">{{ t("contact.phone") }}</dt>
+				<dd>
+					<ULink href="tel:+18095953163" class="text-primary">
 						+1 809-595-3163
-					</a>
+					</ULink>
+				</dd>
 
-					<div class="font-semibold">Website:</div>
-					<NuxtLink
+				<dt class="text-muted font-medium">
+					{{ t("contact.website") }}
+				</dt>
+				<dd>
+					<ULink
 						to="https://www.manosunidasporautismo.org/"
-						class="text-red-600 hover:underline"
+						target="_blank"
+						class="text-primary"
 					>
-						{{ $t("Manos-Link") }}
-					</NuxtLink>
-				</div>
+						{{ t("contact.websiteLink") }}
+					</ULink>
+				</dd>
+			</dl>
 
-				<!-- Footer message -->
-				<p class="mt-[70px] text-center font-medium">
-					Feel free to reach out anytime for questions or support.
+			<template #footer>
+				<p class="text-muted text-center text-sm">
+					{{ t("contact.message") }}
 				</p>
-			</div>
-		</div>
+			</template>
+		</UCard>
 	</div>
 </template>
-
-<script setup lang="ts">
-// No logic needed
-</script>

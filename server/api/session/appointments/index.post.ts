@@ -4,6 +4,7 @@ import {
 	validateScheduledDateTime,
 } from "~/composables/form/useRequestValidation";
 import { prisma } from "~/server/utils/prisma";
+import { AccessPermission } from "~/types/permissions";
 
 const appointmentRequestSchema = z.object({
 	firstName: z.string().min(1),
@@ -158,57 +159,62 @@ async function createAppointmentRequestWithPatient(
 	});
 }
 
-export default defineEventHandler(async (event) => {
-	const data = await validateBody(event, appointmentRequestSchema);
+export default defineAuthedHandler(
+	{ access: AccessPermission.USER_SERVICE },
+	async (event) => {
+		const data = await validateBody(event, appointmentRequestSchema);
 
-	const missing = getMissingRequiredFields(data, [
-		"firstName",
-		"lastName",
-		"email",
-		"phone",
-		"whatsApp",
-		"domRepId",
-	]);
-	if (missing.length > 0) {
-		throw createError({
-			statusCode: 400,
-			statusMessage: `Missing required fields: ${missing.join(", ")}`,
-		});
-	}
+		const missing = getMissingRequiredFields(data, [
+			"firstName",
+			"lastName",
+			"email",
+			"phone",
+			"whatsApp",
+			"domRepId",
+		]);
+		if (missing.length > 0) {
+			throw createError({
+				statusCode: 400,
+				statusMessage: `Missing required fields: ${missing.join(", ")}`,
+			});
+		}
 
-	const scheduleValidation = validateScheduledDateTime(data.scheduledDate);
-	if (!scheduleValidation.isValid) {
-		throw createError({
-			statusCode: 400,
-			statusMessage: scheduleValidation.error,
-		});
-	}
-
-	const appointmentRequest = getAppointmentRequestCreateDelegate();
-
-	try {
-		const patientId = await ensurePatientForAppointment(data);
-		const ipAddress = data.ipAddress ?? getRequestIP(event) ?? null;
-
-		const created = await createAppointmentRequestWithPatient(
-			appointmentRequest,
-			{
-				firstName: data.firstName,
-				middleName: data.middleName ?? null,
-				lastName: data.lastName,
-				email: data.email,
-				phone: data.phone,
-				whatsApp: data.whatsApp,
-				domRepId: data.domRepId,
-				serviceType: data.serviceType,
-				scheduledDate: scheduleValidation.date,
-				ipAddress,
-			},
-			patientId
+		const scheduleValidation = validateScheduledDateTime(
+			data.scheduledDate
 		);
+		if (!scheduleValidation.isValid) {
+			throw createError({
+				statusCode: 400,
+				statusMessage: scheduleValidation.error,
+			});
+		}
 
-		return created;
-	} catch (e) {
-		handlePrismaError(e);
+		const appointmentRequest = getAppointmentRequestCreateDelegate();
+
+		try {
+			const patientId = await ensurePatientForAppointment(data);
+			const ipAddress = data.ipAddress ?? getRequestIP(event) ?? null;
+
+			const created = await createAppointmentRequestWithPatient(
+				appointmentRequest,
+				{
+					firstName: data.firstName,
+					middleName: data.middleName ?? null,
+					lastName: data.lastName,
+					email: data.email,
+					phone: data.phone,
+					whatsApp: data.whatsApp,
+					domRepId: data.domRepId,
+					serviceType: data.serviceType,
+					scheduledDate: scheduleValidation.date,
+					ipAddress,
+				},
+				patientId
+			);
+
+			return created;
+		} catch (e) {
+			handlePrismaError(e);
+		}
 	}
-});
+);

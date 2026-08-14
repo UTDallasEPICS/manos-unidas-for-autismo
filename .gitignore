@@ -33,4 +33,8 @@ CLAUDE.md
 # Old files
 OldComponentsAndFiles
 
-docs
+# Large client/reference assets — keep the markdown docs (docs/*.md) tracked.
+docs/client-files/
+docs/files/
+docs/resources/
+docs/.DS_Store

@@ -8,6 +8,7 @@ interface TherapyNotesResponse {
 
 export function useTherapyNotes(patientId: string | string[]) {
 	const therapyNotes = ref<TherapyNote[]>([]);
+	const selectedSessionId = ref<string | null>(null);
 
 	async function loadTherapyNotes() {
 		const res = await $fetch<TherapyNotesResponse>("/api/session/notes", {
@@ -27,8 +28,9 @@ export function useTherapyNotes(patientId: string | string[]) {
 		);
 	});
 
-	function openNewTherapyNote() {
+	function openNewTherapyNote(sessionId?: string) {
 		editingNoteId.value = null;
+		selectedSessionId.value = sessionId ?? null;
 	}
 
 	function openEditTherapyNote(note: { id: number }) {
@@ -40,6 +42,7 @@ export function useTherapyNotes(patientId: string | string[]) {
 		loadTherapyNotes,
 		editingNoteId,
 		editingNote,
+		selectedSessionId,
 		openNewTherapyNote,
 		openEditTherapyNote,
 	};

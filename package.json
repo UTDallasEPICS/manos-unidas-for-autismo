@@ -3,21 +3,24 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"i18n:deepl": "node scripts/i18n-deepl.js",
-		"i18n:fill": "node scripts/i18n-report.js",
-		"predev": "npm run i18n:deepl",
+		"i18n:check": "node scripts/i18n-check.js",
 		"build": "nuxt build",
 		"dev": "nuxt dev",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"checker": "eslint && prettier . --check",
+		"checker": "node scripts/check-endpoint-auth.mjs && node scripts/i18n-check.js && eslint && prettier . --check",
 		"prepare": "husky"
 	},
 	"prisma": {
 		"seed": "tsx prisma/seed.ts"
 	},
 	"dependencies": {
+		"@fullcalendar/core": "^6.1.21",
+		"@fullcalendar/daygrid": "^6.1.21",
+		"@fullcalendar/interaction": "^6.1.21",
+		"@fullcalendar/timegrid": "^6.1.21",
+		"@fullcalendar/vue3": "^6.1.21",
 		"@headlessui/vue": "^1.7.23",
 		"@heroicons/vue": "^2.2.0",
 		"@nuxt/fonts": "^0.11.0",
@@ -44,6 +47,7 @@
 	"main": "index.js",
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
+		"@iconify-json/lucide": "^1.2.123",
 		"@nuxt/eslint": "^1.15.0",
 		"@types/node": "^22.12.0",
 		"@types/nodemailer": "^8.0.1",

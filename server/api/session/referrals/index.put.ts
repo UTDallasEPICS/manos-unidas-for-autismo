@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { prisma } from "~/server/utils/prisma";
+import { AccessPermission } from "~/types/permissions";
 
 type TherapistReferralUpdateDelegate = {
 	update: (args: {
@@ -60,23 +61,26 @@ async function assignTherapist(
 	});
 }
 
-export default defineEventHandler(async (event) => {
-	const { therapistReferralId, therapistId } = await validateBody(
-		event,
-		assignTherapistSchema
-	);
+export default defineAuthedHandler(
+	{ access: AccessPermission.USER_SERVICE },
+	async (event) => {
+		const { therapistReferralId, therapistId } = await validateBody(
+			event,
+			assignTherapistSchema
+		);
 
-	const therapistExists = await resolveTherapistExists(therapistId);
-	if (!therapistExists) {
-		throw createError({
-			statusCode: 404,
-			statusMessage: "Therapist not found.",
-		});
-	}
+		const therapistExists = await resolveTherapistExists(therapistId);
+		if (!therapistExists) {
+			throw createError({
+				statusCode: 404,
+				statusMessage: "Therapist not found.",
+			});
+		}
 
-	try {
-		return await assignTherapist(therapistReferralId, therapistId);
-	} catch (e) {
-		handlePrismaError(e);
+		try {
+			return await assignTherapist(therapistReferralId, therapistId);
+		} catch (e) {
+			handlePrismaError(e);
+		}
 	}
-});
+);

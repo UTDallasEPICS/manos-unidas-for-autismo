@@ -61,6 +61,8 @@ export interface datedData {
 // For therapy notes
 export interface therapyInfo {
 	id: number;
+	patientId: string;
+	sessionId?: string | null;
 	createdAt: string;
 	updatedAt: string;
 	[key: string]: unknown;

@@ -1,121 +1,144 @@
-<template>
-	<div class="font-sc-encode m-5 flex justify-center">
-		<div class="flex flex-col gap-10">
-			<div
-				class="flex w-4/5 flex-col justify-between md:w-200 md:flex-row"
-			>
-				<div class="font-cormorant-garamond">
-					<h1 class="text-2xl">View Incoming Contact Forms</h1>
-				</div>
-				<div class="flex w-full flex-row md:w-1/3">
-					<ViewContactFormSortControl
-						v-model="sortBy"
-						:options="sortOptions"
-					/>
-				</div>
-			</div>
-			<div class="flex flex-col gap-5">
-				<RequestViewRequestTable
-					:columns="columns"
-					:requests="processingRequests"
-					@view="openModal"
-				/>
-			</div>
-		</div>
-
-		<!-- Modal -->
-		<RequestViewRequestModal
-			:request="selectedRequest"
-			@close="closeModal"
-		/>
-	</div>
-</template>
-
+<!-- User-service: review incoming contact-form submissions (status "processing").
+     Each row links to the full request and to the intake flow. Rebuilt on
+     NuxtUI (UTable) — replaces the old raw-table + headless Listbox sort. -->
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
-import { $fetch } from "ofetch";
+import type { TableColumn } from "@nuxt/ui";
 
+definePageMeta({
+	title: "contactForms.title",
+});
+
+const { t } = useI18n();
+const localePath = useLocalePath();
+
+interface RequestPhone {
+	id: number;
+	number: string;
+	requestId: number;
+}
 interface Request {
 	id: number;
 	firstName: string;
-	middleName?: string;
 	lastName: string;
 	email: string;
-	phone: { id: number; number: string; requestId: number }[];
-	whatsapp: string;
-	idNumber: string;
-	status: string;
-	streetName: string;
-	streetNum: string;
-	buildingNum?: string;
-	postCode: string;
-	isAdult: boolean;
+	phone: RequestPhone[];
 	patientFirstName: string;
-	patientMiddleName?: string;
 	patientLastName: string;
-	patientAge: number;
-	diagnosed: boolean;
-	returnPatient: boolean;
-	previousVisitDate?: string;
-	wantsEval: boolean;
-	hasReferral: boolean;
 	createdAt: string;
-	therapies: { name: string }[];
-	complementaryServices: { name: string }[];
-	workshops: { name: string }[];
 }
 
-const columns = [
-	{ key: "contactName", label: "Contact Name" },
-	{ key: "email", label: "Email" },
-	{ key: "phone", label: "Phone" },
-	{ key: "patientName", label: "Patient Name" },
-	{ key: "createdAt", label: "Date Submitted" },
-];
-
-const sortOptions = ["Last Name", "Date Submitted"];
-const sortBy = ref("");
-const processingRequests = ref<Request[]>([]);
-const selectedRequest = ref<Request | null>(null);
-
-async function getRequests() {
-	try {
-		const response = await $fetch<Request[]>("/api/request/processing", {
-			method: "GET",
-		});
-		processingRequests.value = response;
-	} catch {
-		console.log("Could not fetch processing requests");
-	}
-}
-
-function sort(category: string) {
-	if (category === "Last Name") {
-		processingRequests.value = [...processingRequests.value].sort((a, b) =>
-			a.lastName.localeCompare(b.lastName)
-		);
-	} else if (category === "Date Submitted") {
-		processingRequests.value = [...processingRequests.value].sort(
-			(a, b) =>
-				new Date(b.createdAt).getTime() -
-				new Date(a.createdAt).getTime()
-		);
-	}
-}
-
-function openModal(request: Request) {
-	selectedRequest.value = request;
-}
-
-function closeModal() {
-	selectedRequest.value = null;
-}
-
-watch(sortBy, (newSortBy) => {
-	sort(newSortBy);
+const {
+	data: requests,
+	status,
+	error,
+	refresh,
+} = await useFetch<Request[]>("/api/request/processing", {
+	default: () => [],
 });
 
-onMounted(() => {
-	getRequests();
+const sortBy = ref<"date" | "name">("date");
+const sortItems = computed(() => [
+	{ label: t("contactForms.sortDate"), value: "date" as const },
+	{ label: t("contactForms.sortName"), value: "name" as const },
+]);
+
+type Row = {
+	id: number;
+	contact: string;
+	email: string;
+	phone: string;
+	patient: string;
+	submitted: string;
+};
+
+const rows = computed<Row[]>(() => {
+	const list = [...(requests.value ?? [])];
+	list.sort((a, b) =>
+		sortBy.value === "name"
+			? a.lastName.localeCompare(b.lastName)
+			: new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+	);
+	return list.map((r) => ({
+		id: r.id,
+		contact: `${r.firstName} ${r.lastName}`.trim(),
+		email: r.email,
+		phone: (r.phone ?? []).map((p) => p.number).join(", ") || "—",
+		patient: `${r.patientFirstName} ${r.patientLastName}`.trim() || "—",
+		submitted: r.createdAt
+			? new Date(r.createdAt).toLocaleDateString()
+			: "—",
+	}));
 });
+
+const columns = computed<TableColumn<Row>[]>(() => [
+	{ accessorKey: "contact", header: t("contactForms.colContact") },
+	{ accessorKey: "email", header: t("contactForms.colEmail") },
+	{ accessorKey: "phone", header: t("contactForms.colPhone") },
+	{ accessorKey: "patient", header: t("contactForms.colPatient") },
+	{ accessorKey: "submitted", header: t("contactForms.colDate") },
+	{ accessorKey: "actions", header: t("contactForms.colActions") },
+]);
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-6xl">
+		<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
+			<USelect
+				v-model="sortBy"
+				:items="sortItems"
+				:icon="'i-lucide-arrow-up-down'"
+				class="w-56"
+				:aria-label="t('contactForms.sortBy')"
+			/>
+		</div>
+
+		<UAlert
+			v-if="error"
+			color="error"
+			variant="subtle"
+			icon="i-lucide-triangle-alert"
+			:title="t('common.loadError')"
+			:actions="[
+				{
+					label: t('common.retry'),
+					color: 'neutral',
+					variant: 'subtle',
+					onClick: () => refresh(),
+				},
+			]"
+		/>
+		<div
+			v-else-if="!rows.length && status !== 'pending'"
+			class="border-default text-muted rounded-lg border border-dashed py-12 text-center"
+		>
+			{{ t("contactForms.empty") }}
+		</div>
+		<UTable
+			v-else
+			:data="rows"
+			:columns="columns"
+			:loading="status === 'pending'"
+		>
+			<template #actions-cell="{ row }">
+				<div class="flex flex-wrap gap-2">
+					<UButton
+						:to="localePath(`/request/${row.original.id}`)"
+						color="neutral"
+						variant="outline"
+						size="xs"
+						icon="i-lucide-file-text"
+						:label="t('contactForms.viewFull')"
+					/>
+					<UButton
+						:to="localePath(`/intake/${row.original.id}`)"
+						color="primary"
+						variant="solid"
+						size="xs"
+						icon="i-lucide-clipboard-check"
+						:label="t('contactForms.completeIntake')"
+					/>
+				</div>
+			</template>
+		</UTable>
+	</div>
+</template>

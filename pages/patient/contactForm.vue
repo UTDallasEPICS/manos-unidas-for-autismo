@@ -1,840 +1,438 @@
-<template>
-	<!--div container for the whole app-->
-	<div class="font-karla">
-		<!--div container for the contact form-->
-		<div class="flex h-auto place-content-center overflow-y-auto">
-			<div class="flex-col flex-wrap font-light md:w-180">
-				<!--Title of contact form-->
-				<h1 class="mt-5 ml-5 text-4xl sm:mr-5 sm:ml-0">
-					Patient Contact Form
-				</h1>
-
-				<!--div container for the form-->
-				<div class="justify-start p-5 text-lg">
-					<!--Form for contact form-->
-					<form
-						@submit.prevent="handleSubmit"
-						class="flex w-full flex-col flex-wrap bg-white"
-					>
-						<!-- div class for the short answer type of responses-->
-						<div class="flex w-full flex-wrap gap-5 py-5">
-							<!--div class for the name portion (the name components should occupy the same line)-->
-							<div
-								class="flex h-auto w-9/10 flex-col gap-3 sm:flex-row md:w-full md:gap-7"
-							>
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("Patient First name:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-
-									<input
-										type="text"
-										class="input w-70 sm:w-full"
-										required
-										v-model="data.firstName"
-									/>
-								</div>
-
-								<div class="flex flex-col">
-									<label class="">{{
-										$t("Patient Middle name:")
-									}}</label>
-									<!--takes a string, type/enter box-->
-									<input
-										type="middleName"
-										class="input w-70 sm:w-full"
-										v-model="data.middleName"
-									/>
-								</div>
-
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("Patient Last name:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-									<!--takes a string, type/enter box-->
-									<input
-										type="lastName"
-										class="input w-70 sm:w-full"
-										required
-										v-model="data.lastName"
-									/>
-								</div>
-							</div>
-
-							<div
-								class="flex h-auto w-full flex-col gap-7 sm:flex-row"
-							>
-								<div class="relative flex flex-col sm:w-1/5">
-									<label class=""
-										>{{ $t("Gender:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-
-									<Listbox
-										v-model="gender"
-										as="div"
-										class="fill-smoky bg-smoky flex w-40 flex-col overflow-auto sm:w-full"
-									>
-										<div>
-											<ListboxButton
-												class="flex w-full cursor-pointer items-start px-2"
-												>{{
-													gender == ""
-														? "Select Gender:"
-														: gender
-												}}</ListboxButton
-											>
-											<ListboxOptions
-												as="div"
-												class="bg-blay absolute flex w-full flex-col"
-											>
-												<ListboxOption
-													as="div"
-													class="flex w-full cursor-pointer hover:bg-blue-500"
-													v-for="(
-														g, index
-													) in genders"
-													:key="index"
-													:value="g"
-												>
-													<div class="px-5">
-														{{ g }}
-													</div>
-												</ListboxOption>
-											</ListboxOptions>
-										</div>
-									</Listbox>
-								</div>
-
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("Date of Birth:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-									<input
-										class="input no-calendar w-full sm:w-28"
-										type="date"
-										required
-										v-model="data.DOB"
-									/>
-								</div>
-
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("Nationality:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-									<input
-										class="input w-70 sm:w-full"
-										type="nationality"
-										required
-										v-model="data.nationality"
-									/>
-								</div>
-							</div>
-
-							<div
-								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
-							>
-								<div class="flex flex-col">
-									<label class="">Medication:</label>
-									<input
-										class="input w-70 sm:w-full"
-										type="text"
-										v-model="data.medication"
-									/>
-								</div>
-
-								<div class="flex flex-col">
-									<label class="">Allergies:</label>
-									<input
-										class="input w-70 sm:w-full"
-										type="text"
-										v-model="data.allergies"
-										placeholder="List any allergies"
-									/>
-								</div>
-
-								<div class="flex flex-col">
-									<label class="">Diet:</label>
-									<input
-										class="input w-70 sm:w-full"
-										type="text"
-										v-model="data.diet"
-										placeholder="Dietary restrictions/prefences"
-									/>
-								</div>
-							</div>
-							<div
-								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
-							>
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("ID Number:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-									<input
-										class="input w-70 sm:w-full"
-										type="ID"
-										required
-										v-model="data.ID"
-									/>
-								</div>
-							</div>
-
-							<div
-								class="flex h-auto w-4/5 flex-col content-start gap-1 md:w-full"
-							>
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("Address Line 1:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-									<input
-										class="input w-90 sm:w-full"
-										type="address1"
-										required
-										v-model="data.address1"
-									/>
-								</div>
-
-								<div class="flex flex-col">
-									<label class="">{{
-										$t("Address Line 2:")
-									}}</label>
-									<input
-										class="input w-90 sm:w-full"
-										type="address2"
-										v-model="data.address2"
-									/>
-								</div>
-
-								<div class="flex flex-col sm:flex-row sm:gap-5">
-									<div class="flex flex-col">
-										<label class=""
-											>{{ $t("Postal Code:")
-											}}<span class="text-red-500"
-												>*</span
-											></label
-										>
-										<input
-											class="input w-70 sm:w-full"
-											type="postalCode"
-											required
-											v-model="data.postalCode"
-										/>
-									</div>
-									<div class="flex flex-col">
-										<label class=""
-											>{{ $t("Locality:")
-											}}<span class="text-red-500"
-												>*</span
-											></label
-										>
-										<input
-											class="input w-70 sm:w-full"
-											type="locality"
-											required
-											v-model="data.locality"
-										/>
-									</div>
-									<div class="flex flex-col sm:w-1/3">
-										<label class=""
-											>{{ $t("Country:")
-											}}<span class="text-red-500"
-												>*</span
-											>
-										</label>
-
-										<Listbox
-											v-model="data.country"
-											as="div"
-											class="fill-smoky bg-smoky relative flex w-full flex-col content-start"
-										>
-											<ListboxButton
-												class="flex w-full cursor-pointer items-start px-2"
-											>
-												{{
-													data.country === ""
-														? "Select a country:"
-														: data.country
-												}}
-											</ListboxButton>
-
-											<ListboxOptions
-												as="div"
-												class="bg-blay absolute left-0 mt-1 flex max-h-45 w-full flex-col overflow-y-auto"
-												style="z-index: 10"
-											>
-												<ListboxOption
-													v-for="country in countries"
-													:key="country.cca2"
-													:value="country.name.common"
-													as="div"
-													class="flex w-full cursor-pointer hover:bg-blue-500"
-												>
-													<div class="px-5">
-														{{
-															country.name.common
-														}}
-													</div>
-												</ListboxOption>
-											</ListboxOptions>
-										</Listbox>
-									</div>
-								</div>
-							</div>
-
-							<div
-								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
-							>
-								<div class="flex flex-col">
-									<label class="">{{
-										$t("Parent First Name:")
-									}}</label>
-									<input
-										class="input w-70 sm:w-full"
-										type="parentFirstName"
-										v-model="data.parentFirstName"
-									/>
-								</div>
-								<div class="flex flex-col">
-									<label class="">{{
-										$t("Parent Last Name:")
-									}}</label>
-									<input
-										class="input w-70 sm:w-full"
-										type="parentLastName"
-										v-model="data.parentLastName"
-									/>
-								</div>
-							</div>
-
-							<div
-								class="flex h-auto w-full flex-col gap-3 sm:flex-row sm:gap-7"
-							>
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("Email:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-									<input
-										class="input w-70 sm:w-full"
-										type="email"
-										required
-										v-model="data.email"
-									/>
-								</div>
-
-								<div class="flex flex-col">
-									<label class=""
-										>{{ $t("Phone Number/Whatsapp:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-									<input
-										class="input w-70 sm:w-full"
-										type="phone"
-										required
-										v-model="data.phone"
-									/>
-								</div>
-							</div>
-
-							<div
-								class="flex h-auto w-9/10 flex-col gap-7 sm:flex-row md:w-full"
-							>
-								<div
-									class="relative flex w-50 flex-col sm:w-1/2"
-								>
-									<label class=""
-										>{{ $t("Medical Insurance:")
-										}}<span class="text-red-500"
-											>*</span
-										></label
-									>
-
-									<Listbox
-										v-model="insurance"
-										as="div"
-										class="fill-smoky bg-smoky flex w-full flex-col overflow-auto"
-									>
-										<div>
-											<ListboxButton
-												class="flex w-full cursor-pointer items-start px-2"
-												>{{
-													insurance == ""
-														? $t(
-																"Select the insurance:"
-															)
-														: insurance
-												}}</ListboxButton
-											>
-											<ListboxOptions
-												as="div"
-												class="bg-blay absolute flex w-full flex-col"
-												style="z-index: 20"
-											>
-												<ListboxOption
-													as="div"
-													class="flex w-full cursor-pointer hover:bg-blue-500"
-													style="z-index: 20"
-													v-for="(
-														ins, index
-													) in insuranceOptions"
-													:key="index"
-													:value="ins"
-												>
-													<div class="px-5">
-														{{ ins }}
-													</div>
-												</ListboxOption>
-											</ListboxOptions>
-										</div>
-									</Listbox>
-								</div>
-
-								<div
-									class="relative flex w-70 flex-col sm:w-1/2"
-								>
-									<label class="">{{
-										$t("Preferred Services/Therapies:")
-									}}</label>
-									<Listbox
-										v-model="therapies"
-										multiple
-										as="div"
-										class="fill-smoky bg-smoky flex w-full flex-col content-start overflow-y-scroll"
-									>
-										<div>
-											<ListboxButton
-												class="flex w-full cursor-pointer items-start px-2"
-												>{{
-													therapies.length > 0
-														? therapies
-																.map(
-																	(therapy) =>
-																		therapy
-																)
-																.join(", ")
-														: "Select different therapies:"
-												}}</ListboxButton
-											>
-											<ListboxOptions
-												as="div"
-												class="bg-blay absolute flex w-full flex-col"
-												style="z-index: 10"
-											>
-												<ul>
-													<ListboxOption
-														as="div"
-														class="flex w-full cursor-pointer hover:bg-blue-500"
-														v-for="therapy in therapyOptions"
-														:key="therapy.name"
-														:value="therapy.name"
-														style="z-index: 10"
-													>
-														<div class="px-5">
-															{{ therapy.name }}
-														</div>
-													</ListboxOption>
-												</ul>
-											</ListboxOptions>
-										</div>
-									</Listbox>
-								</div>
-							</div>
-						</div>
-
-						<div class="flex flex-col gap-5">
-							<div class="flex flex-col">
-								<p>
-									{{
-										$t("Please submit any medical records.")
-									}}
-								</p>
-								<label class="">
-									<input
-										v-on:change="handleFileUpload"
-										class="btn h-full w-40 cursor-pointer p-2 sm:w-2/5"
-										ref="fileInputRef"
-										type="file"
-										name="file"
-										accept=".jpg, .jpeg, .png, .pdf"
-										multiple
-									/>
-								</label>
-								<div
-									class="bg-smoky w-90 sm:w-3/5"
-									v-if="data.medicalRecordFiles.length > 0"
-								>
-									<div
-										class="bg-color2 flex flex-col justify-between p-2 md:flex-row"
-										v-for="(
-											rec, idx
-										) in data.medicalRecordFiles"
-										:key="idx"
-									>
-										<div>
-											{{ rec }}
-										</div>
-										<button
-											class="btn w-1/10 cursor-pointer"
-											type="button"
-											@click="handleDeleteFile(rec)"
-											v-if="
-												data.medicalRecordFiles.length >
-												0
-											"
-										>
-											X
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<div class="flex flex-col">
-								<label
-									>{{
-										$t(
-											"Have you been a patient previously with us?"
-										)
-									}}
-									<span class="text-red-500">*</span>
-								</label>
-								<div class="flex flex-row gap-5 text-xl">
-									<label>
-										<input
-											type="radio"
-											name="prevPatient"
-											v-model="data.prevPatient"
-											value="true"
-										/>Yes
-									</label>
-									<label>
-										<input
-											type="radio"
-											name="prevPatient"
-											v-model="data.prevPatient"
-											value="false"
-										/>No
-									</label>
-								</div>
-							</div>
-
-							<div class="">
-								<label class=""
-									>{{
-										$t("Have you been formally diagnosed?")
-									}}
-									<span class="text-red-500">*</span>
-								</label>
-								<div class="flex flex-row gap-5 text-xl">
-									<label>
-										<input
-											type="radio"
-											name="diagnosis"
-											v-model="data.diagnosis"
-											value="true"
-										/>Yes
-									</label>
-									<label>
-										<input
-											type="radio"
-											name="diagnosis"
-											v-model="data.diagnosis"
-											value="false"
-										/>No
-									</label>
-								</div>
-							</div>
-
-							<div class="">
-								<label class=""
-									>{{
-										$t(
-											"Do you want to perform a Diagnostic Evaluation on the patient?"
-										)
-									}}
-									<span class="text-red-500">*</span>
-								</label>
-								<div class="flex flex-row gap-5 text-xl">
-									<label>
-										<input
-											type="radio"
-											name="evaluation"
-											v-model="data.evaluation"
-											value="true"
-										/>Yes
-									</label>
-									<label>
-										<input
-											type="radio"
-											name="evaluation"
-											v-model="data.evaluation"
-											value="false"
-										/>No
-									</label>
-								</div>
-							</div>
-
-							<div class="flex flex-col">
-								<label class="">{{
-									$t("Any Comments for the therapist?")
-								}}</label>
-								<textarea
-									class="bg-smoky w-90 px-2 sm:w-full"
-									type="comments"
-									v-model="data.comments"
-								>
-								</textarea>
-							</div>
-
-							<div class="">
-								<button class="btn mt-5 flex flex-col">
-									{{ $t("Submit form") }}
-								</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-</template>
-
+<!-- Public patient registration (contact form). Canonical NuxtUI form reference:
+     UForm + Zod validation + UFormField, grouped in UCards, fully i18n'd, with
+     inline field errors and toast feedback. Posts to /api/contactForm/form
+     (PUBLIC). Enum values mirror the Prisma enums the server validates against. -->
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
-import {
-	Listbox,
-	ListboxButton,
-	ListboxOptions,
-	ListboxOption,
-} from "@headlessui/vue";
-import { $fetch } from "ofetch";
+import { z } from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
 
-const genders = ["Male", "Female", "Other"];
-const gender = ref("");
+definePageMeta({ layout: "auth" });
 
-interface Country {
-	name: { common: string };
-	cca2: string;
-}
-const countries = ref<Country[]>([]);
-onMounted(async () => {
-	try {
-		const res = await fetch(
-			"https://restcountries.com/v3.1/all?fields=cca2,name"
-		);
-		const data: Country[] = await res.json();
+const { t } = useI18n();
+const toast = useToast();
 
-		countries.value = data.sort((a, b) =>
-			a.name.common.localeCompare(b.name.common)
-		);
-	} catch (err) {
-		console.error("Error fetching countries:", err);
-	}
-});
-
-const insuranceOptions = [
-	"SENASA contributivo",
-	"SENASA subsidiado",
-	"ARS HUMANO",
+const GENDERS = ["MALE", "FEMALE", "OTHER"] as const;
+const CONTACT_PREFS = ["EMAIL", "PHONE", "WHATS_APP"] as const;
+const INSURANCES = [
+	"SENASA_CONTRIBUTIVO",
+	"SENASA_SUBSIDIADO",
+	"ARS_HUMANO",
 	"MAPFRE",
-	"LA MONUMENTAL",
-	"ARS Universal",
-	"ARS Meta Salud",
-	"ARS Plan Salud Banco Central",
+	"LA_MONUMENTAL",
+	"ARS_UNIVERSAL",
+	"ARS_META_SALUD",
+	"ARS_PLAN_SALUD_BANCO_CENTRAL",
 	"RENACER",
-	"Otro",
-	"Not Listed",
-];
-const insurance = ref("");
+	"OTRO",
+] as const;
 
-const therapyOptions = [
-	{ name: "Social Skills Workshop" },
-	{ name: "Assessment & Diagnosis" },
-	{ name: "Occupational Therapy" },
-	{ name: "Language Therapy" },
-	{ name: "Behavioral Therapy" },
-	{ name: "Learning Therapy" },
-	{ name: "Parental Support Group" },
-	{ name: "Preparation for Adult Life" },
+// Insurance names are proper nouns — same in both languages, not translated.
+const insuranceItems = [
+	{ label: "SENASA Contributivo", value: "SENASA_CONTRIBUTIVO" },
+	{ label: "SENASA Subsidiado", value: "SENASA_SUBSIDIADO" },
+	{ label: "ARS Humano", value: "ARS_HUMANO" },
+	{ label: "MAPFRE", value: "MAPFRE" },
+	{ label: "La Monumental", value: "LA_MONUMENTAL" },
+	{ label: "ARS Universal", value: "ARS_UNIVERSAL" },
+	{ label: "ARS Meta Salud", value: "ARS_META_SALUD" },
+	{
+		label: "ARS Plan Salud Banco Central",
+		value: "ARS_PLAN_SALUD_BANCO_CENTRAL",
+	},
+	{ label: "Renacer", value: "RENACER" },
+	{ label: "Otro", value: "OTRO" },
 ];
-const therapies = ref([]); //types of therapies
 
-const data = reactive<{
-	firstName: string;
-	middleName: string;
-	lastName: string;
-	age: string;
-	DOB: string;
-	nationality: string;
-	medication: string;
-	allergies: string;
-	diet: string;
-	parentFirstName: string;
-	parentLastName: string;
-	ID: string;
-	record: string;
-	address1: string;
-	address2: string;
-	postalCode: string;
-	locality: string;
-	country: string;
-	email: string;
-	comments: string;
-	phone: string;
-	prevPatient: string;
-	diagnosis: string;
-	evaluation: string;
-	medicalRecordFiles: string[]; // Explicitly typed as an array of strings
-}>({
-	//empty strings that will take the entered data. keep empty.
-	firstName: "",
-	middleName: "",
-	lastName: "",
-	age: "",
-	DOB: "",
-	nationality: "",
-	medication: "",
-	allergies: "",
-	diet: "",
-	parentFirstName: "",
-	parentLastName: "",
-	ID: "",
-	record: "",
-	address1: "",
-	address2: "",
-	postalCode: "",
-	locality: "",
-	country: "",
-	email: "",
-	comments: "",
-	phone: "",
-	prevPatient: "",
-	diagnosis: "",
-	evaluation: "",
-	medicalRecordFiles: [],
+const genderItems = computed(() =>
+	GENDERS.map((v) => ({ label: t(`signup.gender_${v}`), value: v }))
+);
+const contactPrefItems = computed(() =>
+	CONTACT_PREFS.map((v) => ({ label: t(`signup.pref_${v}`), value: v }))
+);
+
+const schema = z.object({
+	fName: z.string().min(1),
+	mInit: z.string().max(1).optional(),
+	lName: z.string().min(1),
+	gender: z.enum(GENDERS),
+	dob: z.string().min(1),
+	nationality: z.string().min(1),
+	identification: z.string().min(1),
+	streetNum: z.number(),
+	streetName: z.string().min(1),
+	buildingNum: z.number().optional(),
+	postcode: z.number(),
+	city: z.string().min(1),
+	email: z.string().email(),
+	phone: z.string().min(1),
+	whatsapp: z.string().optional(),
+	contactPref: z.enum(CONTACT_PREFS),
+	insurance: z.enum(INSURANCES),
+	hasBeenPatient: z.boolean(),
+	isDiagnosed: z.boolean(),
+	wantsEval: z.boolean(),
+	medication: z.string().optional(),
+	allergies: z.string().optional(),
+	diet: z.string().optional(),
+	parentFirstName: z.string().optional(),
+	parentLastName: z.string().optional(),
+	comment: z.string().optional(),
 });
+type Schema = z.output<typeof schema>;
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
-
-function handleFileUpload() {
-	if (!fileInputRef.value) return;
-	const files = fileInputRef.value.files;
-	if (!files) return;
-	const formData = new FormData();
-
-	for (let i = 0; i < files.length; i++) {
-		if (data.medicalRecordFiles.indexOf(files[i].name) < 0) {
-			formData.append("files[" + i + "]", files[i]);
-			data.medicalRecordFiles.push(files[i].name);
-		}
-	}
+function blank() {
+	return {
+		fName: "",
+		mInit: "",
+		lName: "",
+		gender: undefined,
+		dob: "",
+		nationality: "",
+		identification: "",
+		streetNum: undefined,
+		streetName: "",
+		buildingNum: undefined,
+		postcode: undefined,
+		city: "",
+		email: "",
+		phone: "",
+		whatsapp: "",
+		contactPref: "PHONE",
+		insurance: undefined,
+		hasBeenPatient: false,
+		isDiagnosed: false,
+		wantsEval: false,
+		medication: "",
+		allergies: "",
+		diet: "",
+		parentFirstName: "",
+		parentLastName: "",
+		comment: "",
+	} as Partial<Schema>;
 }
 
-function handleDeleteFile(rec: string) {
-	data.medicalRecordFiles.splice(data.medicalRecordFiles.indexOf(rec), 1);
-}
+const state = reactive(blank());
+const submitting = ref(false);
 
-async function handleSubmit() {
-	const formData = {
-		fName: data.firstName,
-		mInit: data.middleName.substring(0, 1),
-		lName: data.lastName,
-		gender: gender.value.toUpperCase(),
-		dob: new Date(data.DOB),
-		nationality: data.nationality,
-		medication: data.medication,
-		allergies: data.allergies,
-		diet: data.diet,
-		streetName: data.address1.substring(data.address1.indexOf(" ") + 1),
-		streetNum: Number(
-			data.address1.substring(0, data.address1.indexOf(" "))
-		),
-		postcode: Number(data.postalCode),
-		identification: data.ID,
-		city: data.locality,
-		insurance: insurance.value.toUpperCase().replace(" ", "_"),
-		email: data.email,
-		phone: data.phone,
-		isDiagnosed: data.diagnosis === "true",
-		status: "PROCESSING",
-		hasBeenPatient: data.prevPatient === "true",
-		wantsEval: data.evaluation === "true",
-		comment: data.comments,
-	};
-
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+	const d = event.data;
+	submitting.value = true;
 	try {
-		const response = await $fetch("/api/contactForm/form", {
+		await $fetch("/api/contactForm/form", {
 			method: "POST",
-			body: formData,
+			body: {
+				fName: d.fName,
+				mInit: d.mInit || undefined,
+				lName: d.lName,
+				gender: d.gender,
+				dob: d.dob,
+				nationality: d.nationality,
+				identification: d.identification,
+				streetName: d.streetName,
+				streetNum: d.streetNum,
+				buildingNum: d.buildingNum ?? undefined,
+				postcode: d.postcode,
+				city: d.city,
+				contactPref: d.contactPref,
+				email: d.email,
+				phone: d.phone,
+				whatsapp: d.whatsapp || undefined,
+				isDiagnosed: d.isDiagnosed,
+				insurance: d.insurance,
+				hasBeenPatient: d.hasBeenPatient,
+				wantsEval: d.wantsEval,
+				status: "PROCESSING",
+				comment: d.comment || undefined,
+				medication: d.medication || undefined,
+				allergies: d.allergies || undefined,
+				diet: d.diet || undefined,
+				parentFirstName: d.parentFirstName || undefined,
+				parentLastName: d.parentLastName || undefined,
+			},
 		});
-
-		console.log(response);
-
-		if (response == null || !response) {
-			throw new Error("Could not submit form");
-		}
-
-		clearForm();
-	} catch (e) {
-		// TODO make better than bandaid
-		console.log(formData.email);
-		console.log(e.statusMessage + ":");
-		console.log(e.data);
-		alert("Form submit encountered an error, check console");
+		toast.add({
+			title: t("signup.success"),
+			color: "success",
+			icon: "i-lucide-circle-check",
+		});
+		Object.assign(state, blank());
+	} catch (err: unknown) {
+		const e = err as { data?: { message?: string }; statusCode?: number };
+		const dup =
+			e?.statusCode === 409 ||
+			/exists|unique|P2002/i.test(e?.data?.message ?? "");
+		toast.add({
+			title: dup ? t("signup.errorDuplicate") : t("signup.error"),
+			color: "error",
+			icon: "i-lucide-triangle-alert",
+		});
+	} finally {
+		submitting.value = false;
 	}
-}
-
-function clearForm() {
-	data.firstName = "";
-	data.middleName = "";
-	data.lastName = "";
-	data.age = "";
-	data.DOB = "";
-	data.nationality = "";
-	data.medication = "";
-	data.allergies = "";
-	data.diet = "";
-	data.parentFirstName = "";
-	data.parentLastName = "";
-	data.ID = "";
-	data.record = "";
-	data.address1 = "";
-	data.address2 = "";
-	data.postalCode = "";
-	data.locality = "";
-	data.country = "";
-	data.email = "";
-	data.comments = "";
-	data.phone = "";
-	data.prevPatient = "";
-	data.diagnosis = "";
-	data.evaluation = "";
-	data.medicalRecordFiles = [];
-	gender.value = "";
-	therapies.value = [];
-	insurance.value = "";
 }
 </script>
+
+<template>
+	<div class="mx-auto w-full max-w-2xl">
+		<h1 class="text-highlighted mb-1 text-2xl font-semibold">
+			{{ t("signup.title") }}
+		</h1>
+		<p class="text-muted mb-6 text-sm">{{ t("signup.subtitle") }}</p>
+
+		<UForm
+			:schema="schema"
+			:state="state"
+			class="space-y-6"
+			@submit="onSubmit"
+		>
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("signup.sectionPatient") }}
+					</h2>
+				</template>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<UFormField
+						:label="t('signup.fName')"
+						name="fName"
+						required
+					>
+						<UInput v-model="state.fName" class="w-full" />
+					</UFormField>
+					<UFormField :label="t('signup.mInit')" name="mInit">
+						<UInput
+							v-model="state.mInit"
+							maxlength="1"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField
+						:label="t('signup.lName')"
+						name="lName"
+						required
+					>
+						<UInput v-model="state.lName" class="w-full" />
+					</UFormField>
+					<UFormField
+						:label="t('signup.gender')"
+						name="gender"
+						required
+					>
+						<USelect
+							v-model="state.gender"
+							:items="genderItems"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField :label="t('signup.dob')" name="dob" required>
+						<UInput
+							v-model="state.dob"
+							type="date"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField
+						:label="t('signup.nationality')"
+						name="nationality"
+						required
+					>
+						<UInput v-model="state.nationality" class="w-full" />
+					</UFormField>
+					<UFormField
+						:label="t('signup.identification')"
+						name="identification"
+						required
+					>
+						<UInput v-model="state.identification" class="w-full" />
+					</UFormField>
+				</div>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("signup.sectionAddress") }}
+					</h2>
+				</template>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<UFormField
+						:label="t('signup.streetNum')"
+						name="streetNum"
+						required
+					>
+						<UInput
+							v-model.number="state.streetNum"
+							type="number"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField
+						:label="t('signup.streetName')"
+						name="streetName"
+						required
+					>
+						<UInput v-model="state.streetName" class="w-full" />
+					</UFormField>
+					<UFormField
+						:label="t('signup.buildingNum')"
+						name="buildingNum"
+					>
+						<UInput
+							v-model.number="state.buildingNum"
+							type="number"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField
+						:label="t('signup.postcode')"
+						name="postcode"
+						required
+					>
+						<UInput
+							v-model.number="state.postcode"
+							type="number"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField :label="t('signup.city')" name="city" required>
+						<UInput v-model="state.city" class="w-full" />
+					</UFormField>
+				</div>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("signup.sectionContact") }}
+					</h2>
+				</template>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<UFormField
+						:label="t('signup.email')"
+						name="email"
+						required
+					>
+						<UInput
+							v-model="state.email"
+							type="email"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField
+						:label="t('signup.phone')"
+						name="phone"
+						required
+					>
+						<UInput v-model="state.phone" class="w-full" />
+					</UFormField>
+					<UFormField :label="t('signup.whatsapp')" name="whatsapp">
+						<UInput v-model="state.whatsapp" class="w-full" />
+					</UFormField>
+					<UFormField
+						:label="t('signup.contactPref')"
+						name="contactPref"
+					>
+						<USelect
+							v-model="state.contactPref"
+							:items="contactPrefItems"
+							class="w-full"
+						/>
+					</UFormField>
+				</div>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("signup.sectionGuardian") }}
+					</h2>
+				</template>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<UFormField
+						:label="t('signup.parentFirstName')"
+						name="parentFirstName"
+					>
+						<UInput
+							v-model="state.parentFirstName"
+							class="w-full"
+						/>
+					</UFormField>
+					<UFormField
+						:label="t('signup.parentLastName')"
+						name="parentLastName"
+					>
+						<UInput v-model="state.parentLastName" class="w-full" />
+					</UFormField>
+				</div>
+			</UCard>
+
+			<UCard>
+				<template #header>
+					<h2 class="text-highlighted font-medium">
+						{{ t("signup.sectionServices") }}
+					</h2>
+				</template>
+				<div class="space-y-4">
+					<UFormField
+						:label="t('signup.insurance')"
+						name="insurance"
+						required
+					>
+						<USelect
+							v-model="state.insurance"
+							:items="insuranceItems"
+							class="w-full sm:max-w-sm"
+						/>
+					</UFormField>
+					<div class="flex flex-col gap-3 pt-1">
+						<USwitch
+							v-model="state.hasBeenPatient"
+							:label="t('signup.hasBeenPatient')"
+						/>
+						<USwitch
+							v-model="state.isDiagnosed"
+							:label="t('signup.isDiagnosed')"
+						/>
+						<USwitch
+							v-model="state.wantsEval"
+							:label="t('signup.wantsEval')"
+						/>
+					</div>
+					<div class="grid gap-4 sm:grid-cols-3">
+						<UFormField
+							:label="t('signup.medication')"
+							name="medication"
+						>
+							<UInput v-model="state.medication" class="w-full" />
+						</UFormField>
+						<UFormField
+							:label="t('signup.allergies')"
+							name="allergies"
+						>
+							<UInput v-model="state.allergies" class="w-full" />
+						</UFormField>
+						<UFormField :label="t('signup.diet')" name="diet">
+							<UInput v-model="state.diet" class="w-full" />
+						</UFormField>
+					</div>
+					<UFormField :label="t('signup.comment')" name="comment">
+						<UTextarea
+							v-model="state.comment"
+							:rows="3"
+							class="w-full"
+						/>
+					</UFormField>
+				</div>
+			</UCard>
+
+			<div class="flex justify-end">
+				<UButton
+					type="submit"
+					size="lg"
+					:loading="submitting"
+					:label="t('signup.submit')"
+				/>
+			</div>
+		</UForm>
+	</div>
+</template>

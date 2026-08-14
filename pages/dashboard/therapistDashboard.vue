@@ -1,22 +1,25 @@
 <template>
-	<DashboardButtonGrid :buttons="therapistButtons" />
+	<DashboardTiles :tiles="tiles" />
 </template>
-<script lang="ts" setup>
-import { Calendar, Users } from "lucide-vue-next";
-import { useDashboardGuard } from "~/composables/auth/useDashboardGuard";
 
+<script lang="ts" setup>
+definePageMeta({
+	title: "nav.dashboard",
+});
+
+const { t } = useI18n();
 useDashboardGuard("THERAPIST");
 
-const therapistButtons = [
+const tiles = computed(() => [
 	{
-		path: "/scheduleView",
-		icon: Calendar,
-		label: "VIEW SCHEDULE",
+		to: "/scheduleView",
+		icon: "i-lucide-calendar-days",
+		label: t("dash.schedule"),
 	},
 	{
-		path: { name: "patient-patientSearch" },
-		icon: Users,
-		label: "VIEW PATIENTS",
+		to: { name: "patient-patientSearch" },
+		icon: "i-lucide-users-round",
+		label: t("dash.viewPatients"),
 	},
-];
+]);
 </script>
