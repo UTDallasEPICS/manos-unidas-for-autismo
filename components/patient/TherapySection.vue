@@ -27,7 +27,7 @@
 					size="xs"
 					color="success"
 					variant="soft"
-					icon="i-heroicons-eye"
+					icon="i-lucide-eye"
 					@click="
 						handleOpenNoteFromSession(row.original.TherapyNotes[0])
 					"

@@ -126,7 +126,7 @@
 		"savedError": "No se pudieron guardar los cambios del perfil. Inténtelo de nuevo.",
 		"appointments": "Citas",
 		"columns": {
-			"dateTime": "Fecho y Hora",
+			"dateTime": "Fecha y Hora",
 			"type": "Tipo",
 			"therapist": "Terapeuta",
 			"note": "Nota",

@@ -38,6 +38,28 @@ export default defineAuthedHandler(
 			};
 		}
 
+		// Integrity: a note may only be attached to a session the patient
+		// actually attends. Guards against a note being mis-attributed to an
+		// unrelated (e.g. another therapist's) session via a crafted request.
+		if (data.sessionId) {
+			const onRoster = await prisma.sessionPatient.findUnique({
+				where: {
+					sessionId_patientId: {
+						sessionId: data.sessionId,
+						patientId: data.patientId,
+					},
+				},
+				select: { sessionId: true },
+			});
+			if (!onRoster) {
+				event.node.res.statusCode = 400;
+				return {
+					success: false,
+					error: "Session does not include this patient.",
+				};
+			}
+		}
+
 		// 1) Create TherapyNote
 		const note = await prisma.therapyNote.create({
 			data: {

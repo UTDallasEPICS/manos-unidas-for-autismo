@@ -636,7 +636,7 @@ const modalDescription = computed(() =>
 											size="xs"
 											color="success"
 											variant="soft"
-											icon="i-heroicons-eye"
+											icon="i-lucide-eye"
 											@click="
 												handleViewNote(
 													getNoteForPatient(
