@@ -8,6 +8,7 @@ import type {
 	SessionPatientDetails,
 	SessionWithAttendance,
 } from "~/components/schedule/sessionTypes";
+import type { TherapyNote } from "~/types/formTypes";
 
 interface PatientRow {
 	id: string;
@@ -161,6 +162,127 @@ async function removePatient(patientId: string) {
 		);
 	} finally {
 		removingPatientId.value = null;
+	}
+}
+
+// ---------------------------------------------------------------
+// Create / edit patient therapy note for session
+// ---------------------------------------------------------------
+// Allow THERAPIST and ADMIN to create/view notes
+const canWriteNotes = computed(
+	() =>
+		!!access.value &&
+		!!(
+			access.value[AccessPermission.THERAPIST] ||
+			access.value[AccessPermission.ADMIN]
+		)
+);
+
+const notesUrl = computed(() =>
+	props.session ? `/api/session/${props.session.id}/notes` : ""
+);
+
+const { data: sessionNotes, refresh: refreshSessionNotes } = await useFetch<
+	TherapyNote[]
+>(notesUrl, {
+	// Don't fire if there is no session or URL is empty
+	immediate: !!props.session,
+	default: () => [],
+});
+
+const notesByPatientId = computed(() => {
+	const map = new Map<string, TherapyNote>();
+	for (const note of sessionNotes.value ?? []) {
+		if (note?.patientId) {
+			const pId =
+				typeof note.patientId === "string"
+					? note.patientId
+					: String(note.patientId);
+			map.set(pId, note as TherapyNote);
+		}
+	}
+	return map;
+});
+
+function getNoteForPatient(patientId: string): TherapyNote | undefined {
+	return notesByPatientId.value.get(patientId);
+}
+
+const activePatientId = ref<string>("");
+const activeSessionId = ref<string | null>(null);
+const activeNote = ref<TherapyNote | null>(null);
+const editingNote = ref<TherapyNote | null>(null);
+
+const { saveTherapyNote } = useTherapyNoteForm();
+
+const noteModals = reactive({
+	progressReport: false,
+	viewNote: false,
+});
+
+function handleViewNote(note: TherapyNote) {
+	// ViewNoteModal reads the raw TherapyNote fields (reinforcersUsed,
+	// familyRecommendations, generalObservations, …) directly — the same raw
+	// record the profile page passes it. No remapping needed.
+	activeNote.value = note;
+	noteModals.viewNote = true;
+}
+
+function handleEditNote(note: TherapyNote) {
+	if (!props.session) return;
+
+	activePatientId.value = String(note.patientId ?? "");
+	activeSessionId.value = props.session.id;
+
+	// Pass the raw note object directly from sessionNotes (same as profile page)
+	editingNote.value = note;
+	noteModals.progressReport = true;
+}
+
+function handleAddNote(patientId: string) {
+	if (!props.session) return;
+	activePatientId.value = patientId;
+	activeSessionId.value = props.session.id;
+	editingNote.value = null;
+	noteModals.progressReport = true;
+}
+
+async function handleNoteSave(formData: Record<string, unknown>) {
+	const result = await saveTherapyNote(
+		formData,
+		activePatientId.value,
+		editingNote.value?.id ?? null,
+		async () => {
+			await refreshSessionNotes();
+			emit("changed");
+		},
+		activeSessionId.value,
+		// Pass the note being edited so unchanged dates keep their original
+		// timestamp instead of being re-stamped to "now".
+		editingNote.value as Record<string, unknown> | null
+	);
+
+	if (result.success) {
+		noteModals.progressReport = false;
+		editingNote.value = null;
+		activeSessionId.value = null;
+		toast.add({
+			title: t("sessionModal.updateSuccess"),
+			color: "success",
+			icon: "i-lucide-circle-check",
+		});
+	} else {
+		// Ensure result.error is evaluated as a string fallback
+		const errorMessage =
+			typeof result.error === "string"
+				? result.error
+				: t("sessionModal.updateError");
+
+		toast.add({
+			title: errorMessage,
+			color: "error",
+			icon: "i-lucide-triangle-alert",
+		});
 	}
 }
 
@@ -493,18 +615,79 @@ const modalDescription = computed(() =>
 							:key="sp.patientId"
 							class="border-default flex items-center justify-between rounded-md border px-3 py-2"
 						>
-							<span class="text-default text-sm">{{
-								patientName(sp)
-							}}</span>
-							<UButton
-								v-if="canManage"
-								color="error"
-								variant="ghost"
-								size="xs"
-								:loading="removingPatientId === sp.patientId"
-								:label="t('sessionModal.remove')"
-								@click="removePatient(sp.patientId)"
-							/>
+							<NuxtLink
+								:to="`/patientProfile/${sp.patientId}`"
+								class="text-default hover:text-primary flex items-center gap-1 text-sm font-medium hover:underline"
+							>
+								{{ patientName(sp) }}
+								<UIcon
+									name="i-lucide-external-link"
+									class="size-3 text-gray-400"
+								/>
+							</NuxtLink>
+
+							<div class="flex items-center gap-1.5">
+								<!-- NEW: Note actions for Therapists/Admins -->
+								<template v-if="canWriteNotes">
+									<template
+										v-if="getNoteForPatient(sp.patientId)"
+									>
+										<UButton
+											size="xs"
+											color="success"
+											variant="soft"
+											icon="i-lucide-eye"
+											@click="
+												handleViewNote(
+													getNoteForPatient(
+														sp.patientId
+													)!
+												)
+											"
+										>
+											{{ t("profile.columns.viewNote") }}
+										</UButton>
+										<UButton
+											size="xs"
+											color="primary"
+											variant="soft"
+											icon="i-lucide-pencil"
+											@click="
+												handleEditNote(
+													getNoteForPatient(
+														sp.patientId
+													)!
+												)
+											"
+										>
+											{{ t("profile.columns.editNote") }}
+										</UButton>
+									</template>
+
+									<UButton
+										v-else
+										size="xs"
+										color="primary"
+										variant="soft"
+										icon="i-lucide-file-plus"
+										@click="handleAddNote(sp.patientId)"
+									>
+										{{ t("profile.columns.addNote") }}
+									</UButton>
+								</template>
+
+								<UButton
+									v-if="canManage"
+									color="error"
+									variant="ghost"
+									size="xs"
+									:loading="
+										removingPatientId === sp.patientId
+									"
+									:label="t('sessionModal.remove')"
+									@click="removePatient(sp.patientId)"
+								/>
+							</div>
 						</div>
 					</div>
 
@@ -639,4 +822,19 @@ const modalDescription = computed(() =>
 			</div>
 		</template>
 	</UModal>
+
+	<!-- Therapy Note Modals -->
+	<TherapyReportModal
+		v-if="canWriteNotes"
+		v-model="noteModals.progressReport"
+		:patient-id="activePatientId"
+		:editing-note="editingNote ?? undefined"
+		@save="handleNoteSave"
+	/>
+
+	<TherapyViewNoteModal
+		v-if="canWriteNotes"
+		v-model="noteModals.viewNote"
+		:note="activeNote"
+	/>
 </template>

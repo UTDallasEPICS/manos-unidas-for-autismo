@@ -28,6 +28,30 @@ export function useTherapyNoteForm() {
 	}
 
 	/**
+	 * Resolve the timestamp to persist for a dated field. When editing, the
+	 * form only carries the date portion (yyyy-mm-dd), so re-saving an unchanged
+	 * date would otherwise re-stamp its time to "now" on every update. If the
+	 * form date still matches the stored value, keep the original timestamp
+	 * exactly; only a new or genuinely changed date gets the current time.
+	 */
+	function resolveDate(
+		formDate: string | null | undefined,
+		originalDate: unknown
+	): string | null {
+		if (!formDate) return null;
+		if (originalDate) {
+			const original = new Date(originalDate as string | number | Date);
+			if (
+				!isNaN(original.getTime()) &&
+				original.toISOString().slice(0, 10) === formDate
+			) {
+				return original.toISOString();
+			}
+		}
+		return dateStringWithCurrentTime(formDate);
+	}
+
+	/**
 	 * Maps any form data shape to the API payload and saves.
 	 * Accepts Record<string, unknown> for flexibility with component emit types.
 	 */
@@ -35,28 +59,30 @@ export function useTherapyNoteForm() {
 		formData: Record<string, unknown>,
 		patientId: string,
 		noteId: number | null,
-		onSuccess: () => Promise<void>
+		onSuccess: () => Promise<void>,
+		sessionId?: string | null,
+		originalNote?: Record<string, unknown> | null
 	) {
-		const objectives =
-			(formData.objectives as Record<string, unknown>) ?? {};
-		const goals = (formData.goals as Record<string, unknown>) ?? {};
 		const reinforcers =
 			(formData.reinforcers as Record<string, string>) ?? {};
-		const famRecs = (formData.famRecs as Record<string, string>) ?? {};
+		const famRecs =
+			(formData.familyRecommendations as Record<string, string>) ?? {};
 		const progressNotes =
 			(formData.progressNotes as Record<string, string>) ?? {};
 		const nextSeshObjectives =
-			(formData.nextSeshObjectives as Record<string, string>) ?? {};
+			(formData.nextSessionObjectives as Record<string, string>) ?? {};
 		const incidents = (formData.incidents as Record<string, string>) ?? {};
 		const observations =
-			(formData.observations as Record<string, string>) ?? {};
-		const goalsGoals = (goals.goals as Record<string, string>) ?? {};
+			(formData.generalObservations as Record<string, string>) ?? {};
+		const goalsAchieved =
+			(formData.goalsAchieved as Record<string, string>) ?? {};
 
-		const objectiveNames = (objectives.objectiveNames as string[]) ?? [];
+		const selectedObjectives =
+			(formData.selectedObjectives as string[]) ?? [];
 		const objectiveDetails =
-			(objectives.objectiveDetails as Record<string, string>) ?? {};
+			(formData.objectiveDetails as Record<string, string>) ?? {};
 		const customGoals =
-			(goals.customGoals as Array<{
+			(formData.customGoals as Array<{
 				id: number;
 				label: string;
 				details: string;
@@ -68,7 +94,7 @@ export function useTherapyNoteForm() {
 			details?: string | null;
 		}[] = [];
 
-		for (const key of objectiveNames) {
+		for (const key of selectedObjectives) {
 			objectivesPayload.push({
 				goalKey: key,
 				goalLabel: key,
@@ -87,30 +113,49 @@ export function useTherapyNoteForm() {
 
 		const payload = {
 			patientId,
-			therapyType: formData.therapy,
+			sessionId: sessionId ?? null,
+			therapyType: formData.selectedTherapy,
 			objectives: objectivesPayload,
-			objectivesDate: dateStringWithCurrentTime(
-				objectives.objectivesDate as string
+			objectivesDate: resolveDate(
+				formData.objectivesDate as string,
+				originalNote?.objectivesDate
 			),
 			reinforcersUsed: reinforcers.value || null,
-			reinforcersDate: dateStringWithCurrentTime(reinforcers.date),
+			reinforcersDate: resolveDate(
+				reinforcers.date,
+				originalNote?.reinforcersDate
+			),
 			familyRecommendations: famRecs.value || null,
-			familyRecommendationsDate: dateStringWithCurrentTime(famRecs.date),
+			familyRecommendationsDate: resolveDate(
+				famRecs.date,
+				originalNote?.familyRecommendationsDate
+			),
 			groupRecommendationParents:
 				(formData.groupRecommendationParents as string) || null,
-			goalsAchieved: goalsGoals.value || null,
-			goalsAchievedDate: dateStringWithCurrentTime(goalsGoals.date),
+			goalsAchieved: goalsAchieved.value || null,
+			goalsAchievedDate: resolveDate(
+				goalsAchieved.date,
+				originalNote?.goalsAchievedDate
+			),
 			progressNotes: progressNotes.value || null,
-			progressNotesDate: dateStringWithCurrentTime(progressNotes.date),
+			progressNotesDate: resolveDate(
+				progressNotes.date,
+				originalNote?.progressNotesDate
+			),
 			nextSessionObjectives: nextSeshObjectives.value || null,
-			nextSessionObjectivesDate: dateStringWithCurrentTime(
-				nextSeshObjectives.date
+			nextSessionObjectivesDate: resolveDate(
+				nextSeshObjectives.date,
+				originalNote?.nextSessionObjectivesDate
 			),
 			incidents: incidents.value || null,
-			incidentsDate: dateStringWithCurrentTime(incidents.date),
+			incidentsDate: resolveDate(
+				incidents.date,
+				originalNote?.incidentsDate
+			),
 			generalObservations: observations.value || null,
-			generalObservationsDate: dateStringWithCurrentTime(
-				observations.date
+			generalObservationsDate: resolveDate(
+				observations.date,
+				originalNote?.generalObservationsDate
 			),
 		};
 
@@ -124,6 +169,7 @@ export function useTherapyNoteForm() {
 			await $fetch(url, {
 				method,
 				body: payload,
+				credentials: "include",
 			});
 
 			await onSuccess();

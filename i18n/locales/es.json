@@ -123,7 +123,19 @@
 		"generalObservations": "Observaciones generales",
 		"noDate": "Sin fecha",
 		"savedSuccess": "Perfil actualizado correctamente.",
-		"savedError": "No se pudieron guardar los cambios del perfil. Inténtelo de nuevo."
+		"savedError": "No se pudieron guardar los cambios del perfil. Inténtelo de nuevo.",
+		"appointments": "Citas",
+		"columns": {
+			"dateTime": "Fecha y Hora",
+			"type": "Tipo",
+			"therapist": "Terapeuta",
+			"note": "Nota",
+			"actions": "Acciones",
+			"viewNote": "Ver nota",
+			"noNote": "Sin nota",
+			"editNote": "Editar nota",
+			"addNote": "Agregar nota"
+		}
 	},
 	"patients": {
 		"title": "Ver todos los pacientes",
@@ -656,6 +668,15 @@
 		"goalDetailsPlaceholder": "Detalles de este otro objetivo",
 		"addGoalHint": "Haga clic en \"Agregar otro objetivo\" para definir objetivos personalizados para esta terapia.",
 		"addQuestion": "Agregar pregunta",
-		"validationError": "Corrija los campos indicados antes de guardar."
+		"validationError": "Corrija los campos indicados antes de guardar.",
+		"saveError": "No se pudo guardar la nota de terapia. Inténtalo de nuevo."
+	},
+	"therapyTypes": {
+		"LEARNING_THERAPY": "Terapia de Aprendizaje",
+		"BEHAVIORAL_EARLY": "Terapia Conductual y Terapia de Intervención Temprana",
+		"SPEECH_THERAPY": "Terapia del Lenguaje",
+		"SOCIAL_SKILLS": "Terapia de Habilidades Sociales",
+		"OCCUPATIONAL_THERAPY": "Terapia Ocupacional",
+		"INDEPENDENT_LIVING": "Programa de Entrenamiento en Habilidades para la Vida Independiente"
 	}
 }

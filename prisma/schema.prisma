@@ -155,6 +155,7 @@ model Session {
   Type               SessionType         @relation(fields: [typeId], references: [id])
   Patients           SessionPatient[]
   AppointmentRequest AppointmentRequest?
+  TherapyNotes       TherapyNote[]
 
   @@unique([time, therapistId])
 }
@@ -260,6 +261,8 @@ model TherapyNote {
   submitterId Int?
 
   objectives TherapyNoteObjective[]
+  sessionId  String?
+  Session    Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 }
 
 model TherapyNoteObjective {

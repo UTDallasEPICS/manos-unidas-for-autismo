@@ -1,7 +1,6 @@
 <!-- Therapy notes history (therapist view). Lists notes with open/edit actions.
      Rebuilt on NuxtUI. -->
 <script setup lang="ts">
-import { therapyTypes } from "~/composables/therapy/therapyData";
 import type { TherapyNote } from "~/types/formTypes";
 
 defineProps<{ notes: TherapyNote[] }>();
@@ -12,6 +11,7 @@ defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { therapyTypeLabel } = useTherapyTypes();
 
 function formatDate(value?: string | Date | null) {
 	return value ? new Date(value).toLocaleString() : "—";
@@ -49,10 +49,7 @@ function formatDate(value?: string | Date | null) {
 						{{ formatDate(note.updatedAt) }}
 					</p>
 					<p class="text-muted text-sm">
-						{{
-							therapyTypes[String(note.therapyType)] ||
-							String(note.therapyType)
-						}}
+						{{ therapyTypeLabel(String(note.therapyType)) }}
 					</p>
 				</div>
 				<div class="flex shrink-0 gap-2">

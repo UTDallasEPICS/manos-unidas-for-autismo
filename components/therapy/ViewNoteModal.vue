@@ -1,7 +1,6 @@
 <!-- Read-only therapy-note viewer. Rebuilt on NuxtUI (UModal). Self-contained:
      no longer depends on the Form engine / FormConfig. -->
 <script setup lang="ts">
-import { therapyTypes } from "~/composables/therapy/therapyData";
 import type { TherapyNote } from "~/types/formTypes";
 
 type NoteField = { key: string; label: string; dateKey?: string };
@@ -14,6 +13,7 @@ const props = defineProps<{
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
 const { t } = useI18n();
+const { therapyTypeLabel } = useTherapyTypes();
 
 const open = computed({
 	get: () => props.modelValue,
@@ -92,7 +92,7 @@ function formatDate(value?: string | Date | null) {
 				</p>
 				<p>
 					<span class="text-muted">{{ t("profile.therapy") }}:</span>
-					{{ therapyTypes[note.therapyType] || note.therapyType }}
+					{{ therapyTypeLabel(note.therapyType) }}
 				</p>
 
 				<div v-if="note.objectives?.length">

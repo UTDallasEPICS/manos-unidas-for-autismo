@@ -123,7 +123,19 @@
 		"generalObservations": "General observations",
 		"noDate": "No date",
 		"savedSuccess": "Profile updated successfully.",
-		"savedError": "Could not save profile changes. Please try again."
+		"savedError": "Could not save profile changes. Please try again.",
+		"appointments": "Appointments",
+		"columns": {
+			"dateTime": "Date & Time",
+			"type": "Type",
+			"therapist": "Therapist",
+			"note": "Note",
+			"actions": "Actions",
+			"viewNote": "View Note",
+			"noNote": "No note",
+			"editNote": "Edit Note",
+			"addNote": "Add Note"
+		}
 	},
 	"patients": {
 		"title": "View All Patients",
@@ -656,6 +668,15 @@
 		"goalDetailsPlaceholder": "Details for this other goal",
 		"addGoalHint": "Click \"Add other goal\" to define custom goals for this therapy.",
 		"addQuestion": "Add question",
-		"validationError": "Please fix the highlighted fields before saving."
+		"validationError": "Please fix the highlighted fields before saving.",
+		"saveError": "Could not save therapy note. Please try again."
+	},
+	"therapyTypes": {
+		"LEARNING_THERAPY": "Learning Therapy",
+		"BEHAVIORAL_EARLY": "Behavioral Therapy & Early Intervention Therapy",
+		"SPEECH_THERAPY": "Speech Therapy",
+		"SOCIAL_SKILLS": "Social Skills Therapy",
+		"OCCUPATIONAL_THERAPY": "Occupational Therapy",
+		"INDEPENDENT_LIVING": "Independent Living Skills Training Program"
 	}
 }
