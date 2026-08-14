@@ -571,6 +571,7 @@
 		"selectStaff": "Selecciona un miembro del personal…",
 		"date": "Fecha",
 		"time": "Hora",
+		"timeMustBeFuture": "Elige una fecha y hora en el futuro.",
 		"duration": "Duración (minutos)",
 		"maxAttendance": "Asistencia máxima",
 		"comment": "Comentario",

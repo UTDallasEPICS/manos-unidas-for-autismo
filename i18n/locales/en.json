@@ -571,6 +571,7 @@
 		"selectStaff": "Select a staff member…",
 		"date": "Date",
 		"time": "Time",
+		"timeMustBeFuture": "Pick a date and time in the future.",
 		"duration": "Duration (minutes)",
 		"maxAttendance": "Max attendance",
 		"comment": "Comment",

@@ -366,19 +366,30 @@ onMounted(async () => {
 	void loadPatients();
 });
 
+function combinedDateTime(): Date {
+	return new Date(`${form.date}T${form.time}`);
+}
+
+// The server rejects a session whose time is not strictly in the future
+// (session/create + session/info both enforce `time > now`). Mirror that here
+// so a past slot — e.g. an earlier day in the visible week — surfaces inline
+// instead of failing with a generic 400 on submit.
+const isTimeInFuture = computed(() => {
+	if (!form.date || !form.time) return false;
+	const dt = combinedDateTime();
+	return !Number.isNaN(dt.getTime()) && dt.getTime() > Date.now();
+});
+
 const canSubmitDetails = computed(
 	() =>
 		!!selectedType.value &&
 		!!selectedStaff.value &&
 		!!form.date &&
 		!!form.time &&
+		isTimeInFuture.value &&
 		form.duration > 0 &&
 		form.maxAttendance >= 1
 );
-
-function combinedDateTime(): Date {
-	return new Date(`${form.date}T${form.time}`);
-}
 
 async function startEditing() {
 	resetFormFromSession();
@@ -530,6 +541,12 @@ const modalDescription = computed(() =>
 							/>
 						</UFormField>
 					</div>
+					<p
+						v-if="form.date && form.time && !isTimeInFuture"
+						class="text-error text-xs"
+					>
+						{{ t("sessionModal.timeMustBeFuture") }}
+					</p>
 					<div class="grid grid-cols-2 gap-3">
 						<UFormField
 							:label="t('sessionModal.duration')"
