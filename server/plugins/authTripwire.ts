@@ -24,6 +24,12 @@ export default defineNitroPlugin((nitroApp) => {
 
 		if (!path.startsWith("/api/")) return;
 		if (path.startsWith("/api/auth/")) return;
+		// Nuxt-internal endpoints (e.g. Nuxt Icon's runtime bundle at
+		// /api/_nuxt_icon/*) aren't app routes and never go through
+		// defineAuthedHandler; they serve public, non-PHI assets. Without this
+		// passthrough the deny-by-default tripwire 403s them, so icons that fall
+		// back to a runtime fetch fail to render.
+		if (path.startsWith("/api/_nuxt_icon/")) return;
 		if (event.context.authorized === true) return;
 
 		setResponseStatus(event, 403);
