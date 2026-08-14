@@ -1,61 +1,7 @@
-<template>
-	<div
-		v-if="modelValue"
-		class="fixed inset-0 z-50 flex items-center justify-center"
-		aria-modal="true"
-		role="dialog"
-	>
-		<!-- Dimmed Background -->
-		<div
-			class="absolute inset-0 bg-black/70"
-			@click.self="$emit('update:modelValue', false)"
-		></div>
-
-		<!-- Modal Content -->
-		<div
-			class="max-w-7/12 relative z-10 w-full overflow-y-auto bg-white p-6 shadow-md"
-			@click.stop
-		>
-			<h2 class="mb-4 text-xl font-bold">Edit Profile</h2>
-			<form @submit.prevent="$emit('save', formData)">
-				<template
-					v-for="section in formBlueprint.slice(0, 3)"
-					:key="section.sectionTitle"
-				>
-					<h3 class="mb-2 font-semibold">
-						{{ section.sectionTitle }}
-					</h3>
-					<div v-for="(row, rowIdx) in section.fields" :key="rowIdx">
-						<FormDynamicInput
-							v-for="field in row"
-							:key="field.name"
-							v-model="formData[field.name]"
-							:field-config="field"
-						/>
-					</div>
-				</template>
-
-				<!-- Action Buttons -->
-				<div class="flex justify-end space-x-2">
-					<button
-						type="button"
-						class="bg-blay px-2 hover:cursor-pointer"
-						@click="$emit('update:modelValue', false)"
-					>
-						Cancel
-					</button>
-					<button type="submit" class="btn hover:cursor-pointer">
-						Save
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</template>
-
+<!-- Edit patient profile. Static NuxtUI form (replaces the dynamic Form engine).
+     Field keys are preserved exactly so useProfileSave still maps them. Parent
+     controls visibility via v-model; emits `save` with the form data. -->
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { formBlueprint } from "~/types/FormConfig/index";
 import type { FormFieldValue } from "~/types/FormConfig/formConfig";
 import type { Profile } from "~/types/formTypes";
 
@@ -64,44 +10,145 @@ const props = defineProps<{
 	profile: Profile;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
 	"update:modelValue": [value: boolean];
 	save: [data: Record<string, FormFieldValue>];
 }>();
 
+const { t } = useI18n();
+
 const formData = ref<Record<string, FormFieldValue>>({});
+
+const genderOptions = computed(() => [
+	{ label: t("profile.female"), value: "FEMALE" },
+	{ label: t("profile.male"), value: "MALE" },
+	{ label: t("profile.other"), value: "OTHER" },
+]);
 
 watch(
 	() => props.modelValue,
-	(newVal) => {
-		if (newVal && props.profile) {
-			formData.value.firstName = props.profile.firstName || "";
-			formData.value.middleName = props.profile.middleInitial || "";
-			formData.value.lastName = props.profile.lastName || "";
-			formData.value.email = props.profile.email || "";
-			formData.value.phone = props.profile.phone || "";
-			formData.value.whatsapp = props.profile.whatsApp || "";
-
-			if (props.profile.NonEmployee?.dob) {
-				formData.value.DOB =
-					props.profile.NonEmployee.dob.split("T")[0];
-			}
-			if (props.profile.NonEmployee?.gender) {
-				formData.value.gender = props.profile.NonEmployee.gender;
-			}
-			if (props.profile.NonEmployee) {
-				const ne = props.profile.NonEmployee;
-				formData.value.address =
-					`${ne.streetNum || ""} ${ne.streetName || ""}`.trim();
-			}
-			if (props.profile.NonEmployee?.postCode) {
-				formData.value.postcode = props.profile.NonEmployee.postCode;
-			}
-			if (props.profile.NonEmployee?.PostCodeCity?.city) {
-				formData.value.city =
-					props.profile.NonEmployee.PostCodeCity.city;
-			}
-		}
+	(open) => {
+		if (!open || !props.profile) return;
+		const p = props.profile;
+		const ne = p.NonEmployee;
+		formData.value = {
+			firstName: p.firstName || "",
+			middleName: p.middleInitial || "",
+			lastName: p.lastName || "",
+			email: p.email || "",
+			phone: p.phone || "",
+			whatsapp: p.whatsApp || "",
+			DOB: ne?.dob ? ne.dob.split("T")[0] : "",
+			gender: ne?.gender || "",
+			address: `${ne?.streetNum || ""} ${ne?.streetName || ""}`.trim(),
+			postcode: ne?.postCode || "",
+			city: ne?.PostCodeCity?.city || "",
+		};
 	}
 );
+
+function submit() {
+	emit("save", formData.value);
+}
 </script>
+
+<template>
+	<UModal
+		:open="modelValue"
+		:title="t('profile.editTitle')"
+		:ui="{ content: 'max-w-2xl' }"
+		@update:open="(v) => emit('update:modelValue', v)"
+	>
+		<template #body>
+			<form
+				id="edit-profile-form"
+				class="grid grid-cols-1 gap-4 sm:grid-cols-2"
+				@submit.prevent="submit"
+			>
+				<UFormField :label="t('profile.firstName')" name="firstName">
+					<UInput
+						v-model="formData.firstName as string"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.middleName')" name="middleName">
+					<UInput
+						v-model="formData.middleName as string"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.lastName')" name="lastName">
+					<UInput
+						v-model="formData.lastName as string"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.email')" name="email">
+					<UInput
+						v-model="formData.email as string"
+						type="email"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.phone')" name="phone">
+					<UInput v-model="formData.phone as string" class="w-full" />
+				</UFormField>
+				<UFormField :label="t('profile.whatsApp')" name="whatsapp">
+					<UInput
+						v-model="formData.whatsapp as string"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.dob')" name="DOB">
+					<UInput
+						v-model="formData.DOB as string"
+						type="date"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.sex')" name="gender">
+					<USelect
+						v-model="formData.gender as string"
+						:items="genderOptions"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField
+					:label="t('profile.address')"
+					name="address"
+					class="sm:col-span-2"
+				>
+					<UInput
+						v-model="formData.address as string"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.postcode')" name="postcode">
+					<UInput
+						v-model="formData.postcode as string"
+						class="w-full"
+					/>
+				</UFormField>
+				<UFormField :label="t('profile.city')" name="city">
+					<UInput v-model="formData.city as string" class="w-full" />
+				</UFormField>
+			</form>
+		</template>
+
+		<template #footer>
+			<div class="flex w-full justify-end gap-3">
+				<UButton
+					color="neutral"
+					variant="outline"
+					:label="t('profile.cancel')"
+					@click="emit('update:modelValue', false)"
+				/>
+				<UButton
+					type="submit"
+					form="edit-profile-form"
+					:label="t('profile.save')"
+				/>
+			</div>
+		</template>
+	</UModal>
+</template>

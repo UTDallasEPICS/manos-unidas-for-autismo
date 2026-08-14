@@ -1,31 +1,188 @@
-<template>
-  <div class="flex flex-col items-center pt-10 gap-6 ">
+<!-- Landing = login. Logged-out visitors see this (middleware routes anonymous
+     users here); logged-in users are redirected to their dashboard (#210). Also
+     points new patients at the public service-request form. The old home.png
+     hero returns as a fixed, scrimmed full-screen background behind the card. -->
+<script setup lang="ts">
+import { authClient } from "~/utils/auth-client";
+import { useDashboardNavigation } from "~/composables/auth/useDashboardNavigation";
 
-    <!-- HEADER -->
-    <div class="flex items-center gap-4">
-      <img src="/manos-unidas-logo.jpg" alt="Logo" class="w-[150px] h-[150px]" />
+definePageMeta({ layout: "auth" });
 
-      <h1 class="text-[30px] font-bold text-center">
-        Manos Unidas Foundation for Autism
-      </h1>
-    </div>
+const { t } = useI18n();
+const localePath = useLocalePath();
 
-    <!-- HERO IMAGE -->
-    <img
-      src="/home.png"
-      alt="Home"
-      class="w-[2700px] max-w-full h-[1400px] object-cover"
-    />
-	<p class="font-bold text-[20px] mt-[5px] text-center mb-[20px]">
-            For more inquiries, you can contact us at 
-        <a href="tel:+18499251246" class="text-blue-500 hover:text-red-500">
-            (849) 925-1246
-        </a>. Our email is fundación@manosunidasporautismo.org.
-        </p>
-  </div>
-</template>
+const email = ref("");
+const otp = ref("");
+const step = ref<"email" | "otp">("email");
+const loading = ref(false);
+const error = ref("");
 
-<script lang="ts" setup>
+async function sendCode() {
+	error.value = "";
+	loading.value = true;
+	try {
+		const { error: e } = await authClient.emailOtp.sendVerificationOtp({
+			email: email.value,
+			type: "sign-in",
+		});
+		if (e) {
+			error.value = e.message ?? t("login.sendError");
+			return;
+		}
+		step.value = "otp";
+	} finally {
+		loading.value = false;
+	}
+}
 
-
+async function verify() {
+	error.value = "";
+	loading.value = true;
+	try {
+		const { error: e } = await authClient.signIn.emailOtp({
+			email: email.value,
+			otp: otp.value,
+		});
+		if (e) {
+			error.value = e.message ?? t("login.invalidCode");
+			return;
+		}
+		const { refresh } = useAuthState();
+		await refresh();
+		const { dashboardNavigation } = useDashboardNavigation();
+		dashboardNavigation();
+	} finally {
+		loading.value = false;
+	}
+}
 </script>
+
+<template>
+	<div>
+		<!-- Fixed full-viewport background image + scrim (sits behind the solid
+		     header and the login content). -->
+		<div
+			class="fixed inset-0 z-0 bg-[url('/home.png')] bg-cover bg-center"
+		/>
+		<div class="bg-default/90 fixed inset-0 z-0" />
+
+		<div
+			class="relative z-10 mx-auto flex min-h-[80vh] w-full max-w-md flex-col justify-center gap-6 py-8"
+		>
+			<div class="text-center">
+				<img
+					src="/fmua-logo.svg"
+					alt="FMUA"
+					class="mx-auto h-auto w-64 max-w-[80%] sm:w-72"
+				/>
+			</div>
+
+			<UCard>
+				<div class="mb-5 text-center">
+					<h1 class="text-highlighted text-xl font-semibold">
+						{{ t("login.title") }}
+					</h1>
+					<p class="text-muted mt-1 text-sm">
+						{{
+							step === "email"
+								? t("login.subtitle")
+								: t("login.codeSentTo", { email })
+						}}
+					</p>
+				</div>
+				<form
+					v-if="step === 'email'"
+					class="space-y-4"
+					@submit.prevent="sendCode"
+				>
+					<UFormField :label="t('login.email')" name="email">
+						<UInput
+							v-model="email"
+							type="email"
+							autofocus
+							required
+							class="w-full"
+						/>
+					</UFormField>
+					<UAlert
+						v-if="error"
+						color="error"
+						variant="subtle"
+						icon="i-lucide-triangle-alert"
+						:title="error"
+					/>
+					<UButton
+						type="submit"
+						block
+						size="lg"
+						:loading="loading"
+						:label="t('login.sendCode')"
+					/>
+				</form>
+
+				<form v-else class="space-y-4" @submit.prevent="verify">
+					<UFormField :label="t('login.code')" name="otp">
+						<UInput
+							v-model="otp"
+							inputmode="numeric"
+							autocomplete="one-time-code"
+							autofocus
+							required
+							class="w-full"
+						/>
+					</UFormField>
+					<UAlert
+						v-if="error"
+						color="error"
+						variant="subtle"
+						icon="i-lucide-triangle-alert"
+						:title="error"
+					/>
+					<UButton
+						type="submit"
+						block
+						size="lg"
+						:loading="loading"
+						:label="t('login.verify')"
+					/>
+					<div class="flex items-center justify-between">
+						<UButton
+							variant="link"
+							color="neutral"
+							size="sm"
+							:label="t('login.resend')"
+							@click="sendCode"
+						/>
+						<UButton
+							variant="link"
+							color="neutral"
+							size="sm"
+							:label="t('login.differentEmail')"
+							@click="step = 'email'"
+						/>
+					</div>
+				</form>
+			</UCard>
+
+			<UCard>
+				<div class="flex flex-wrap items-center justify-between gap-3">
+					<div class="min-w-0">
+						<p class="text-highlighted font-medium">
+							{{ t("login.newPatientTitle") }}
+						</p>
+						<p class="text-muted text-sm">
+							{{ t("login.newPatientBody") }}
+						</p>
+					</div>
+					<UButton
+						:to="localePath('requestForm')"
+						color="neutral"
+						variant="outline"
+						icon="i-lucide-clipboard-plus"
+						:label="t('login.requestServices')"
+					/>
+				</div>
+			</UCard>
+		</div>
+	</div>
+</template>

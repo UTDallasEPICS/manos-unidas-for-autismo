@@ -1,69 +1,69 @@
-<template>
-	<div
-		v-if="modelValue"
-		class="fixed inset-0 z-50 flex items-center justify-center"
-		aria-modal="true"
-		role="dialog"
-	>
-		<div
-			class="absolute inset-0 bg-black/70"
-			@click.self="$emit('update:modelValue', false)"
-		></div>
-
-		<div
-			class="max-h-9/12 relative z-10 w-full max-w-3xl overflow-auto rounded bg-white p-6 shadow-md"
-			@click.stop
-		>
-			<h2 class="mb-4 text-xl font-bold">Therapist Recommendations</h2>
-
-			<div v-if="recommendations.length" class="space-y-3 text-sm">
-				<ul class="ml-5 list-disc">
-					<li
-						v-for="rec in recommendations"
-						:key="rec.id"
-						class="cursor-pointer hover:underline"
-						@click="$emit('view-recommendation', rec)"
-					>
-						<strong
-							>{{
-								formatDate(rec.familyRecommendationsDate)
-							}}:</strong
-						>
-						{{
-							rec.familyRecommendations.length > 50
-								? rec.familyRecommendations.slice(0, 50) + "..."
-								: rec.familyRecommendations
-						}}
-					</li>
-				</ul>
-			</div>
-			<div v-else>
-				<p>No rec available.</p>
-			</div>
-
-			<div class="mt-4 flex justify-end">
-				<button
-					type="button"
-					class="bg-blay px-2 hover:cursor-pointer"
-					@click="$emit('update:modelValue', false)"
-				>
-					Close
-				</button>
-			</div>
-		</div>
-	</div>
-</template>
-
+<!-- Therapist recommendations list. Click a row to view the full note. Rebuilt
+     on NuxtUI (UModal). -->
 <script setup lang="ts">
 import type { Recommendation } from "~/types/formTypes";
 
-defineProps<{
+const props = defineProps<{
 	modelValue: boolean;
 	recommendations: Recommendation[];
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
 	"update:modelValue": [value: boolean];
 	"view-recommendation": [note: Recommendation];
 }>();
+
+const { t } = useI18n();
+
+function formatDate(value?: string | Date | null) {
+	return value ? new Date(value).toLocaleDateString() : "—";
+}
+
+const open = computed({
+	get: () => props.modelValue,
+	set: (v) => emit("update:modelValue", v),
+});
 </script>
+
+<template>
+	<UModal v-model:open="open" :title="t('profile.recommendationsTitle')">
+		<template #body>
+			<ul
+				v-if="recommendations.length"
+				class="divide-default divide-y text-sm"
+			>
+				<li
+					v-for="rec in recommendations"
+					:key="rec.id"
+					class="hover:bg-elevated -mx-2 cursor-pointer rounded px-2 py-2"
+					@click="emit('view-recommendation', rec)"
+				>
+					<span class="text-highlighted font-medium">
+						{{ formatDate(rec.familyRecommendationsDate) }}:
+					</span>
+					<span class="text-default">
+						{{
+							rec.familyRecommendations.length > 60
+								? rec.familyRecommendations.slice(0, 60) + "…"
+								: rec.familyRecommendations
+						}}
+					</span>
+				</li>
+			</ul>
+			<p v-else class="text-muted text-sm">
+				{{ t("profile.noRecommendations") }}
+			</p>
+		</template>
+
+		<template #footer>
+			<div class="flex w-full justify-end">
+				<UButton
+					color="neutral"
+					variant="outline"
+					:label="t('profile.close')"
+					@click="open = false"
+				/>
+			</div>
+		</template>
+	</UModal>
+</template>

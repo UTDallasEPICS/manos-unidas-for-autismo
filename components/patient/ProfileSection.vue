@@ -20,6 +20,9 @@ const emit = defineEmits<{
 	"profile-updated": [];
 }>();
 
+const { t } = useI18n();
+const toast = useToast();
+
 const { saveProfile } = useProfileSave(
 	props.patientId,
 	computed(() => props.profile),
@@ -41,10 +44,18 @@ async function handleEditProfileSave(formData: Record<string, unknown>) {
 	try {
 		await saveProfile(formData);
 		closeModal("edit");
-		alert("Profile updated successfully.");
+		toast.add({
+			title: t("profile.savedSuccess"),
+			color: "success",
+			icon: "i-lucide-check",
+		});
 	} catch (err) {
 		console.error("Could not save profile changes:", err);
-		alert("Could not save profile changes. Please try again.");
+		toast.add({
+			title: t("profile.savedError"),
+			color: "error",
+			icon: "i-lucide-triangle-alert",
+		});
 	}
 }
 </script>

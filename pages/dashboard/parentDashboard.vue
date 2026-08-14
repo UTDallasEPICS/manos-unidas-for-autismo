@@ -1,21 +1,25 @@
 <template>
-	<DashboardButtonGrid :buttons="parentButtons" />
+	<DashboardTiles :tiles="tiles" />
 </template>
-<script lang="ts" setup>
-import { Calendar, User } from "lucide-vue-next";
 
+<script lang="ts" setup>
+definePageMeta({
+	title: "nav.dashboard",
+});
+
+const { t } = useI18n();
 useDashboardGuard("PARENT");
 
-const parentButtons = [
+const tiles = computed(() => [
 	{
-		path: "/scheduleView",
-		icon: Calendar,
-		label: "SCHEDULE",
+		to: "/scheduleView",
+		icon: "i-lucide-calendar-days",
+		label: t("dash.schedule"),
 	},
 	{
-		path: { name: "childSearch" },
-		icon: User,
-		label: "VIEW CHILDREN'S PROFILES",
+		to: { name: "childSearch" },
+		icon: "i-lucide-users",
+		label: t("dash.children"),
 	},
-];
+]);
 </script>

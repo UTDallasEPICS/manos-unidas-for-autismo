@@ -563,9 +563,20 @@ const createUsers = async () => {
 		});
 
 		for (const child of children) {
-			await prisma.patient.update({
-				where: { id: child.id },
-				data: { Parents: { connect: { id } } },
+			await prisma.patientGuardian.upsert({
+				where: {
+					patientId_guardianId: {
+						patientId: child.id,
+						guardianId: id,
+					},
+				},
+				update: {},
+				create: {
+					patientId: child.id,
+					guardianId: id,
+					relationship: "PARENT",
+					primaryGuardian: true,
+				},
 			});
 		}
 	}

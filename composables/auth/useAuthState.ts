@@ -1,13 +1,44 @@
-import { useLocalePath } from "#imports";
-import type { AccessVal } from "~/types/permissions";
-import type { CookieRef } from "#app";
+import type { AccessVal, SessionUser } from "~/types/permissions";
+
+type AuthState = { user: SessionUser | null; permissions: AccessVal } | null;
+
+/**
+ * Reactive auth state, sourced from the Better Auth session (which carries our
+ * custom `permissions` via the customSession plugin). Backed by Nuxt `useState`
+ * so it is SSR-serialised and hydrated once; the `plugins/auth-session` plugin
+ * seeds it during SSR with the request cookies.
+ *
+ * NOTE: these values drive UX only (nav links, conditional buttons). Real
+ * authorization is enforced server-side. Never trust these for security.
+ */
 export function useAuthState() {
-	const userId = useCookie("userId");
+	const authState = useState<AuthState>("auth-state", () => null);
 
-	// since for whatever reason access is stored as a JSON object,
-	// instead of parsing it each time, it just gets parsed as it comes out of the cookie
+	const user = computed<SessionUser | null>(
+		() => authState.value?.user ?? null
+	);
+	const userId = computed<string | null>(() => user.value?.id ?? null);
+	const access = computed<AccessVal | null>(
+		() => authState.value?.permissions ?? null
+	);
 
-	const access: CookieRef<AccessVal | null> = useCookie("AccessPermission");
-	const localePath = useLocalePath();
-	return { userId, access, localePath };
+	async function refresh() {
+		try {
+			const data = await $fetch<{
+				user?: SessionUser | null;
+				permissions?: AccessVal;
+			} | null>("/api/auth/get-session");
+			authState.value = data?.user
+				? { user: data.user, permissions: data.permissions ?? {} }
+				: null;
+		} catch {
+			authState.value = null;
+		}
+	}
+
+	function clear() {
+		authState.value = null;
+	}
+
+	return { user, userId, access, refresh, clear };
 }

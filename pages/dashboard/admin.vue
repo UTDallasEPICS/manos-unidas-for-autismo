@@ -1,32 +1,35 @@
 <template>
-	<DashboardButtonGrid :buttons="adminButtons" />
+	<DashboardTiles :tiles="tiles" />
 </template>
 
 <script lang="ts" setup>
-import { Calendar, FileText, Users, UserPlus } from "lucide-vue-next";
+definePageMeta({
+	title: "nav.dashboard",
+});
 
+const { t } = useI18n();
 useDashboardGuard("ADMIN");
 
-const adminButtons = [
+const tiles = computed(() => [
 	{
-		path: "/scheduleView",
-		icon: Calendar,
-		label: "Schedule",
+		to: "/scheduleView",
+		icon: "i-lucide-calendar-days",
+		label: t("dash.schedule"),
 	},
 	{
-		path: "/viewContactForms",
-		icon: FileText,
-		label: "View New Contact Forms",
+		to: "/viewContactForms",
+		icon: "i-lucide-file-text",
+		label: t("dash.contactForms"),
 	},
 	{
-		path: "/employeeSearch",
-		icon: Users,
-		label: "View Employees",
+		to: "/admin/employeeSearch",
+		icon: "i-lucide-users",
+		label: t("dash.employees"),
 	},
 	{
-		path: "/admin/createAccount",
-		icon: UserPlus,
-		label: "Create Account",
+		to: "/admin/createAccount",
+		icon: "i-lucide-user-plus",
+		label: t("dash.createAccount"),
 	},
-];
+]);
 </script>

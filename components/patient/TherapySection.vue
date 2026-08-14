@@ -1,7 +1,71 @@
 <template>
+	<!-- Session List -->
+	<div v-if="can('THERAPIST') || can('ADMIN')" class="mb-6">
+		<div class="mb-2 flex items-center justify-between">
+			<h3 class="text-lg font-semibold">
+				{{ $t("profile.appointments") }}
+			</h3>
+		</div>
+
+		<UTable :data="sessions" :columns="sessionColumns">
+			<template #time-cell="{ row }">
+				{{ formatSessionTime(row.original.time) }}
+			</template>
+
+			<template #type-cell="{ row }">
+				{{ row.original.Type?.name ?? "—" }}
+			</template>
+
+			<template #therapist-cell="{ row }">
+				{{ row.original.Therapist?.fName }}
+				{{ row.original.Therapist?.lName }}
+			</template>
+
+			<template #note-cell="{ row }">
+				<UButton
+					v-if="row.original.TherapyNotes?.length"
+					size="xs"
+					color="success"
+					variant="soft"
+					icon="i-lucide-eye"
+					@click="
+						handleOpenNoteFromSession(row.original.TherapyNotes[0])
+					"
+				>
+					{{ t("profile.columns.viewNote") }}
+				</UButton>
+				<span v-else class="text-sm text-gray-400">
+					{{ t("profile.columns.noNote") }}
+				</span>
+			</template>
+
+			<template #actions-cell="{ row }">
+				<UButton
+					v-if="row.original.TherapyNotes?.length"
+					size="xs"
+					color="primary"
+					variant="soft"
+					@click="
+						handleEditNoteFromSession(row.original.TherapyNotes[0])
+					"
+				>
+					{{ t("profile.columns.editNote") }}
+				</UButton>
+				<UButton
+					v-else
+					size="xs"
+					variant="soft"
+					@click="handleNewNoteForSession(row.original)"
+				>
+					{{ t("profile.columns.addNote") }}
+				</UButton>
+			</template>
+		</UTable>
+	</div>
+
 	<!-- Therapy Notes history -->
 	<TherapyNotesHistory
-		v-if="can('THERAPIST')"
+		v-if="can('THERAPIST') || can('ADMIN')"
 		:notes="therapyNotes"
 		@open-note="handleOpenNote"
 		@edit-note="handleEditNote"
@@ -26,17 +90,21 @@
 
 <script setup lang="ts">
 import type { TherapyNote, Recommendation } from "~/types/formTypes";
+const { t, locale } = useI18n();
+const toast = useToast();
 
 const props = defineProps<{
 	patientId: string;
 }>();
 
 const { can } = useAccess();
+const canViewSessions = computed(() => can("THERAPIST") || can("ADMIN"));
 const {
 	therapyNotes,
 	loadTherapyNotes,
 	editingNoteId,
 	editingNote,
+	selectedSessionId,
 	openNewTherapyNote,
 	openEditTherapyNote,
 } = useTherapyNotes(props.patientId);
@@ -47,11 +115,71 @@ const { modals, openModal, closeModal } = useModalToggle(
 	"viewNote"
 );
 
+defineExpose({ openRecommendationsModal, handleNewNote });
+
 const activeNote = ref<TherapyNote | null>(null);
 const recommendations = ref<Recommendation[]>([]);
+const selectedSessionTime = ref<string | null>(null);
+
+// Fetch sessions for this patient. Only therapists/admins may hit this
+// endpoint — skip the request (and its 403) for every other profile viewer.
+const { data: sessions } = await useFetch("/api/profile/sessions", {
+	query: { patientId: props.patientId },
+	default: () => [],
+	immediate: canViewSessions.value,
+});
+
+const sessionColumns = computed(() => [
+	{
+		id: "time",
+		accessorKey: "time",
+		header: t("profile.columns.dateTime"),
+	},
+	{
+		id: "type",
+		header: t("profile.columns.type"),
+	},
+	{
+		id: "therapist",
+		header: t("profile.columns.therapist"),
+	},
+	{
+		id: "note",
+		header: t("profile.columns.note"),
+	},
+	{
+		id: "actions",
+		header: t("profile.columns.actions"),
+	},
+]);
+
+function formatSessionTime(timeValue: unknown): string {
+	if (!timeValue) return "—";
+
+	try {
+		const date = new Date(timeValue as string | number | Date);
+		if (isNaN(date.getTime())) return "—";
+
+		// Safely extract string locale ('en', 'es', etc.) regardless of i18n version
+		const lang = typeof locale.value === "string" ? locale.value : "en";
+
+		const dateStr = date.toLocaleDateString(lang);
+		const timeStr = date.toLocaleTimeString(lang, {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+
+		return `${dateStr} ${timeStr}`;
+	} catch (err) {
+		console.error("Error formatting date:", err);
+		return "—";
+	}
+}
 
 // --- Init ---
-loadTherapyNotes();
+onMounted(() => {
+	loadTherapyNotes();
+});
 
 // --- Exposed for parent to call ---
 function openRecommendationsModal() {
@@ -75,7 +203,11 @@ function handleNewNote() {
 	openModal("progressReport");
 }
 
-defineExpose({ openRecommendationsModal, handleNewNote });
+function handleNewNoteForSession(session: { id: string; time: string }) {
+	openNewTherapyNote(session.id);
+	selectedSessionTime.value = session.time;
+	openModal("progressReport");
+}
 
 // --- Internal handlers ---
 function viewRecommendation(note: Recommendation) {
@@ -89,9 +221,23 @@ function handleOpenNote(note: TherapyNote) {
 	openModal("viewNote");
 }
 
+function handleOpenNoteFromSession(sessionNote: { id: number }) {
+	const fullNote = therapyNotes.value.find((n) => n.id === sessionNote.id);
+	if (fullNote) {
+		handleOpenNote(fullNote);
+	}
+}
+
 function handleEditNote(note: TherapyNote) {
 	openEditTherapyNote(note);
 	openModal("progressReport");
+}
+
+function handleEditNoteFromSession(sessionNote: { id: number }) {
+	const fullNote = therapyNotes.value.find((n) => n.id === sessionNote.id);
+	if (fullNote) {
+		handleEditNote(fullNote);
+	}
 }
 
 async function handleProgressReportSave(formData: Record<string, unknown>) {
@@ -101,14 +247,26 @@ async function handleProgressReportSave(formData: Record<string, unknown>) {
 		editingNoteId.value,
 		async () => {
 			await loadTherapyNotes();
-		}
+		},
+		selectedSessionId.value,
+		// Pass the note being edited so unchanged dates keep their original
+		// timestamp instead of being re-stamped to "now".
+		editingNote.value as Record<string, unknown> | null
 	);
 
 	if (result.success) {
 		closeModal("progressReport");
 		editingNoteId.value = null;
+		selectedSessionId.value = null;
+		selectedSessionTime.value = null;
 	} else {
-		alert("Could not save therapy note: " + result.error);
+		toast.add({
+			title: t("therapyNote.saveError"),
+			description:
+				typeof result.error === "string" ? result.error : undefined,
+			color: "error",
+			icon: "i-lucide-triangle-alert",
+		});
 	}
 }
 </script>
