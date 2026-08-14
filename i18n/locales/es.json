@@ -1,6 +1,7 @@
 {
 	"employees": {
 		"title": "Ver todos los empleados",
+		"newAccount": "Nueva cuenta",
 		"searchPlaceholder": "Buscar por nombre...",
 		"colName": "Nombre",
 		"colType": "Tipo",
