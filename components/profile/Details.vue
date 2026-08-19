@@ -43,12 +43,21 @@ const profileFields = computed(() => [
 
 const contactFields = computed(() => [
 	{ label: t("profile.email"), value: props.profile.email },
-	{ label: t("profile.phone"), value: props.profile.phone },
-	{ label: t("profile.whatsApp"), value: props.profile.whatsApp },
 	{
 		label: t("profile.contactPreference"),
 		value: props.profile.contactPreference,
 	},
+]);
+
+// WhatsApp/phone are PII restricted to IT support and admin — not visible to
+// therapists or the user-service (neurodevelopment) coordinator.
+const canSeeRestrictedContact = computed(
+	() => can("ADMIN") || can("IT_SERVICE")
+);
+
+const restrictedContactFields = computed(() => [
+	{ label: t("profile.phone"), value: props.profile.phone },
+	{ label: t("profile.whatsApp"), value: props.profile.whatsApp },
 ]);
 </script>
 
@@ -66,6 +75,12 @@ const contactFields = computed(() => [
 				<dd class="text-default">{{ field.value || "—" }}</dd>
 			</div>
 
+			<template v-if="canSeeRestrictedContact">
+				<div v-for="c in restrictedContactFields" :key="c.label">
+					<dt class="text-muted">{{ c.label }}</dt>
+					<dd class="text-default">{{ c.value || "—" }}</dd>
+				</div>
+			</template>
 			<template v-if="!can('THERAPIST')">
 				<div v-for="c in contactFields" :key="c.label">
 					<dt class="text-muted">{{ c.label }}</dt>
