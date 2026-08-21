@@ -43,12 +43,15 @@ export default defineAuthedHandler(
 		});
 
 		// Contact info (phone/WhatsApp) is PII restricted to ADMIN + IT_SERVICE
-		// (mirrors the client gate in components/profile/Details.vue). Strip it
-		// from the payload for everyone else so it is never exposed via the API,
-		// not just hidden in the UI.
+		// (mirrors the client gate in components/profile/Details.vue), plus the
+		// patient viewing their OWN profile. Strip it from the payload for
+		// everyone else so it is never exposed via the API, not just hidden.
 		const perms = event.context.permissions;
+		const isSelf = event.context.user?.id === id;
 		const canSeeContact =
-			perms[AccessPermission.ADMIN] || perms[AccessPermission.IT_SERVICE];
+			isSelf ||
+			perms[AccessPermission.ADMIN] ||
+			perms[AccessPermission.IT_SERVICE];
 		if (patient && !canSeeContact) {
 			const { phone, whatsApp, ...rest } = patient;
 			return rest;

@@ -12,6 +12,13 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { can } = useAccess();
+const { userId } = useAuthState();
+const route = useRoute();
+
+// A patient viewing their OWN profile may see their own contact info.
+const isSelf = computed(
+	() => !!userId.value && route.params.id === userId.value
+);
 
 const postCodeCity = computed(() => props.nonEmployee?.PostCodeCity ?? {});
 
@@ -50,9 +57,10 @@ const contactFields = computed(() => [
 ]);
 
 // WhatsApp/phone are PII restricted to IT support and admin — not visible to
-// therapists or the user-service (neurodevelopment) coordinator.
+// therapists or the user-service (neurodevelopment) coordinator. Patients may
+// still see their own contact info on their own profile.
 const canSeeRestrictedContact = computed(
-	() => can("ADMIN") || can("IT_SERVICE")
+	() => isSelf.value || can("ADMIN") || can("IT_SERVICE")
 );
 
 const restrictedContactFields = computed(() => [
