@@ -7,7 +7,6 @@ import type {
 	FormFieldConfig,
 	DrilldownValue,
 } from "~/types/FormConfig/formConfig";
-import { objectivesByTherapy } from "~/composables/therapy/therapyData";
 
 defineProps<{ fieldConfig: FormFieldConfig }>();
 
@@ -16,7 +15,7 @@ const model = defineModel<DrilldownValue>({
 });
 
 const { t } = useI18n();
-const { therapyTypeOptions } = useTherapyTypes();
+const { therapyTypeOptions, objectivesFor } = useTherapyTypes();
 
 const selectedTherapy = computed({
 	get: () => model.value.selected,
@@ -36,7 +35,7 @@ const selectedObjectives = computed({
 
 const objectivesForSelectedTherapy = computed(() => {
 	if (!selectedTherapy.value) return [];
-	return objectivesByTherapy[selectedTherapy.value] || [];
+	return objectivesFor(selectedTherapy.value);
 });
 
 const objectivesFieldConfig = computed<FormFieldConfig>(() => ({
