@@ -56,7 +56,7 @@
 			<!-- Therapist Multi-Select Dropdown -->
 			<USelectMenu
 				v-model="selectedTherapistIds"
-				:items="therapistMenuOptions"
+				:items="baseTherapistOptions"
 				value-key="value"
 				label-key="label"
 				:placeholder="t('sessions.allTherapists')"
@@ -65,35 +65,17 @@
 				class="w-56"
 			>
 				<template #item-leading="{ item }">
-					<!-- Action row: Clear selection -->
-					<template v-if="item.isAction">
-						<UButton
-							size="xs"
-							color="neutral"
-							variant="subtle"
-							class="w-full justify-center"
-							:disabled="selectedTherapistIds.length === 0"
-							@click.stop="selectedTherapistIds = []"
-						>
-							{{ t("sessions.clearFilter") }}
-						</UButton>
-					</template>
-					<!-- Standard item checkbox -->
-					<template v-else>
-						<UCheckbox
-							:model-value="
-								selectedTherapistIds.includes(item.value)
-							"
-							class="pointer-events-none mr-2"
-						/>
-					</template>
+					<UCheckbox
+						:model-value="selectedTherapistIds.includes(item.value)"
+						class="pointer-events-none mr-2"
+					/>
 				</template>
 			</USelectMenu>
 
 			<!-- Session Type Multi-Select Dropdown -->
 			<USelectMenu
 				v-model="selectedTypeIds"
-				:items="typeMenuOptions"
+				:items="baseTypeOptions"
 				value-key="value"
 				label-key="label"
 				:placeholder="t('sessions.allTypes')"
@@ -102,26 +84,10 @@
 				class="w-56"
 			>
 				<template #item-leading="{ item }">
-					<!-- Action row: Clear selection -->
-					<template v-if="item.isAction">
-						<UButton
-							size="xs"
-							color="neutral"
-							variant="subtle"
-							class="w-full justify-center"
-							:disabled="selectedTypeIds.length === 0"
-							@click.stop="selectedTypeIds = []"
-						>
-							{{ t("sessions.clearFilter") }}
-						</UButton>
-					</template>
-					<!-- Standard item checkbox -->
-					<template v-else>
-						<UCheckbox
-							:model-value="selectedTypeIds.includes(item.value)"
-							class="pointer-events-none mr-2"
-						/>
-					</template>
+					<UCheckbox
+						:model-value="selectedTypeIds.includes(item.value)"
+						class="pointer-events-none mr-2"
+					/>
 				</template>
 			</USelectMenu>
 
@@ -231,7 +197,6 @@ interface SessionEntry {
 interface MenuItemOption {
 	value: string;
 	label: string;
-	isAction?: boolean;
 }
 
 const loading = ref(false);
@@ -281,29 +246,10 @@ const baseTypeOptions = computed<MenuItemOption[]>(() => {
 	return options;
 });
 
-// Dropdown menu options with embedded top "Clear Filter" action
-const therapistMenuOptions = computed<MenuItemOption[]>(() => {
-	if (baseTherapistOptions.value.length === 0) return [];
-	return [
-		{ value: "__action__", label: "", isAction: true },
-		...baseTherapistOptions.value,
-	];
-});
-
-const typeMenuOptions = computed<MenuItemOption[]>(() => {
-	if (baseTypeOptions.value.length === 0) return [];
-	return [
-		{ value: "__action__", label: "", isAction: true },
-		...baseTypeOptions.value,
-	];
-});
-
 // Active filter detector for global clear button
 const hasActiveFilters = computed(() => {
-	const hasTherapist = selectedTherapistIds.value.some(
-		(id) => id !== "__action__"
-	);
-	const hasType = selectedTypeIds.value.some((id) => id !== "__action__");
+	const hasTherapist = selectedTherapistIds.value.length > 0;
+	const hasType = selectedTypeIds.value.length > 0;
 	const hasDateRange =
 		activePreset.value !== "all" ||
 		Boolean(startDate.value) ||
@@ -323,10 +269,8 @@ function clearAllFilters() {
 }
 
 const filteredSessions = computed(() => {
-	const therapistIds = selectedTherapistIds.value.filter(
-		(id) => id !== "__action__"
-	);
-	const typeIds = selectedTypeIds.value.filter((id) => id !== "__action__");
+	const therapistIds = selectedTherapistIds.value;
+	const typeIds = selectedTypeIds.value;
 
 	return allSessions.value.filter((s) => {
 		if (
