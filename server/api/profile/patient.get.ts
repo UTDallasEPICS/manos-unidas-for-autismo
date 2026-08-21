@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AccessPermission } from "~/types/permissions";
 
 const schema = z.object({
 	id: z.string(),
@@ -40,6 +41,18 @@ export default defineAuthedHandler(
 				},
 			},
 		});
+
+		// Contact info (phone/WhatsApp) is PII restricted to ADMIN + IT_SERVICE
+		// (mirrors the client gate in components/profile/Details.vue). Strip it
+		// from the payload for everyone else so it is never exposed via the API,
+		// not just hidden in the UI.
+		const perms = event.context.permissions;
+		const canSeeContact =
+			perms[AccessPermission.ADMIN] || perms[AccessPermission.IT_SERVICE];
+		if (patient && !canSeeContact) {
+			const { phone, whatsApp, ...rest } = patient;
+			return rest;
+		}
 
 		return patient;
 	}
