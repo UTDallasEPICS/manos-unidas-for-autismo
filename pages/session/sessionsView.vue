@@ -1,9 +1,5 @@
 <template>
 	<div class="p-6">
-		<h1 class="font-cormorant-garamond mb-6 text-3xl font-bold">
-			{{ t("sessions.sessions") }}
-		</h1>
-
 		<!-- Filters -->
 		<div class="mb-6 flex flex-wrap items-center gap-4">
 			<!-- Date presets -->
@@ -208,6 +204,7 @@ const { t } = useI18n();
 
 definePageMeta({
 	path: "/sessionsView",
+	title: "sessions.sessions",
 });
 
 interface SessionPatientEntry {
