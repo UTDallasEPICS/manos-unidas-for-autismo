@@ -39,6 +39,10 @@ const NAV_META: Record<string, { icon: string; key: string }> = {
 		icon: "i-lucide-briefcase",
 		key: "nav.employees",
 	},
+	"therapy-types": {
+		icon: "i-lucide-list-checks",
+		key: "nav.therapyTypes",
+	},
 	"dashboard-evaluatorDashboard": {
 		icon: "i-lucide-clipboard-check",
 		key: "nav.evaluators",
