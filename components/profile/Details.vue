@@ -12,6 +12,13 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { can } = useAccess();
+const { userId } = useAuthState();
+const route = useRoute();
+
+// A patient viewing their OWN profile may see their own contact info.
+const isSelf = computed(
+	() => !!userId.value && route.params.id === userId.value
+);
 
 const postCodeCity = computed(() => props.nonEmployee?.PostCodeCity ?? {});
 
@@ -43,12 +50,22 @@ const profileFields = computed(() => [
 
 const contactFields = computed(() => [
 	{ label: t("profile.email"), value: props.profile.email },
-	{ label: t("profile.phone"), value: props.profile.phone },
-	{ label: t("profile.whatsApp"), value: props.profile.whatsApp },
 	{
 		label: t("profile.contactPreference"),
 		value: props.profile.contactPreference,
 	},
+]);
+
+// WhatsApp/phone are PII restricted to IT support and admin — not visible to
+// therapists or the user-service (neurodevelopment) coordinator. Patients may
+// still see their own contact info on their own profile.
+const canSeeRestrictedContact = computed(
+	() => isSelf.value || can("ADMIN") || can("IT_SERVICE")
+);
+
+const restrictedContactFields = computed(() => [
+	{ label: t("profile.phone"), value: props.profile.phone },
+	{ label: t("profile.whatsApp"), value: props.profile.whatsApp },
 ]);
 </script>
 
@@ -66,6 +83,12 @@ const contactFields = computed(() => [
 				<dd class="text-default">{{ field.value || "—" }}</dd>
 			</div>
 
+			<template v-if="canSeeRestrictedContact">
+				<div v-for="c in restrictedContactFields" :key="c.label">
+					<dt class="text-muted">{{ c.label }}</dt>
+					<dd class="text-default">{{ c.value || "—" }}</dd>
+				</div>
+			</template>
 			<template v-if="!can('THERAPIST')">
 				<div v-for="c in contactFields" :key="c.label">
 					<dt class="text-muted">{{ c.label }}</dt>
