@@ -35,7 +35,7 @@ const NAV_META: Record<string, { icon: string; key: string }> = {
 		icon: "i-lucide-user-plus",
 		key: "nav.assignSpecialist",
 	},
-	"admin-employeeSearch": {
+	employees: {
 		icon: "i-lucide-briefcase",
 		key: "nav.employees",
 	},
