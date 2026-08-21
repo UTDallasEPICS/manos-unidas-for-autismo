@@ -56,15 +56,15 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	"patient-viewContactForms": AccessPermission.USER_SERVICE,
 	"intake-id": AccessPermission.USER_SERVICE,
 	"request-id": AccessPermission.USER_SERVICE,
+	"session-sessionsView": AccessPermission.USER_SERVICE,
 	// IT Service Pages
 	"dashboard-iTServiceDashboard": AccessPermission.IT_SERVICE,
 	// Admin Pages
 
-	"admin-employeeSearch": AccessPermission.ADMIN,
-	"admin-createAccount": AccessPermission.ADMIN,
+	employees: AccessPermission.ADMIN,
+	"employees-create": AccessPermission.ADMIN,
 
 	"dashboard-admin": AccessPermission.ADMIN,
-	// "admin-employeeSearch": AccessPermission.ADMIN,
 
 	// Contact
 	contact: AccessPermission.USER,

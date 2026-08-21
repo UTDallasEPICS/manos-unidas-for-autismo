@@ -26,6 +26,13 @@ const props = defineProps<{
 const emit = defineEmits<{ close: [] }>();
 const { t } = useI18n();
 const localePath = useLocalePath();
+const { can } = useAccess();
+
+// WhatsApp/phone are PII restricted to IT support and admin — not visible to
+// therapists or the user-service (neurodevelopment) coordinator.
+const canSeeRestrictedContact = computed(
+	() => can("ADMIN") || can("IT_SERVICE")
+);
 
 const open = ref(true);
 watch(open, (v) => {
@@ -61,14 +68,20 @@ const genderAge = computed(() =>
 					<dt class="text-muted">{{ t("patients.email") }}</dt>
 					<dd class="text-default">{{ patient?.email || "—" }}</dd>
 				</div>
-				<div>
-					<dt class="text-muted">{{ t("patients.phone") }}</dt>
-					<dd class="text-default">{{ patient?.phone || "—" }}</dd>
-				</div>
-				<div>
-					<dt class="text-muted">{{ t("patients.whatsApp") }}</dt>
-					<dd class="text-default">{{ patient?.whatsApp || "—" }}</dd>
-				</div>
+				<template v-if="canSeeRestrictedContact">
+					<div>
+						<dt class="text-muted">{{ t("patients.phone") }}</dt>
+						<dd class="text-default">
+							{{ patient?.phone || "—" }}
+						</dd>
+					</div>
+					<div>
+						<dt class="text-muted">{{ t("patients.whatsApp") }}</dt>
+						<dd class="text-default">
+							{{ patient?.whatsApp || "—" }}
+						</dd>
+					</div>
+				</template>
 				<div>
 					<dt class="text-muted">{{ t("patients.contactPref") }}</dt>
 					<dd class="text-default">

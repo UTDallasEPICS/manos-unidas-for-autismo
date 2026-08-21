@@ -55,11 +55,15 @@ export function useUserLinks() {
 				to: "userService-assignNeuroSpecialist",
 				label: "Assign Specialist",
 			});
+			legalRoutes.push({
+				to: "session-sessionsView",
+				label: "Sessions",
+			});
 		}
 
 		if (val[AP.ADMIN]) {
 			legalRoutes.push({
-				to: "admin-employeeSearch",
+				to: "employees",
 				label: "Employees",
 			});
 		}

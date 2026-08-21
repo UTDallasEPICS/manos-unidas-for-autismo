@@ -10,7 +10,7 @@ import type {
 	CheckboxOption,
 } from "~/types/FormConfig/formConfig";
 
-defineProps<{ fieldConfig: FormFieldConfig }>();
+const props = defineProps<{ fieldConfig: FormFieldConfig }>();
 
 // string[] of selected option values — same shape the old widget emitted.
 const model = defineModel<string[]>({ default: () => [] });
@@ -46,14 +46,46 @@ function buildSegments(options: CheckboxOption[] | undefined): Segment[] {
 	}
 	return segments;
 }
+
+// All selectable values across every group, in order, for the select-all
+// toggle — headers/subheaders excluded.
+const allValues = computed(() =>
+	(props.fieldConfig.checkboxOptions ?? [])
+		.filter((item) => item.value !== undefined)
+		.map((item) => item.value as string)
+);
+
+const allSelected = computed(
+	() =>
+		allValues.value.length > 0 &&
+		allValues.value.every((v) => model.value.includes(v))
+);
+
+function toggleSelectAll() {
+	model.value = allSelected.value ? [] : [...allValues.value];
+}
 </script>
 
 <template>
 	<div class="flex flex-col gap-1">
-		<label class="text-default text-sm font-medium">
-			{{ fieldConfig.label }}
-			<span v-if="fieldConfig.required" class="text-error">*</span>
-		</label>
+		<div class="flex items-center justify-between gap-2">
+			<label class="text-default text-sm font-medium">
+				{{ fieldConfig.label }}
+				<span v-if="fieldConfig.required" class="text-error">*</span>
+			</label>
+			<UButton
+				v-if="allValues.length > 0"
+				size="xs"
+				color="neutral"
+				variant="link"
+				:label="
+					allSelected
+						? t('therapyNote.clearAll')
+						: t('therapyNote.selectAll')
+				"
+				@click="toggleSelectAll"
+			/>
+		</div>
 		<div
 			v-if="fieldConfig.checkboxOptions?.length"
 			class="border-default max-h-48 space-y-2 overflow-y-auto rounded-md border p-2"
