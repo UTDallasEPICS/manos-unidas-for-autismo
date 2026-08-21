@@ -22,12 +22,12 @@ const tiles = computed(() => [
 		label: t("dash.contactForms"),
 	},
 	{
-		to: "/admin/employeeSearch",
+		to: "/employees",
 		icon: "i-lucide-users",
 		label: t("dash.employees"),
 	},
 	{
-		to: "/admin/createAccount",
+		to: "/employees/create",
 		icon: "i-lucide-user-plus",
 		label: t("dash.createAccount"),
 	},
