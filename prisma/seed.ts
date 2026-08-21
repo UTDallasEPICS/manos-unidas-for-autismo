@@ -177,6 +177,16 @@ const admin = [
 		contactPref: "EMAIL",
 		type: "ADMIN",
 	},
+	{
+		fName: "Coordinación de",
+		mInit: null,
+		lName: "Servicios",
+		email: "coordinaciondeservicios@manosunidasporautismo.org",
+		phone: "000-000-0008",
+		whatsApp: null,
+		contactPref: "EMAIL",
+		type: "USER_SERVICE",
+	},
 ];
 const therapists = [
 	// therapists
