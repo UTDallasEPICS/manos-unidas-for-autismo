@@ -56,10 +56,6 @@ export function useUserLinks() {
 				label: "Assign Specialist",
 			});
 			legalRoutes.push({
-				to: "patient-viewContactForms",
-				label: "Review Forms",
-			});
-			legalRoutes.push({
 				to: "session-sessionsView",
 				label: "Sessions",
 			});
