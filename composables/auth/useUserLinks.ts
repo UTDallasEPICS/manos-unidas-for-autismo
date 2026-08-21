@@ -59,7 +59,7 @@ export function useUserLinks() {
 
 		if (val[AP.ADMIN]) {
 			legalRoutes.push({
-				to: "admin-employeeSearch",
+				to: "employees",
 				label: "Employees",
 			});
 		}
