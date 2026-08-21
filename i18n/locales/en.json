@@ -10,6 +10,7 @@
 	},
 	"createAccount": {
 		"title": "Create New Account",
+		"back": "Back",
 		"firstName": "First name",
 		"middleInitial": "Middle initial",
 		"lastName": "Last name",

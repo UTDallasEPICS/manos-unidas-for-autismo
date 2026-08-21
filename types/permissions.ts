@@ -60,11 +60,10 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	"dashboard-iTServiceDashboard": AccessPermission.IT_SERVICE,
 	// Admin Pages
 
-	"admin-employeeSearch": AccessPermission.ADMIN,
-	"admin-createAccount": AccessPermission.ADMIN,
+	employees: AccessPermission.ADMIN,
+	"employees-create": AccessPermission.ADMIN,
 
 	"dashboard-admin": AccessPermission.ADMIN,
-	// "admin-employeeSearch": AccessPermission.ADMIN,
 
 	// Contact
 	contact: AccessPermission.USER,

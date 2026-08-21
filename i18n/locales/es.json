@@ -10,6 +10,7 @@
 	},
 	"createAccount": {
 		"title": "Crear nueva cuenta",
+		"back": "Atrás",
 		"firstName": "Nombre",
 		"middleInitial": "Inicial del segundo nombre",
 		"lastName": "Apellido",

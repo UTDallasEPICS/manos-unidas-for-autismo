@@ -41,7 +41,7 @@ const columns = computed<TableColumn<Employee>[]>(() => [
 	<div class="mx-auto w-full max-w-5xl">
 		<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
 			<UButton
-				to="/admin/createAccount"
+				to="/employees/create"
 				icon="i-lucide-user-plus"
 				:label="t('employees.newAccount')"
 			/>

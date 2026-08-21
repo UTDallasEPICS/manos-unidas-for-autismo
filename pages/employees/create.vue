@@ -9,6 +9,14 @@ definePageMeta({
 
 const { t } = useI18n();
 const toast = useToast();
+const router = useRouter();
+
+// Return to the previous page (Employees list or the dashboard tile), falling
+// back to the Employees directory on a direct load with no history.
+function goBack() {
+	if (import.meta.client && window.history.length > 1) router.back();
+	else navigateTo("/employees");
+}
 
 const form = reactive({
 	firstName: "",
@@ -117,6 +125,15 @@ async function submit() {
 
 <template>
 	<div class="mx-auto w-full max-w-3xl">
+		<div class="mb-4">
+			<UButton
+				variant="ghost"
+				color="neutral"
+				icon="i-lucide-arrow-left"
+				:label="t('createAccount.back')"
+				@click="goBack"
+			/>
+		</div>
 		<form class="space-y-6" @submit.prevent="submit">
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<UFormField
