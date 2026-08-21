@@ -661,6 +661,8 @@
 		"selectTherapyFirst": "Select a therapy first to see its objectives.",
 		"objectivesByTherapy": "Objectives worked on (according to therapy)",
 		"noOptions": "No options available.",
+		"selectAll": "Select all",
+		"clearAll": "Clear all",
 		"selectObjectiveAbove": "Select at least one objective above.",
 		"detailsFor": "Details for: {objective}",
 		"date": "Date",
