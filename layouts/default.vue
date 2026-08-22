@@ -197,7 +197,7 @@ const sidebarCollapsed = ref(false);
 			</template>
 		</UDashboardSidebar>
 
-		<UDashboardPanel>
+		<UDashboardPanel :ui="{ body: 'px-3 sm:px-6' }">
 			<template #header>
 				<UDashboardNavbar :title="pageTitle" />
 			</template>

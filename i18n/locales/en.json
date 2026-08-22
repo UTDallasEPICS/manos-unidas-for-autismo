@@ -155,6 +155,7 @@
 		"savedSuccess": "Profile updated successfully.",
 		"savedError": "Could not save profile changes. Please try again.",
 		"appointments": "Appointments",
+		"noAppointments": "No appointments yet.",
 		"columns": {
 			"dateTime": "Date & Time",
 			"type": "Type",

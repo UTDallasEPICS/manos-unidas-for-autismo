@@ -155,6 +155,7 @@
 		"savedSuccess": "Perfil actualizado correctamente.",
 		"savedError": "No se pudieron guardar los cambios del perfil. Inténtelo de nuevo.",
 		"appointments": "Citas",
+		"noAppointments": "Aún no hay citas.",
 		"columns": {
 			"dateTime": "Fecha y Hora",
 			"type": "Tipo",
