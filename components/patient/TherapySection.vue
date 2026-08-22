@@ -1,66 +1,130 @@
 <template>
 	<!-- Session List -->
-	<div v-if="can('THERAPIST') || can('ADMIN')" class="mb-6">
+	<div v-if="can('THERAPIST') || can('ADMIN')" class="mb-6 py-4">
 		<div class="mb-2 flex items-center justify-between">
 			<h3 class="text-lg font-semibold">
 				{{ $t("profile.appointments") }}
 			</h3>
 		</div>
 
-		<UTable :data="sessions" :columns="sessionColumns">
-			<template #time-cell="{ row }">
-				{{ formatSessionTime(row.original.time) }}
-			</template>
+		<!-- Mobile: stacked cards (the 5-column table overflows on phones) -->
+		<div class="flex flex-col gap-2 sm:hidden">
+			<p v-if="!sessions.length" class="text-muted text-sm">
+				{{ t("profile.noAppointments") }}
+			</p>
+			<div
+				v-for="row in sessions"
+				:key="row.id"
+				class="border-default rounded-lg border p-3"
+			>
+				<div class="text-highlighted text-sm font-medium">
+					{{ formatSessionTime(row.time) }}
+				</div>
+				<div class="text-muted mt-0.5 text-sm">
+					{{ row.Type?.name ?? "—" }} ·
+					{{
+						[row.Therapist?.fName, row.Therapist?.lName]
+							.filter(Boolean)
+							.join(" ") || "—"
+					}}
+				</div>
+				<div class="mt-2 flex flex-wrap gap-2">
+					<template v-if="row.TherapyNotes?.length">
+						<UButton
+							size="xs"
+							color="success"
+							variant="soft"
+							icon="i-lucide-eye"
+							@click="
+								handleOpenNoteFromSession(row.TherapyNotes[0])
+							"
+						>
+							{{ t("profile.columns.viewNote") }}
+						</UButton>
+						<UButton
+							size="xs"
+							color="primary"
+							variant="soft"
+							@click="
+								handleEditNoteFromSession(row.TherapyNotes[0])
+							"
+						>
+							{{ t("profile.columns.editNote") }}
+						</UButton>
+					</template>
+					<UButton
+						v-else
+						size="xs"
+						variant="soft"
+						@click="handleNewNoteForSession(row)"
+					>
+						{{ t("profile.columns.addNote") }}
+					</UButton>
+				</div>
+			</div>
+		</div>
 
-			<template #type-cell="{ row }">
-				{{ row.original.Type?.name ?? "—" }}
-			</template>
+		<!-- Desktop: full table (scrolls horizontally if it must) -->
+		<div class="hidden overflow-x-auto sm:block">
+			<UTable :data="sessions" :columns="sessionColumns">
+				<template #time-cell="{ row }">
+					{{ formatSessionTime(row.original.time) }}
+				</template>
 
-			<template #therapist-cell="{ row }">
-				{{ row.original.Therapist?.fName }}
-				{{ row.original.Therapist?.lName }}
-			</template>
+				<template #type-cell="{ row }">
+					{{ row.original.Type?.name ?? "—" }}
+				</template>
 
-			<template #note-cell="{ row }">
-				<UButton
-					v-if="row.original.TherapyNotes?.length"
-					size="xs"
-					color="success"
-					variant="soft"
-					icon="i-lucide-eye"
-					@click="
-						handleOpenNoteFromSession(row.original.TherapyNotes[0])
-					"
-				>
-					{{ t("profile.columns.viewNote") }}
-				</UButton>
-				<span v-else class="text-sm text-gray-400">
-					{{ t("profile.columns.noNote") }}
-				</span>
-			</template>
+				<template #therapist-cell="{ row }">
+					{{ row.original.Therapist?.fName }}
+					{{ row.original.Therapist?.lName }}
+				</template>
 
-			<template #actions-cell="{ row }">
-				<UButton
-					v-if="row.original.TherapyNotes?.length"
-					size="xs"
-					color="primary"
-					variant="soft"
-					@click="
-						handleEditNoteFromSession(row.original.TherapyNotes[0])
-					"
-				>
-					{{ t("profile.columns.editNote") }}
-				</UButton>
-				<UButton
-					v-else
-					size="xs"
-					variant="soft"
-					@click="handleNewNoteForSession(row.original)"
-				>
-					{{ t("profile.columns.addNote") }}
-				</UButton>
-			</template>
-		</UTable>
+				<template #note-cell="{ row }">
+					<UButton
+						v-if="row.original.TherapyNotes?.length"
+						size="xs"
+						color="success"
+						variant="soft"
+						icon="i-lucide-eye"
+						@click="
+							handleOpenNoteFromSession(
+								row.original.TherapyNotes[0]
+							)
+						"
+					>
+						{{ t("profile.columns.viewNote") }}
+					</UButton>
+					<span v-else class="text-sm text-gray-400">
+						{{ t("profile.columns.noNote") }}
+					</span>
+				</template>
+
+				<template #actions-cell="{ row }">
+					<UButton
+						v-if="row.original.TherapyNotes?.length"
+						size="xs"
+						color="primary"
+						variant="soft"
+						@click="
+							handleEditNoteFromSession(
+								row.original.TherapyNotes[0]
+							)
+						"
+					>
+						{{ t("profile.columns.editNote") }}
+					</UButton>
+					<UButton
+						v-else
+						size="xs"
+						variant="soft"
+						@click="handleNewNoteForSession(row.original)"
+					>
+						{{ t("profile.columns.addNote") }}
+					</UButton>
+				</template>
+			</UTable>
+		</div>
 	</div>
 
 	<!-- Therapy Notes history -->

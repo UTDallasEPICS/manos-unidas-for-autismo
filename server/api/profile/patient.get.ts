@@ -34,6 +34,15 @@ export default defineAuthedHandler(
 										Questions: true,
 									},
 								},
+								Diagnoses: true,
+								Sponsor: true,
+								Sponsorships: true,
+								Support: true,
+								Guardians: {
+									include: {
+										Guardian: { include: { User: true } },
+									},
+								},
 							},
 						},
 						PostCodeCity: true,

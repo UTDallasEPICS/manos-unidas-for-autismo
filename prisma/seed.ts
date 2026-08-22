@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { therapyTypeSeed } from "./therapyTypeSeedData";
 
 const prisma: PrismaClient = new PrismaClient();
 
@@ -918,9 +919,44 @@ const createSessionPatients = async () => {
 	}
 };
 
+// Seed the editable therapy-modality catalog. Create-if-not-exists (by key) so
+// re-running the seed on a persistent DB never clobbers admin edits made in-app.
+const createTherapyModalities = async () => {
+	for (const tt of therapyTypeSeed) {
+		const existing = await prisma.therapyModality.findUnique({
+			where: { key: tt.key },
+		});
+		if (existing) continue;
+		const modality = await prisma.therapyModality.create({
+			data: {
+				key: tt.key,
+				labelEn: tt.labelEn,
+				labelEs: tt.labelEs,
+				order: tt.order,
+				active: tt.active,
+			},
+		});
+		if (tt.objectives.length) {
+			await prisma.therapyObjective.createMany({
+				data: tt.objectives.map((obj, i) => ({
+					therapyModalityId: modality.id,
+					kind: obj.kind,
+					labelEn: obj.labelEn,
+					labelEs: obj.labelEs,
+					order: i,
+				})),
+			});
+		}
+	}
+};
+
 const main = async () => {
 	await createPostCodes();
 	await createSpecializations();
+	// Idempotent (create-if-not-exists): seed the therapy-modality catalog early,
+	// before the non-idempotent creates below, so it still runs on a re-seed of a
+	// populated (prod) DB where a later step may throw and abort the seed.
+	await createTherapyModalities();
 	await createUsers();
 	await createSponsors();
 	await createContactForms();

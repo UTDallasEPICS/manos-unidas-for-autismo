@@ -63,6 +63,7 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 
 	employees: AccessPermission.ADMIN,
 	"employees-create": AccessPermission.ADMIN,
+	"therapy-types": AccessPermission.ADMIN,
 
 	"dashboard-admin": AccessPermission.ADMIN,
 
