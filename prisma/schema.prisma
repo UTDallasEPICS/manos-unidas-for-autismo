@@ -276,6 +276,37 @@ model TherapyNoteObjective {
   details   String? // therapist’s text for this specific goal
 }
 
+/// Editable catalog of therapy types shown in the therapy-note drilldown.
+/// `key` is the stable identifier stored on TherapyNote.therapyType; labels are
+/// bilingual so admin-added types work without i18n files. Migrated out of the
+/// former hardcoded composables/therapy/therapyData.ts constant.
+/// (Named TherapyModality to avoid colliding with the request-form `TherapyType`
+/// enum below.)
+model TherapyModality {
+  id         String             @id @default(uuid())
+  key        String             @unique
+  labelEn    String
+  labelEs    String
+  order      Int                @default(0)
+  active     Boolean            @default(true)
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @default(now()) @updatedAt
+  Objectives TherapyObjective[]
+}
+
+/// One entry in a therapy modality's objectives checklist. `kind` distinguishes
+/// selectable objectives from non-selectable header/subheader rows, preserving
+/// the drilldown's grouped structure. Ordered by `order`.
+model TherapyObjective {
+  id                String          @id @default(uuid())
+  therapyModalityId String
+  TherapyModality   TherapyModality @relation(fields: [therapyModalityId], references: [id], onDelete: Cascade)
+  kind              String          @default("objective") // "objective" | "header" | "subheader"
+  labelEn           String
+  labelEs           String
+  order             Int             @default(0)
+}
+
 enum ContactType {
   EMAIL
   PHONE

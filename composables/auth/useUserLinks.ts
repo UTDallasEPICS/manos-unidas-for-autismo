@@ -66,6 +66,10 @@ export function useUserLinks() {
 				to: "employees",
 				label: "Employees",
 			});
+			legalRoutes.push({
+				to: "therapy-types",
+				label: "Therapy Types",
+			});
 		}
 
 		if (val[AP.EVALUATOR]) {
