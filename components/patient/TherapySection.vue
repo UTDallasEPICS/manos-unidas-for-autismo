@@ -1,6 +1,6 @@
 <template>
 	<!-- Session List -->
-	<div v-if="can('THERAPIST') || can('ADMIN')" class="mb-6">
+	<div v-if="can('THERAPIST') || can('ADMIN')" class="mb-6 py-4">
 		<div class="mb-2 flex items-center justify-between">
 			<h3 class="text-lg font-semibold">
 				{{ $t("profile.appointments") }}
