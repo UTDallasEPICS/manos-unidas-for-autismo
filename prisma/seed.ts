@@ -953,6 +953,10 @@ const createTherapyModalities = async () => {
 const main = async () => {
 	await createPostCodes();
 	await createSpecializations();
+	// Idempotent (create-if-not-exists): seed the therapy-modality catalog early,
+	// before the non-idempotent creates below, so it still runs on a re-seed of a
+	// populated (prod) DB where a later step may throw and abort the seed.
+	await createTherapyModalities();
 	await createUsers();
 	await createSponsors();
 	await createContactForms();
@@ -962,7 +966,6 @@ const main = async () => {
 	await createSessionTypes();
 	await createSessions();
 	await createSessionPatients();
-	await createTherapyModalities();
 };
 
 main().catch((err) => {
