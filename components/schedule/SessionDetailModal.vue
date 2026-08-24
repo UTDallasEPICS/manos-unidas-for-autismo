@@ -247,6 +247,78 @@ function handleAddNote(patientId: string) {
 	noteModals.progressReport = true;
 }
 
+// ---------------------------------------------------------------
+// Create patient report (tests used + diagnosis) for session
+// ---------------------------------------------------------------
+interface TherapyReportRow {
+	id: string;
+	patientId: string;
+	deliveredAt: string | null;
+}
+
+const reportsUrl = computed(() =>
+	props.session ? `/api/session/${props.session.id}/reports` : ""
+);
+
+const { data: sessionReports, refresh: refreshSessionReports } = await useFetch<
+	TherapyReportRow[]
+>(reportsUrl, {
+	immediate: !!props.session,
+	default: () => [],
+});
+
+const reportsByPatientId = computed(() => {
+	const map = new Map<string, TherapyReportRow>();
+	for (const report of sessionReports.value ?? []) {
+		if (report?.patientId) map.set(report.patientId, report);
+	}
+	return map;
+});
+
+function getReportForPatient(patientId: string): TherapyReportRow | undefined {
+	return reportsByPatientId.value.get(patientId);
+}
+
+const createReportModalOpen = ref(false);
+const reportPatientId = ref("");
+
+function handleCreateReport(patientId: string) {
+	if (!props.session) return;
+	reportPatientId.value = patientId;
+	createReportModalOpen.value = true;
+}
+
+async function handleReportSave(data: {
+	testsUsed: string;
+	diagnosis: string;
+}) {
+	if (!props.session) return;
+	try {
+		await $fetch("/api/session/reports", {
+			method: "POST",
+			body: {
+				patientId: reportPatientId.value,
+				sessionId: props.session.id,
+				testsUsed: data.testsUsed,
+				diagnosis: data.diagnosis,
+			},
+		});
+		await refreshSessionReports();
+		createReportModalOpen.value = false;
+		toast.add({
+			title: t("report.submitSuccess"),
+			color: "success",
+			icon: "i-lucide-circle-check",
+		});
+	} catch {
+		toast.add({
+			title: t("report.submitError"),
+			color: "error",
+			icon: "i-lucide-triangle-alert",
+		});
+	}
+}
+
 async function handleNoteSave(formData: Record<string, unknown>) {
 	const result = await saveTherapyNote(
 		formData,
@@ -691,6 +763,27 @@ const modalDescription = computed(() =>
 									>
 										{{ t("profile.columns.addNote") }}
 									</UButton>
+
+									<UButton
+										v-if="
+											!getReportForPatient(sp.patientId)
+										"
+										size="xs"
+										color="primary"
+										variant="soft"
+										icon="i-lucide-clipboard-plus"
+										@click="
+											handleCreateReport(sp.patientId)
+										"
+									>
+										{{ t("report.createButton") }}
+									</UButton>
+									<UBadge
+										v-else
+										color="neutral"
+										variant="subtle"
+										:label="t('report.reportSubmitted')"
+									/>
 								</template>
 
 								<UButton
@@ -853,5 +946,12 @@ const modalDescription = computed(() =>
 		v-if="canWriteNotes"
 		v-model="noteModals.viewNote"
 		:note="activeNote"
+	/>
+
+	<TherapyCreateReportModal
+		v-if="canWriteNotes"
+		v-model="createReportModalOpen"
+		:patient-id="reportPatientId"
+		@save="handleReportSave"
 	/>
 </template>

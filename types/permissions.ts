@@ -57,6 +57,7 @@ const pageAccessMap: { [routeName: string]: AccessPermission } = {
 	"intake-id": AccessPermission.USER_SERVICE,
 	"request-id": AccessPermission.USER_SERVICE,
 	"session-sessionsView": AccessPermission.USER_SERVICE,
+	"report-reportsView": AccessPermission.USER_SERVICE,
 	// IT Service Pages
 	"dashboard-iTServiceDashboard": AccessPermission.IT_SERVICE,
 	// Admin Pages

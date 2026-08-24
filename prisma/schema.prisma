@@ -32,6 +32,9 @@ model User {
   TherapistReferralsAsTherapist TherapistReferral[] @relation("TherapistReferrals")
   TherapistReferralsAsEvaluator TherapistReferral[] @relation("EvaluatorReferrals")
   loggedInRequests              LoggedInRequest[]
+
+  TherapyReportsAsTherapist TherapyReport[] @relation("TherapyReportsAsTherapist")
+  TherapyReportsDelivered   TherapyReport[] @relation("TherapyReportsDelivered")
 }
 
 model NonEmployee {
@@ -73,6 +76,7 @@ model Patient {
   TherapyNotes        TherapyNote[]
   AppointmentRequests AppointmentRequest[]
   TherapistReferrals  TherapistReferral[]
+  TherapyReports      TherapyReport[]
 
   initialInterviewDate DateTime?
   programEvalDate      DateTime?
@@ -156,6 +160,7 @@ model Session {
   Patients           SessionPatient[]
   AppointmentRequest AppointmentRequest?
   TherapyNotes       TherapyNote[]
+  TherapyReports     TherapyReport[]
 
   @@unique([time, therapistId])
 }
@@ -262,7 +267,7 @@ model TherapyNote {
 
   objectives TherapyNoteObjective[]
   sessionId  String?
-  Session    Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  Session    Session?               @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 }
 
 model TherapyNoteObjective {
@@ -376,6 +381,29 @@ model TherapistReferral {
   Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
   Therapist User?   @relation("TherapistReferrals", fields: [therapistId], references: [id], onDelete: Cascade)
   Evaluator User    @relation("EvaluatorReferrals", fields: [evaluatorId], references: [id], onDelete: Cascade)
+}
+
+/// A therapist's post-appointment report for a patient: which tests/
+/// assessments were used and the resulting diagnosis/recommendation. Created
+/// by the assigned therapist, then handed off by USER_SERVICE staff to the
+/// patient (if an adult) or their guardian (if a minor) — tracked via
+/// deliveredAt/deliveredById rather than a separate status enum, mirroring
+/// SessionPatient.paid's boolean-ish "has this happened yet" shape.
+model TherapyReport {
+  id            String    @id @default(uuid())
+  patientId     String
+  therapistId   String
+  sessionId     String?
+  testsUsed     String
+  diagnosis     String
+  createdAt     DateTime  @default(now())
+  deliveredAt   DateTime?
+  deliveredById String?
+
+  Patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  Therapist   User     @relation("TherapyReportsAsTherapist", fields: [therapistId], references: [id], onDelete: Cascade)
+  Session     Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  DeliveredBy User?    @relation("TherapyReportsDelivered", fields: [deliveredById], references: [id], onDelete: SetNull)
 }
 
 model Request {
