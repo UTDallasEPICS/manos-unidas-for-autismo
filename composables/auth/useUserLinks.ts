@@ -59,6 +59,10 @@ export function useUserLinks() {
 				to: "session-sessionsView",
 				label: "Sessions",
 			});
+			legalRoutes.push({
+				to: "report-reportsView",
+				label: "Reports",
+			});
 		}
 
 		if (val[AP.ADMIN]) {
