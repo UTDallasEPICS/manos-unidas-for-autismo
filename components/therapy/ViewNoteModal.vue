@@ -13,7 +13,7 @@ const props = defineProps<{
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
 const { t } = useI18n();
-const { therapyTypeLabel } = useTherapyTypes();
+const { therapyTypeLabels } = useTherapyTypes();
 
 const open = computed({
 	get: () => props.modelValue,
@@ -92,7 +92,7 @@ function formatDate(value?: string | Date | null) {
 				</p>
 				<p>
 					<span class="text-muted">{{ t("profile.therapy") }}:</span>
-					{{ therapyTypeLabel(note.therapyType) }}
+					{{ therapyTypeLabels(note.therapyTypes) }}
 				</p>
 
 				<div v-if="note.objectives?.length">

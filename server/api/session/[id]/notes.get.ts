@@ -21,12 +21,16 @@ export default defineAuthedHandler(
 			where: { sessionId },
 			include: {
 				objectives: true,
+				types: true,
 			},
 			orderBy: {
 				createdAt: "desc",
 			},
 		});
 
-		return notes;
+		return notes.map(({ types, ...note }) => ({
+			...note,
+			therapyTypes: types.map((t) => t.therapyType),
+		}));
 	}
 );

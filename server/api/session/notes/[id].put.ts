@@ -2,7 +2,7 @@ import { z } from "zod";
 import { AccessPermission } from "~/types/permissions";
 
 const therapyNoteUpdateSchema = z.object({
-	therapyType: z.string(),
+	therapyTypes: z.array(z.string()).min(1),
 	goalsAchieved: z.string().optional().nullable(),
 	progressNotes: z.string().optional().nullable(),
 	nextSessionObjectives: z.string().optional().nullable(),
@@ -46,8 +46,6 @@ export default defineAuthedHandler(
 		const note = await prisma.therapyNote.update({
 			where: { id: noteId },
 			data: {
-				therapyType: data.therapyType,
-
 				otherTherapies: data.otherTherapies ?? null,
 
 				objectivesDate: parseDateOrNull(data.objectivesDate),
@@ -100,9 +98,20 @@ export default defineAuthedHandler(
 			});
 		}
 
+		// 3) Replace therapy types (same strategy as objectives)
+		await prisma.therapyNoteType.deleteMany({
+			where: { therapyNoteId: noteId },
+		});
+		await prisma.therapyNoteType.createMany({
+			data: data.therapyTypes.map((therapyType) => ({
+				therapyNoteId: noteId,
+				therapyType,
+			})),
+		});
+
 		return {
 			success: true,
-			data: note,
+			data: { ...note, therapyTypes: data.therapyTypes },
 		};
 	}
 );

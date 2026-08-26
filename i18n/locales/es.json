@@ -676,8 +676,8 @@
 		"rescheduleError": "No se pudo reprogramar la cita."
 	},
 	"therapyNote": {
-		"selectTherapy": "Seleccione una terapia",
-		"selectTherapyFirst": "Seleccione primero una terapia para ver sus objetivos.",
+		"selectTherapy": "Seleccione terapias",
+		"selectTherapyFirst": "Seleccione al menos una terapia para ver sus objetivos.",
 		"objectivesByTherapy": "Objetivos trabajados (según la terapia)",
 		"noOptions": "No hay opciones disponibles.",
 		"selectAll": "Seleccionar todo",
@@ -696,7 +696,8 @@
 	},
 	"therapyTypes": {
 		"LEARNING_THERAPY": "Terapia de Aprendizaje",
-		"BEHAVIORAL_EARLY": "Terapia Conductual y Terapia de Intervención Temprana",
+		"BEHAVIORAL_THERAPY": "Terapia Conductual",
+		"EARLY_INTERVENTION": "Terapia de Intervención Temprana",
 		"SPEECH_THERAPY": "Terapia del Lenguaje",
 		"SOCIAL_SKILLS": "Terapia de Habilidades Sociales",
 		"OCCUPATIONAL_THERAPY": "Terapia Ocupacional",

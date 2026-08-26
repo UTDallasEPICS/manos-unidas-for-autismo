@@ -1,7 +1,8 @@
 // Therapy types (keys) -> labels for dropdown
 export const therapyTypes: Record<string, string> = {
 	LEARNING_THERAPY: "Learning Therapy",
-	BEHAVIORAL_EARLY: "Behavioral Therapy & Early Intervention Therapy",
+	BEHAVIORAL_THERAPY: "Behavioral Therapy",
+	EARLY_INTERVENTION: "Early Intervention Therapy",
 	SPEECH_THERAPY: "Speech Therapy",
 	SOCIAL_SKILLS: "Social Skills Therapy",
 	OCCUPATIONAL_THERAPY: "Occupational Therapy",
@@ -65,7 +66,41 @@ export const objectivesByTherapy: Record<string, ObjectiveItem[]> = {
 		{ subheader: "Others" },
 		"Other(Specify)",
 	],
-	BEHAVIORAL_EARLY: [
+	// BEHAVIORAL_THERAPY and EARLY_INTERVENTION were split from a single
+	// combined "BEHAVIORAL_EARLY" type; both still share this objectives list
+	// pending clinical input on how it should differentiate between the two.
+	BEHAVIORAL_THERAPY: [
+		{ subheader: "Basic Student Skills" },
+		"A. Cooperation and Reinforcer Effectiveness",
+		"B. Visual Performance",
+		"C. Receptive Language",
+		"D. Motor Imitation",
+		"E. Vocal Imitation",
+		"F. Requests",
+		"G. Labeling",
+		"H. Intraverbals",
+		"I. Spontaneous Vocalizations",
+		"J. Syntax and Grammar",
+		"K. Recess and Free Time",
+		"L. Social Interaction",
+		"M. Group Instruction",
+		"N. Following Classroom Routines",
+		"P. Generalized Responses",
+		{ subheader: "Academic Skills" },
+		"Q. Reading Skills",
+		"R. Math Skills",
+		"S. Writing Skills",
+		"T. Spelling Skills",
+		{ subheader: "Self-help Skills" },
+		"U. Dressing Skills",
+		"V. Eating Skills",
+		"W. Personal Maintenance",
+		"X. Personal Hygiene and Toilet Training",
+		{ subheader: "Motor Skills" },
+		"Y. Gross Motor Skills",
+		"Z. Fine Motor Skills",
+	],
+	EARLY_INTERVENTION: [
 		{ subheader: "Basic Student Skills" },
 		"A. Cooperation and Reinforcer Effectiveness",
 		"B. Visual Performance",

@@ -274,10 +274,9 @@ export default defineAuthedHandler(
 			}
 
 			if (body.clinicalNotes.therapistNotes) {
-				await tx.therapyNote.create({
+				const intakeNote = await tx.therapyNote.create({
 					data: {
 						patientId: patient.id,
-						therapyType: body.services.therapies[0] ?? "",
 						goalsAchieved: "",
 						progressNotes: body.clinicalNotes.therapistNotes,
 						progressNotesDate: toDate(body.clinicalNotes.noteDate),
@@ -285,6 +284,14 @@ export default defineAuthedHandler(
 						generalObservations: "",
 					},
 				});
+				if (body.services.therapies.length > 0) {
+					await tx.therapyNoteType.createMany({
+						data: body.services.therapies.map((therapyType) => ({
+							therapyNoteId: intakeNote.id,
+							therapyType,
+						})),
+					});
+				}
 			}
 
 			// Guardians (minors only): dedupe by email so siblings share one

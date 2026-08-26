@@ -1,28 +1,32 @@
-<!-- Therapy picker + its objectives checklist (drill down). Migrated from the
-     deleted Form/Input/TherapyDrilldown.vue. Model is a DrilldownValue
-     ({ selected, checked }); selecting a therapy resets `checked` to [], exactly
-     as before, so the saved selectedTherapy / selectedObjectives are unchanged. -->
+<!-- Therapy picker + its objectives checklist (drill down). Model is a
+     DrilldownValue ({ selected, checked }); `selected` is now a list — a note
+     can cover more than one therapy type. Changing the selection resets
+     `checked` to [], same as the old single-select behavior, since objectives
+     are keyed per therapy type (`${type}::${label}`) and stale keys from a
+     removed type would otherwise linger unseen in the saved data. -->
 <script setup lang="ts">
 import type {
 	FormFieldConfig,
 	DrilldownValue,
+	CheckboxOption,
 } from "~/types/FormConfig/formConfig";
 import { objectivesByTherapy } from "~/composables/therapy/therapyData";
 
 defineProps<{ fieldConfig: FormFieldConfig }>();
 
 const model = defineModel<DrilldownValue>({
-	default: () => ({ selected: "", checked: [] }),
+	default: () => ({ selected: [], checked: [] }),
 });
 
 const { t } = useI18n();
-const { therapyTypeOptions } = useTherapyTypes();
+const { therapyTypeLabel, therapyTypeOptions } = useTherapyTypes();
 
-const selectedTherapy = computed({
+const selectedTherapies = computed({
 	get: () => model.value.selected,
-	// Changing therapy clears the previously-checked objectives — mirrors the
-	// old widget so stale objectives from another therapy are never saved.
-	set: (val: string) => {
+	// Changing the therapy selection clears previously-checked objectives —
+	// mirrors the old widget so stale objectives from a removed therapy are
+	// never saved.
+	set: (val: string[]) => {
 		model.value = { selected: val, checked: [] };
 	},
 });
@@ -34,9 +38,29 @@ const selectedObjectives = computed({
 	},
 });
 
-const objectivesForSelectedTherapy = computed(() => {
-	if (!selectedTherapy.value) return [];
-	return objectivesByTherapy[selectedTherapy.value] || [];
+// Objectives from every selected therapy, grouped under a header per therapy
+// so labels that happen to repeat across types (the checklists share a lot of
+// content) stay visually and functionally distinct. Each item's checkbox
+// value is namespaced `${therapyType}::${label}` so checking "C. Receptive
+// Language" under one therapy doesn't collide with the same label under
+// another selected therapy.
+const objectivesForSelectedTherapies = computed<CheckboxOption[]>(() => {
+	const options: CheckboxOption[] = [];
+	for (const type of selectedTherapies.value) {
+		const items = objectivesByTherapy[type];
+		if (!items?.length) continue;
+		options.push({ header: therapyTypeLabel(type) });
+		for (const item of items) {
+			if (typeof item === "string") {
+				options.push({ value: `${type}::${item}`, label: item });
+			} else if (item.header) {
+				options.push({ header: item.header });
+			} else {
+				options.push({ subheader: item.subheader });
+			}
+		}
+	}
+	return options;
 });
 
 const objectivesFieldConfig = computed<FormFieldConfig>(() => ({
@@ -44,11 +68,7 @@ const objectivesFieldConfig = computed<FormFieldConfig>(() => ({
 	label: t("therapyNote.objectivesByTherapy"),
 	type: "checkboxgroup",
 	required: true,
-	checkboxOptions: objectivesForSelectedTherapy.value.map((item) => {
-		if (typeof item === "string") return { value: item, label: item };
-		if (item.header) return { header: item.header };
-		return { subheader: item.subheader };
-	}),
+	checkboxOptions: objectivesForSelectedTherapies.value,
 }));
 </script>
 
@@ -59,16 +79,18 @@ const objectivesFieldConfig = computed<FormFieldConfig>(() => ({
 			:required="fieldConfig.required"
 			class="flex flex-col"
 		>
-			<USelect
-				v-model="selectedTherapy"
+			<USelectMenu
+				v-model="selectedTherapies"
 				:items="therapyTypeOptions"
+				value-key="value"
+				multiple
 				:placeholder="t('therapyNote.selectTherapy')"
 				class="w-full"
 			/>
 		</UFormField>
 
 		<TherapyInputsCheckboxGroup
-			v-if="selectedTherapy"
+			v-if="selectedTherapies.length"
 			v-model="selectedObjectives"
 			:field-config="objectivesFieldConfig"
 		/>

@@ -1,7 +1,7 @@
 export type DateAndVal = { value: string; date: string };
 
 export interface TherapySelectionData {
-	selectedTherapy: string;
+	selectedTherapies: string[];
 	selectedObjectives: string[];
 	objectiveDetails: Record<string, string>;
 	objectivesDate: string;
@@ -45,7 +45,7 @@ export interface TherapyNoteObjective {
 }
 
 export interface TherapyNoteSelectionData {
-	therapyType?: string;
+	therapyTypes?: string[];
 	objectivesDate?: string;
 	objectives?: TherapyNoteObjective[];
 }

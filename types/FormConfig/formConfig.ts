@@ -45,7 +45,7 @@ export interface FormSection {
 }
 
 export interface DrilldownValue {
-	selected: string;
+	selected: string[];
 	checked: string[];
 }
 
