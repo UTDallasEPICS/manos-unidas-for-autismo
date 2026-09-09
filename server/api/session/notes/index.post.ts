@@ -3,7 +3,7 @@ import { AccessPermission } from "~/types/permissions";
 
 const therapyNoteSchema = z.object({
 	patientId: z.string(),
-	therapyType: z.string(),
+	therapyTypes: z.array(z.string()).min(1),
 	sessionId: z.string().optional().nullable(),
 	submitterID: z.number().int().optional().nullable(),
 	submitterId: z.number().int().optional().nullable(),
@@ -64,7 +64,6 @@ export default defineAuthedHandler(
 		const note = await prisma.therapyNote.create({
 			data: {
 				patientId: data.patientId,
-				therapyType: data.therapyType,
 				sessionId: data.sessionId ?? null,
 				submitterId: data.submitterID ?? data.submitterId ?? null,
 
@@ -116,9 +115,17 @@ export default defineAuthedHandler(
 			});
 		}
 
+		// 3) Create one row per selected therapy type
+		await prisma.therapyNoteType.createMany({
+			data: data.therapyTypes.map((therapyType) => ({
+				therapyNoteId: note.id,
+				therapyType,
+			})),
+		});
+
 		return {
 			success: true,
-			data: note,
+			data: { ...note, therapyTypes: data.therapyTypes },
 		};
 	}
 );

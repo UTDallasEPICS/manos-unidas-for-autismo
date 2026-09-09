@@ -16,6 +16,7 @@ const model = defineModel<ObjectiveDetailsValue>({
 });
 
 const { t } = useI18n();
+const { objectiveLabel } = useTherapyTypes();
 
 function updateDetail(key: string, val: string) {
 	model.value = {
@@ -42,12 +43,14 @@ function updateDate(date: string) {
 				class="border-default space-y-1 rounded-md border p-2"
 			>
 				<div class="text-default text-sm font-semibold">
-					{{ objectiveKey }}
+					{{ objectiveLabel(objectiveKey) }}
 				</div>
 				<UTextarea
 					:model-value="model.details[objectiveKey] ?? ''"
 					:placeholder="
-						t('therapyNote.detailsFor', { objective: objectiveKey })
+						t('therapyNote.detailsFor', {
+							objective: objectiveLabel(objectiveKey),
+						})
 					"
 					:rows="2"
 					class="w-full"

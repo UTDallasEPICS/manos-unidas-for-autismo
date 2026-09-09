@@ -1,6 +1,8 @@
 import { $fetch } from "ofetch";
 
 export function useTherapyNoteForm() {
+	const { objectiveLabel } = useTherapyTypes();
+
 	function dateStringWithCurrentTime(
 		dateStr: string | null | undefined
 	): string | null {
@@ -97,7 +99,7 @@ export function useTherapyNoteForm() {
 		for (const key of selectedObjectives) {
 			objectivesPayload.push({
 				goalKey: key,
-				goalLabel: key,
+				goalLabel: objectiveLabel(key),
 				details: objectiveDetails[key] || null,
 			});
 		}
@@ -114,7 +116,7 @@ export function useTherapyNoteForm() {
 		const payload = {
 			patientId,
 			sessionId: sessionId ?? null,
-			therapyType: formData.selectedTherapy,
+			therapyTypes: formData.selectedTherapies,
 			objectives: objectivesPayload,
 			objectivesDate: resolveDate(
 				formData.objectivesDate as string,

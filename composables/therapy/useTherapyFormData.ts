@@ -43,16 +43,22 @@ export function useTherapyFormData(
 
 	// --- Custom inputs (not driven by blueprint) ---
 
+	function sameTherapies(a: string[], b: string[]): boolean {
+		return a.length === b.length && a.every((v) => b.includes(v));
+	}
+
 	const therapyDrilldownValue = computed({
 		get: (): DrilldownValue => ({
-			selected: formData.value.selectedTherapy ?? "",
+			selected: formData.value.selectedTherapies ?? [],
 			checked: formData.value.selectedObjectives ?? [],
 		}),
 		set: (val: DrilldownValue) => {
-			if (val.selected !== formData.value.selectedTherapy) {
+			if (
+				!sameTherapies(val.selected, formData.value.selectedTherapies)
+			) {
 				formData.value.objectiveDetails = {};
 			}
-			formData.value.selectedTherapy = val.selected;
+			formData.value.selectedTherapies = val.selected;
 			formData.value.selectedObjectives = val.checked;
 		},
 	});
@@ -109,7 +115,7 @@ export function useTherapyFormData(
 	function resetForm() {
 		resetBlueprint();
 		Object.assign(formData.value, {
-			selectedTherapy: "",
+			selectedTherapies: [],
 			selectedObjectives: [],
 			objectiveDetails: {},
 			objectivesDate: "",
@@ -120,7 +126,9 @@ export function useTherapyFormData(
 
 	function isRowVisible(row: FormFieldConfig[]): boolean {
 		if (row.some((f) => f.name === "groupRecommendationParents")) {
-			return formData.value.selectedTherapy === "INDEPENDENT_LIVING";
+			return formData.value.selectedTherapies.includes(
+				"INDEPENDENT_LIVING"
+			);
 		}
 		return true;
 	}
@@ -128,8 +136,8 @@ export function useTherapyFormData(
 	// --- Validation ---
 
 	function validate(): boolean {
-		if (!formData.value.selectedTherapy) {
-			alert("Please select a therapy.");
+		if (!formData.value.selectedTherapies.length) {
+			alert("Please select at least one therapy.");
 			return false;
 		}
 
@@ -154,7 +162,7 @@ export function useTherapyFormData(
 	// --- Populate from existing note ---
 
 	function populateFromNote(note: TherapyNote) {
-		formData.value.selectedTherapy = note.therapyType || "";
+		formData.value.selectedTherapies = note.therapyTypes ?? [];
 		formData.value.objectivesDate = note.objectivesDate
 			? note.objectivesDate.slice(0, 10)
 			: "";

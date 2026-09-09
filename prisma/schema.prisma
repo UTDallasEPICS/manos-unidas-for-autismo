@@ -226,8 +226,6 @@ model TherapyNote {
   patientId String
   Patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  therapyType String
-
   otherTherapies String?
 
   objectivesDate DateTime?
@@ -261,8 +259,20 @@ model TherapyNote {
   submitterId Int?
 
   objectives TherapyNoteObjective[]
+  types      TherapyNoteType[]
   sessionId  String?
   Session    Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+}
+
+/// A note may now cover more than one therapy type (e.g. a patient in both
+/// Behavioral Therapy and Early Intervention Therapy) — replaces the old
+/// single `TherapyNote.therapyType` column with a join row per selected type.
+model TherapyNoteType {
+  therapyNoteId Int
+  therapyType   String
+  TherapyNote   TherapyNote @relation(fields: [therapyNoteId], references: [id], onDelete: Cascade)
+
+  @@id([therapyNoteId, therapyType])
 }
 
 model TherapyNoteObjective {

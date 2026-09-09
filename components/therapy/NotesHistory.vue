@@ -11,7 +11,7 @@ defineEmits<{
 }>();
 
 const { t } = useI18n();
-const { therapyTypeLabel } = useTherapyTypes();
+const { therapyTypeLabels } = useTherapyTypes();
 
 function formatDate(value?: string | Date | null) {
 	return value ? new Date(value).toLocaleString() : "—";
@@ -49,7 +49,7 @@ function formatDate(value?: string | Date | null) {
 						{{ formatDate(note.updatedAt) }}
 					</p>
 					<p class="text-muted text-sm">
-						{{ therapyTypeLabel(String(note.therapyType)) }}
+						{{ therapyTypeLabels(note.therapyTypes as string[]) }}
 					</p>
 				</div>
 				<div class="flex shrink-0 gap-2">

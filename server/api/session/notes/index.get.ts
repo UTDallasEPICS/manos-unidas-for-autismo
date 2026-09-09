@@ -29,6 +29,7 @@ export default defineAuthedHandler(
 			where: { patientId: String(patientId) },
 			include: {
 				objectives: true,
+				types: true,
 			},
 			orderBy: {
 				createdAt: "desc",
@@ -37,7 +38,10 @@ export default defineAuthedHandler(
 
 		return {
 			success: true,
-			data: notes,
+			data: notes.map(({ types, ...note }) => ({
+				...note,
+				therapyTypes: types.map((t) => t.therapyType),
+			})),
 		};
 	}
 );
